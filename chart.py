@@ -20,10 +20,13 @@ def formatHouse(houseNum, house):
 		"objects": formatPlanets(house.planets),
 	}
 
-def getChart(year, month, day, hour, minute, second, utcHour, utcMinute, latitude, longitude, ayanamsa):
+def getChart(config):
 	data = astrodata.AstroData(
-	 year, month, day, hour, minute, second, utcHour, utcMinute,
-	 latitude, longitude, ayanamsa=ayanamsa
+		config["year"], config["month"], config["day"],
+		config["hour"], config["minute"], config["second"],
+		config["utcHour"], config["utcMinute"],
+		config["latitude"], config["longitude"],
+		ayanamsa=config["ayanamsa"]
 	)
 	planet_data = data.planets_rashi()
 	kundli = astrochart.Chart(planet_data).lagnaChart()
@@ -45,7 +48,9 @@ def enrichObject(object, house):
 def getObjectsFromHouse(house):
 	return [enrichObject(object, house) for object in house["objects"]]
 
-def getObjects(chart):
+def getObjects(config):
+	chart = getChart(config)
+
 	return [
 		object
 		for house in chart["houses"]
