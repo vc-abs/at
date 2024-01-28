@@ -7,7 +7,7 @@ second: 0
 # Timezone is split into hour and minute parts. The hour part could be negative.
 utcHour: 5
 utcMinute: 30
-# Latitude and Longitude in DMS (as given by Google Maps).
-latitude: 9.93
-longitude: 78.81
+# Latitude and Longitude in Decimal Degrees (as given by Google Maps).
+latitude: 28.12
+longitude: 77
 ayanamsa: ay_raman # as supported by the underlying package, siderallib.
