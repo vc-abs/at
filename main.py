@@ -2,7 +2,7 @@ import sys
 from pprint import pprint
 
 from readConfig import readConfig
-from getChart import getChart
+from chart import getChart
 
 def main(configFilePath="./sample.yml"):
 	pprint(getChart(**readConfig(configFilePath)))
