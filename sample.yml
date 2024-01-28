@@ -1,0 +1,13 @@
+year: 2024
+month: 1
+day: 1
+hour: 0
+minute: 0
+second: 0
+# Timezone is split into hour and minute parts. The hour part could be negative.
+utcHour: 5
+utcMinute: 30
+# Latitude and Longitude in DMS (as given by Google Maps).
+latitude: 9.93
+longitude: 78.81
+ayanamsa: ay_raman # as supported by the underlying package, siderallib.
