@@ -16,7 +16,7 @@ def formatPlanets(planets):
 def formatHouse(houseNum, house):
 	return {
 		"house": houseNum,
-		"signNum": house.sign_num,
+		"sign": house.sign_num,
 		"objects": formatPlanets(house.planets),
 	}
 
@@ -38,3 +38,18 @@ def getChart(year, month, day, hour, minute, second, utcHour, utcMinute, latitud
 	})
 
 	return {"houses": houses}
+
+def enrichObject(object, house):
+	return { **object, "sign": house["sign"], "house": house["house"] }
+
+def getObjectsFromHouse(house):
+	return [enrichObject(object, house) for object in house["objects"]]
+
+def getObjects(chart):
+	return [
+		object
+		for house in chart["houses"]
+		for object in getObjectsFromHouse(house)
+	]
+
+__all__ = [getChart, getObjects]
