@@ -11,10 +11,15 @@ planets = [
 	'mars',
 	'jupiter',
 	'saturn',
+]
+
+nodes = [
 	'ketu',
 	'rahu',
 ]
 
 angles = ['asc']
 
-objects = angles + planets
+ashtaka = angles + planets
+
+objects = ashtaka + nodes

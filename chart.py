@@ -1,7 +1,7 @@
 from sideralib import astrochart, astrodata
 
-from constants import signs, houseCount
-from helpers import isTraditionalObject
+from constants import objects
+from helpers import selectObjects
 
 def formatPlanet(planetName, planet):
 	return {
@@ -17,12 +17,12 @@ def formatPlanets(planets):
 	]
 
 def formatHouse(houseNum, house):
-	traditionalPlanets = list(filter(isTraditionalObject, formatPlanets(house.planets)))
+	traditionalObjects = selectObjects(formatPlanets(house.planets), objects)
 
 	return {
 		"house": houseNum,
 		"sign": house.sign_num,
-		"objects": traditionalPlanets,
+		"objects": traditionalObjects,
 	}
 
 def getChart(config):

@@ -7,6 +7,7 @@
 * Introduce proper package management.
 * Make the configuration a bit more human readable.
 * Support DMS notation for latitudes and longitudes.
+* Rename this package to Auspicious Times.
 
 ## Notes
 * The preferred ayanamsa is "ay_raman" as it's closer to the Pushya at 16Cn, suggested by PVN Rao.
