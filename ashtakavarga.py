@@ -1,26 +1,33 @@
+from itertools import product
 import pandas as pd
 
-from constants import ashtaka, houseCount
+from constants import ashtaka, planets, signs, houseCount
 from chart import getObjects
 from helpers import selectObjects
 
 ashtakavargaBaseDF = pd.read_csv('./ashtakavarga.csv')
-ashtakavargaBufferDF = ashtakavargaBaseDF.query('position == 1')\
-	.drop(['position', 'points'], axis=1)
+ashtakavargaBufferDF = pd.DataFrame(product(signs, planets, ashtaka), columns=['sign', 'object', 'reference'])
 
 def getAshtakavarga(config):
 	objects = getObjects(config)
 	ashtakaObjects = selectObjects(objects, ashtaka)
-	ashtakaObjectsDF = pd.DataFrame.from_records(ashtakaObjects, columns=['name', 'house', 'sign'])
+	objectPositionsDF = pd.DataFrame.from_records(ashtakaObjects, columns=['name', 'sign'])\
+		.rename(columns={ 'name': 'object'})
 
-	ashtakavargaDF = ashtakavargaBufferDF.merge(ashtakaObjectsDF, left_on='object', right_on='name')\
-		.merge(ashtakaObjectsDF[['name', 'house']], left_on='reference', right_on='name')\
-		.drop(columns=['name_x', 'name_y'])\
-  	.rename(columns={'house_x': 'objectHouse', 'house_y': 'referenceHouse'})\
-		.assign(position=lambda row: (row['objectHouse'] - row['referenceHouse']) % houseCount + 1)\
-		.merge(ashtakavargaBaseDF, on=['object', 'reference', 'position'])\
-		.query('reference == "mercury"')
+	ashtakavargaDF = ashtakavargaBufferDF.merge(
+		objectPositionsDF, on='object', how='left'
+	)\
+	.rename(columns={ 'sign_x': 'sign', 'sign_y': 'objectSign'})\
+	.merge(objectPositionsDF, left_on='reference', right_on='object', how='left')\
+	.drop(columns=['object_y'])\
+	.rename(columns={
+		'object_x': 'object', 'sign_x': 'sign', 'sign_y': 'referenceSign'
+  })\
+	.assign(position=lambda row: (row['sign'] - row['referenceSign']) % houseCount + 1)\
+	.merge(ashtakavargaBaseDF, on=['object', 'reference', 'position'])\
+	.groupby('sign')['points'].sum()
 
 	return ashtakavargaDF
 
 __all__ = [getAshtakavarga]
+
