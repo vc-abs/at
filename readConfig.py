@@ -17,7 +17,7 @@ defaults = {
 	# Location of Delhi
 	"latitude": 28.12,
 	"longitude": 77,
-	"query": "h1 > 1",
+	"query": "h1 >= 0",
 }
 
 def readConfig(filePath):
