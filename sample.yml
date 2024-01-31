@@ -4,6 +4,8 @@ day: 1
 hour: 0
 minute: 0
 second: 0
+freq: '60min' # as supported by pandas.date_range.freq.
+periods: 1000
 # Timezone is split into hour and minute parts. The hour part could be negative.
 utcHour: 5
 utcMinute: 30
