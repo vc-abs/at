@@ -1,4 +1,4 @@
-reference,planet,house,points
+object,reference,position,points
 saturn,saturn,1,0
 saturn,jupiter,1,0
 saturn,mars,1,0

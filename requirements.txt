@@ -1,2 +1,3 @@
-sideralib
+pandas
 pyyaml
+sideralib
