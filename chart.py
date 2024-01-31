@@ -1,6 +1,6 @@
 from sideralib import astrochart, astrodata
 
-from constants import objects
+from constants import signs, objects, houseCount
 from helpers import selectObjects
 
 def formatPlanet(planetName, planet):
