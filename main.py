@@ -9,7 +9,7 @@ def output(context):
 	df = context['df']
 
 	if exportFile:
-		df.to_csv(exportFile)
+		df.to_csv(exportFile, index=False)
 	else:
 		pprint(df)
 
