@@ -1,22 +1,13 @@
 import sys
-from pprint import pprint
+from output import output
 
 from readConfig import readConfig
 from generateAshtakavarga import generateAshtakavarga
 
-def output(context):
-	exportFile = context.get('exportTo')
-	df = context['df']
-
-	if exportFile:
-		df.to_csv(exportFile, index=False)
-	else:
-		pprint(df)
-
 def main(configFilePath="./sample.yml"):
 	context = readConfig(configFilePath)
-	df = generateAshtakavarga(context)
-	output({'df': df, **context})
+	data = generateAshtakavarga(context)
+	output({'data': data, **context})
 
 if __name__ == "__main__":
 	main(*sys.argv[1:])
