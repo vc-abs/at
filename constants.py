@@ -1,7 +1,11 @@
 signCount = 12
-signs = [i + 1 for i in range(0, signCount)]
+signs = [
+	i + 1 for i in range(0, signCount)
+]
 houseCount = signCount
-houses = [i + 1 for i in range(0, houseCount)]
+houses = [
+	i + 1 for i in range(0, houseCount)
+]
 
 planets = [
 	'moon',

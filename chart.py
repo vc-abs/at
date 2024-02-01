@@ -1,7 +1,11 @@
-from sideralib import astrochart, astrodata
+from sideralib import (
+	astrochart,
+	astrodata,
+)
 
-from constants import signs, objects, houseCount
+from constants import objects
 from helpers import selectObjects
+
 
 def formatPlanet(planetName, planet):
 	return {
@@ -11,13 +15,22 @@ def formatPlanet(planetName, planet):
 		'retro': planet['retrograde'],
 	}
 
+
 def formatPlanets(planets):
 	return [
-		formatPlanet(planetName, planet) for (planetName, planet) in planets.items()
+		formatPlanet(planetName, planet)
+		for (
+			planetName,
+			planet,
+		) in planets.items()
 	]
 
+
 def formatHouse(houseNum, house):
-	traditionalObjects = selectObjects(formatPlanets(house.planets), objects)
+	traditionalObjects = selectObjects(
+		formatPlanets(house.planets),
+		objects,
+	)
 
 	return {
 		'house': houseNum,
@@ -25,33 +38,60 @@ def formatHouse(houseNum, house):
 		'objects': traditionalObjects,
 	}
 
+
 def getChart(config):
 	data = astrodata.AstroData(
-		config['year'], config['month'], config['day'],
-		config['hour'], config['minute'], config['second'],
-		config['utcHour'], config['utcMinute'],
-		config['latitude'], config['longitude'],
-		ayanamsa=config['ayanamsa']
+		config['year'],
+		config['month'],
+		config['day'],
+		config['hour'],
+		config['minute'],
+		config['second'],
+		config['utcHour'],
+		config['utcMinute'],
+		config['latitude'],
+		config['longitude'],
+		ayanamsa=config['ayanamsa'],
 	)
 	planet_data = data.planets_rashi()
-	kundli = astrochart.Chart(planet_data).lagnaChart()
+	kundli = astrochart.Chart(
+		planet_data
+	).lagnaChart()
 
 	firstKundliHouse = kundli[0]
-	houses = [formatHouse(houseNum + 1, house) for houseNum, house in enumerate(kundli)]
+	houses = [
+		formatHouse(houseNum + 1, house)
+		for houseNum, house in enumerate(
+			kundli
+		)
+	]
 
-	houses[0]['objects'].insert(0, {
-		'name': 'asc',
-		'type': 'angle',
-		'degree': firstKundliHouse.asc_signlon,
-	})
+	houses[0]['objects'].insert(
+		0,
+		{
+			'name': 'asc',
+			'type': 'angle',
+			'degree': firstKundliHouse.asc_signlon,
+		},
+	)
 
 	return {'houses': houses}
 
+
 def enrichObject(object, house):
-	return { **object, 'sign': house['sign'], 'house': house['house'] }
+	return {
+		**object,
+		'sign': house['sign'],
+		'house': house['house'],
+	}
+
 
 def getObjectsFromHouse(house):
-	return [enrichObject(object, house) for object in house['objects']]
+	return [
+		enrichObject(object, house)
+		for object in house['objects']
+	]
+
 
 def getObjects(config):
 	chart = getChart(config)
@@ -59,7 +99,10 @@ def getObjects(config):
 	return [
 		object
 		for house in chart['houses']
-		for object in getObjectsFromHouse(house)
+		for object in getObjectsFromHouse(
+			house
+		)
 	]
+
 
 __all__ = [getChart, getObjects]

@@ -1,5 +1,9 @@
 import yaml
-from datetime import datetime, timezone, timedelta
+from datetime import (
+	datetime,
+	timezone,
+	timedelta,
+)
 
 defaults = {
 	'ayanamsa': 'ay_raman',
@@ -20,12 +24,26 @@ defaults = {
 	'query': 'h1 >= 0',
 }
 
+
 def readConfig(filePath):
 	with open(filePath, 'r') as stream:
-		config = {**defaults, **yaml.safe_load(stream)}
+		config = {
+			**defaults,
+			**yaml.safe_load(stream),
+		}
 		config['date'] = datetime(
-			config['year'], config['month'], config['day'],
-			config['hour'], config['minute'], config['second'], 000000,
-			tzinfo=timezone(offset=timedelta(hours=config['utcHour'], minutes=config['utcMinute'])),
+			config['year'],
+			config['month'],
+			config['day'],
+			config['hour'],
+			config['minute'],
+			config['second'],
+			000000,
+			tzinfo=timezone(
+				offset=timedelta(
+					hours=config['utcHour'],
+					minutes=config['utcMinute'],
+				)
+			),
 		)
 		return config

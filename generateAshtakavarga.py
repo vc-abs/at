@@ -1,6 +1,7 @@
 import pandas as pd
 from ashtakavarga import getAshtakavarga
 
+
 def standardizeDate(dt):
 	return {
 		'year': dt.year,
@@ -11,21 +12,36 @@ def standardizeDate(dt):
 		'second': dt.second,
 	}
 
+
 def getAshtakavargaForTime(config, dt):
 	return {
 		'time': dt,
-		**getAshtakavarga({**config, **standardizeDate(dt) })
+		**getAshtakavarga(
+			{**config, **standardizeDate(dt)}
+		),
 	}
 
+
 def generateAshtakavarga(config):
-	timeSeries = pd.date_range(
-		start = config['date'],
-		periods = config['periods'],
-		freq=config['freq']
-	).to_pydatetime().tolist()
+	timeSeries = (
+		pd.date_range(
+			start=config['date'],
+			periods=config['periods'],
+			freq=config['freq'],
+		)
+		.to_pydatetime()
+		.tolist()
+	)
 
 	df = pd.DataFrame(
-		list(map(lambda dt: getAshtakavargaForTime(config, dt), timeSeries)),
+		list(
+			map(
+				lambda dt: getAshtakavargaForTime(
+					config, dt
+				),
+				timeSeries,
+			)
+		),
 	)
 
 	return df.query(config['query'])
