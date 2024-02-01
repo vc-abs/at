@@ -5,10 +5,10 @@ from helpers import selectObjects
 
 def formatPlanet(planetName, planet):
 	return {
-		"name": planetName,
-		"type": "planet",
-		"degree": planet["signlon"],
-		"retro": planet["retrograde"],
+		'name': planetName,
+		'type': 'planet',
+		'degree': planet['signlon'],
+		'retro': planet['retrograde'],
 	}
 
 def formatPlanets(planets):
@@ -20,18 +20,18 @@ def formatHouse(houseNum, house):
 	traditionalObjects = selectObjects(formatPlanets(house.planets), objects)
 
 	return {
-		"house": houseNum,
-		"sign": house.sign_num,
-		"objects": traditionalObjects,
+		'house': houseNum,
+		'sign': house.sign_num,
+		'objects': traditionalObjects,
 	}
 
 def getChart(config):
 	data = astrodata.AstroData(
-		config["year"], config["month"], config["day"],
-		config["hour"], config["minute"], config["second"],
-		config["utcHour"], config["utcMinute"],
-		config["latitude"], config["longitude"],
-		ayanamsa=config["ayanamsa"]
+		config['year'], config['month'], config['day'],
+		config['hour'], config['minute'], config['second'],
+		config['utcHour'], config['utcMinute'],
+		config['latitude'], config['longitude'],
+		ayanamsa=config['ayanamsa']
 	)
 	planet_data = data.planets_rashi()
 	kundli = astrochart.Chart(planet_data).lagnaChart()
@@ -39,26 +39,26 @@ def getChart(config):
 	firstKundliHouse = kundli[0]
 	houses = [formatHouse(houseNum + 1, house) for houseNum, house in enumerate(kundli)]
 
-	houses[0]["objects"].insert(0, {
-		"name": "asc",
-		"type": "angle",
-		"degree": firstKundliHouse.asc_signlon,
+	houses[0]['objects'].insert(0, {
+		'name': 'asc',
+		'type': 'angle',
+		'degree': firstKundliHouse.asc_signlon,
 	})
 
-	return {"houses": houses}
+	return {'houses': houses}
 
 def enrichObject(object, house):
-	return { **object, "sign": house["sign"], "house": house["house"] }
+	return { **object, 'sign': house['sign'], 'house': house['house'] }
 
 def getObjectsFromHouse(house):
-	return [enrichObject(object, house) for object in house["objects"]]
+	return [enrichObject(object, house) for object in house['objects']]
 
 def getObjects(config):
 	chart = getChart(config)
 
 	return [
 		object
-		for house in chart["houses"]
+		for house in chart['houses']
 		for object in getObjectsFromHouse(house)
 	]
 

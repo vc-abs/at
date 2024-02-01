@@ -8,7 +8,6 @@
 * Make the configuration a bit more human readable.
 * Support DMS notation for latitudes and longitudes.
 * Rename this package to Auspicious Times.
-* Standardize quotation marks.
 * Try to bring some tools to help with code standardization.
 
 ## Notes
