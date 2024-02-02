@@ -3,16 +3,18 @@ from sideralib import (
 	astrodata,
 )
 
-from constants import objects
+from constants import objects, signWidth
 from helpers import selectObjects
 
 
 def formatPlanet(planetName, planet):
+	sign = planet['lon'] // signWidth + 1
 	return {
 		'name': planetName,
 		'type': 'planet',
-		'degree': planet['signlon'],
-		'retro': planet['retrograde'],
+		'longitude': planet['lon'],
+		'retrograde': planet['retrograde'],
+		'sign': sign,
 	}
 
 
@@ -71,7 +73,8 @@ def getChart(config):
 		{
 			'name': 'asc',
 			'type': 'angle',
-			'degree': firstKundliHouse.asc_signlon,
+			'longitude': firstKundliHouse.asc_lon,
+			'sign': firstKundliHouse.sign_num,
 		},
 	)
 
