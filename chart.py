@@ -41,6 +41,19 @@ def formatHouse(houseNum, house):
 	}
 
 
+def addAscendant(kundli, houses):
+	firstKundliHouse = kundli[0]
+	houses[0]['objects'].insert(
+		0,
+		{
+			'name': 'asc',
+			'type': 'angle',
+			'longitude': firstKundliHouse.asc_lon,
+			'sign': firstKundliHouse.sign_num,
+		},
+	)
+
+
 def getChart(config):
 	data = astrodata.AstroData(
 		config['year'],
@@ -60,7 +73,6 @@ def getChart(config):
 		planet_data
 	).lagnaChart()
 
-	firstKundliHouse = kundli[0]
 	houses = [
 		formatHouse(houseNum + 1, house)
 		for houseNum, house in enumerate(
@@ -68,15 +80,7 @@ def getChart(config):
 		)
 	]
 
-	houses[0]['objects'].insert(
-		0,
-		{
-			'name': 'asc',
-			'type': 'angle',
-			'longitude': firstKundliHouse.asc_lon,
-			'sign': firstKundliHouse.sign_num,
-		},
-	)
+	addAscendant(kundli, houses)
 
 	return {'houses': houses}
 
