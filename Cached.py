@@ -2,7 +2,7 @@ class Cached:
 	__cache__ = {}
 
 	def __init__(self, config):
-		self.__config__ = config
+		self._config = config
 
 	def __getattr__(self, attr):
 		cache = self.__cache__
@@ -13,6 +13,6 @@ class Cached:
 			] = object.__getattribute__(
 				self,
 				'_get' + attr.capitalize(),
-			)(self.__config__)
+			)()
 
 		return cache[attr]

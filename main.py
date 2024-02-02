@@ -7,7 +7,7 @@ from chart import Chart
 
 def main(configFilePath='./sample.yml'):
 	context = readConfig(configFilePath)
-	data = Chart(context).houses
+	data = Chart(context).objects
 	output({'data': data, **context})
 
 
