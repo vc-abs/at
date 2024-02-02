@@ -2,14 +2,12 @@ import sys
 from output import output
 
 from readConfig import readConfig
-from generateAshtakavarga import (
-	generateAshtakavarga,
-)
+from chart import Chart
 
 
 def main(configFilePath='./sample.yml'):
 	context = readConfig(configFilePath)
-	data = generateAshtakavarga(context)
+	data = Chart(context).houses
 	output({'data': data, **context})
 
 

@@ -5,6 +5,7 @@ from sideralib import (
 
 from constants import objects, signWidth
 from helpers import selectObjects
+from Cached import Cached
 
 
 def formatPlanet(planetName, planet):
@@ -112,4 +113,12 @@ def getObjects(config):
 	]
 
 
-__all__ = [getChart, getObjects]
+class Chart(Cached):
+	def __init__(self, config):
+		self.__cache__ = {
+			**self.__cache__,
+			**getChart(config),
+		}
+
+
+__all__ = [getChart, getObjects, Chart]
