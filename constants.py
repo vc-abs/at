@@ -6,6 +6,7 @@ degrees = 360
 houseCount = signCount
 signWidth = degrees / signCount
 tithiCount = 30
+tithis = range(0, tithiCount)
 houses = [
 	i + 1 for i in range(0, houseCount)
 ]

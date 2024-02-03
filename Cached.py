@@ -12,7 +12,9 @@ class Cached:
 				attr
 			] = object.__getattribute__(
 				self,
-				'_get' + attr.capitalize(),
+				'_get'
+				+ attr[0].capitalize()
+				+ attr[1:],
 			)()
 
 		return cache[attr]
