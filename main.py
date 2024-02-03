@@ -1,12 +1,12 @@
 import sys
 from output import output
 from readConfig import readConfig
-from chart import Chart
+from tithi import getTithiDetails
 
 
 def main(configFilePath='./sample.yml'):
 	context = readConfig(configFilePath)
-	data = Chart(context).ashtakavarga
+	data = getTithiDetails()
 	output({'data': data, **context})
 
 
