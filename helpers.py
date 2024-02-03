@@ -1,4 +1,6 @@
+import inspect
 from constants import objects
+from os import path
 
 
 def isTraditionalObject(object):
@@ -28,3 +30,12 @@ def select(dict, keys):
 	return {
 		key: dict[key] for key in keys
 	}
+
+
+def resolveRelativePath(leaf):
+	return path.join(
+		path.dirname(
+			inspect.stack()[1].filename
+		),
+		leaf,
+	)

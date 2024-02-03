@@ -1,5 +1,6 @@
 from itertools import product
 import pandas as pd
+from helpers import resolveRelativePath
 
 from constants import (
 	ashtaka,
@@ -10,7 +11,9 @@ from constants import (
 from helpers import select
 
 ashtakavargaBaseDF = pd.read_csv(
-	'./ashtakavarga.csv'
+	resolveRelativePath(
+		'./ashtakavarga.csv'
+	)
 )
 ashtakavargaBufferDF = pd.DataFrame(
 	product(signs, planets, ashtaka),

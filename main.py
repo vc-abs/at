@@ -7,7 +7,7 @@ from chart import Chart
 
 def main(configFilePath='./sample.yml'):
 	context = readConfig(configFilePath)
-	data = Chart(context).vaar
+	data = Chart(context).ashtakavarga
 	output({'data': data, **context})
 
 
