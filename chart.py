@@ -11,9 +11,18 @@ from constants import (
 	signCount,
 	tithiCount,
 	degrees,
+	weekDays,
+	daysInAWeek,
 )
 from helpers import selectObjects, fold
 from Cached import Cached
+
+
+def hasSunRisen(objects):
+	return (
+		objects['sun']['longitude']
+		<= objects['asc']['longitude']
+	)
 
 
 def formatPlanet(planetName, planet):
@@ -148,6 +157,24 @@ class Chart(Cached):
 
 	def _getAshtakavarga(self):
 		return getAshtakavarga(self.objects)
+
+	def _getVaar(self):
+		sunriseAdjustment = (
+			0
+			if hasSunRisen(self.objects)
+			else -1
+		)
+
+		return weekDays[
+			(
+				(
+					self._config['date'].weekday()
+					+ 1
+					+ sunriseAdjustment
+				)
+				% daysInAWeek
+			)
+		]
 
 
 __all__ = [Chart]

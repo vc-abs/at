@@ -9,7 +9,16 @@ tithiCount = 30
 houses = [
 	i + 1 for i in range(0, houseCount)
 ]
-
+weekDays = [
+	'sunday',
+	'monday',
+	'tuesday',
+	'wednesday',
+	'thursday',
+	'friday',
+	'saturday',
+]
+daysInAWeek = len(weekDays)
 planets = [
 	'moon',
 	'sun',

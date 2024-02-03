@@ -9,8 +9,10 @@
 * Support DMS notation for latitudes and longitudes.
 * Rename this package to Auspicious Times.
 * Improve the accuracy of Tithi Calculations.
+* Try to depend on chart objects, rather than python datetime for weekday calculations.
 
 ## Notes
+* Some computations might be off by a few minutes.
 * The preferred ayanamsa is "ay_raman" as it's closer to the Pushya at 16Cn, suggested by PVN Rao.
 * Jagannatha Hora seems to be more stable in handling higher latitudes than JyotishApp.
 * Astrology software in general seem to have at least a few minor bugs in handling sunrise and sunset times at higher latitudes.
