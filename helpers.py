@@ -15,3 +15,10 @@ def selectObjects(
 			items,
 		)
 	)
+
+
+def fold(listOfDicts, prop='name'):
+	return {
+		item[prop]: item
+		for item in listOfDicts
+	}

@@ -1,10 +1,17 @@
+import math
 from sideralib import (
 	astrochart,
 	astrodata,
 )
 
-from constants import objects, signWidth
-from helpers import selectObjects
+from constants import (
+	objects,
+	signWidth,
+	signCount,
+	tithiCount,
+	degrees,
+)
+from helpers import selectObjects, fold
 from Cached import Cached
 
 
@@ -117,6 +124,26 @@ class Chart(Cached):
 				house
 			)
 		]
+
+	def _getTithi(self):
+		objects = fold(
+			selectObjects(
+				self.objects, ['sun', 'moon']
+			)
+		)
+
+		return (
+			math.ceil(
+				(
+					objects['moon']['longitude']
+					- objects['sun']['longitude']
+					+ degrees
+				)
+				% degrees
+				/ signCount
+			)
+			% tithiCount
+		)
 
 
 __all__ = [Chart]
