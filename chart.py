@@ -3,7 +3,6 @@ from sideralib import (
 	astrochart,
 	astrodata,
 )
-
 from ashtakavarga import getAshtakavarga
 from constants import (
 	objects,
@@ -167,13 +166,11 @@ class Chart(Cached):
 
 		return weekDays[
 			(
-				(
-					self._config['date'].weekday()
-					+ 1
-					+ sunriseAdjustment
-				)
-				% daysInAWeek
+				self._config['date'].weekday()
+				+ 1
+				+ sunriseAdjustment
 			)
+			% daysInAWeek
 		]
 
 

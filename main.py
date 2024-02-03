@@ -1,6 +1,5 @@
 import sys
 from output import output
-
 from readConfig import readConfig
 from chart import Chart
 
