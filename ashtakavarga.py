@@ -7,7 +7,6 @@ from constants import (
 	signs,
 	houseCount,
 )
-from chart import getObjects
 from helpers import selectObjects
 
 ashtakavargaBaseDF = pd.read_csv(
@@ -38,8 +37,7 @@ columnRenameMap = {
 }
 
 
-def getAshtakavarga(config):
-	objects = getObjects(config)
+def getAshtakavarga(objects):
 	ashtakaObjects = selectObjects(
 		objects, ashtaka
 	)

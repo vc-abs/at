@@ -2,12 +2,14 @@ import sys
 from output import output
 
 from readConfig import readConfig
-from chart import Chart
+from generateAshtakavarga import (
+	generateAshtakavarga,
+)
 
 
 def main(configFilePath='./sample.yml'):
 	context = readConfig(configFilePath)
-	data = Chart(context).tithi
+	data = generateAshtakavarga(context)
 	output({'data': data, **context})
 
 

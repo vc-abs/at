@@ -4,6 +4,7 @@ from sideralib import (
 	astrodata,
 )
 
+from ashtakavarga import getAshtakavarga
 from constants import (
 	objects,
 	signWidth,
@@ -144,6 +145,9 @@ class Chart(Cached):
 			)
 			% tithiCount
 		)
+
+	def _getAshtakavarga(self):
+		return getAshtakavarga(self.objects)
 
 
 __all__ = [Chart]

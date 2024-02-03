@@ -1,5 +1,5 @@
 import pandas as pd
-from ashtakavarga import getAshtakavarga
+from chart import Chart
 
 
 def standardizeDate(dt):
@@ -16,9 +16,9 @@ def standardizeDate(dt):
 def getAshtakavargaForTime(config, dt):
 	return {
 		'time': dt,
-		**getAshtakavarga(
+		**Chart(
 			{**config, **standardizeDate(dt)}
-		),
+		).ashtakavarga,
 	}
 
 
