@@ -118,26 +118,26 @@ class Chart(Cached):
 		}
 
 	def _getObjects(self):
-		return [
-			object
-			for house in self.houses
-			for object in getObjectsFromHouse(
-				house
-			)
-		]
-
-	def _getTithi(self):
-		objects = fold(
-			selectObjects(
-				self.objects, ['sun', 'moon']
-			)
+		return fold(
+			[
+				object
+				for house in self.houses
+				for object in getObjectsFromHouse(
+					house
+				)
+			]
 		)
 
+	def _getTithi(self):
 		return (
 			math.ceil(
 				(
-					objects['moon']['longitude']
-					- objects['sun']['longitude']
+					self.objects['moon'][
+						'longitude'
+					]
+					- self.objects['sun'][
+						'longitude'
+					]
 					+ degrees
 				)
 				% degrees

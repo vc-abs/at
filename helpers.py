@@ -22,3 +22,9 @@ def fold(listOfDicts, prop='name'):
 		item[prop]: item
 		for item in listOfDicts
 	}
+
+
+def select(dict, keys):
+	return {
+		key: dict[key] for key in keys
+	}

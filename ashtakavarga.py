@@ -7,7 +7,7 @@ from constants import (
 	signs,
 	houseCount,
 )
-from helpers import selectObjects
+from helpers import select
 
 ashtakavargaBaseDF = pd.read_csv(
 	'./ashtakavarga.csv'
@@ -38,12 +38,10 @@ columnRenameMap = {
 
 
 def getAshtakavarga(objects):
-	ashtakaObjects = selectObjects(
-		objects, ashtaka
+	ashtakaObjects = list(
+		select(objects, ashtaka).values()
 	)
-	ascSign = selectObjects(
-		objects, ['asc']
-	)[0]['sign']
+	ascSign = objects['asc']['sign']
 
 	objectPositionsDF = (
 		pd.DataFrame.from_records(
