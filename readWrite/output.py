@@ -3,12 +3,17 @@ from pandas import DataFrame
 
 
 def output(context):
-	exportFile = context.get('exportTo')
+	exportTo = context.get('exportTo')
+	exportSeparator = context[
+		'exportSeparator'
+	]
 	data = context['data']
 
-	if exportFile:
+	if exportTo:
 		DataFrame(data).to_csv(
-			exportFile, index=False
+			exportTo,
+			index=False,
+			sep=exportSeparator,
 		)
 	else:
 		pprint(data)

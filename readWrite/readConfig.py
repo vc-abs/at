@@ -21,6 +21,7 @@ defaults = {
 	# Location of Delhi
 	'latitude': 28.12,
 	'longitude': 77,
+	'exportSeparator': '\t',
 	'query': 'h1 >= 0',
 }
 
