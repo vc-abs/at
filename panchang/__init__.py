@@ -46,7 +46,7 @@ class Panchang(Cached):
 			% tithiCount
 		)
 
-	def _getVaar(self):
+	def _getVaara(self):
 		sunriseAdjustment = (
 			0
 			if hasSunRisen(
