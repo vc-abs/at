@@ -21,12 +21,12 @@ weekDays = [
 ]
 daysInAWeek = len(weekDays)
 planets = [
-	'moon',
 	'sun',
-	'mercury',
-	'venus',
+	'moon',
 	'mars',
+	'mercury',
 	'jupiter',
+	'venus',
 	'saturn',
 ]
 
