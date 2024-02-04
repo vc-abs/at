@@ -40,3 +40,36 @@ angles = ['asc']
 ashtaka = angles + planets
 
 objects = ashtaka + nodes
+
+# #TODO: Create a CSV with other properties of nakshatras for better analysis.
+nakshatras = [
+	'ashwini',
+	'bharani',
+	'krittika',
+	'rohini',
+	'mrigashira',
+	'ardra',
+	'punarvasu',
+	'pushya',
+	'ashlesha',
+	'magha',
+	'purvaPhalguni',
+	'uttaraPhalguni',
+	'hasta',
+	'chitra',
+	'swati',
+	'vishakha',
+	'anuradha',
+	'jyeshta',
+	'mula',
+	'purvaAshadha',
+	'uttaraAshadha',
+	'shravana',
+	'dhanishta',
+	'shatabhisha',
+	'purvaBhadrapada',
+	'uttaraBhadrapada',
+	'revati',
+]
+
+nakshatraCount = len(nakshatras)

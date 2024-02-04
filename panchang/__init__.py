@@ -6,6 +6,11 @@ from core.constants import (
 	degrees,
 	weekDays,
 	daysInAWeek,
+	nakshatras,
+	nakshatraCount,
+)
+from core.helpers import (
+	getOrdinalPosition,
 )
 
 
@@ -57,4 +62,15 @@ class Panchang(Cached):
 				+ sunriseAdjustment
 			)
 			% daysInAWeek
+		]
+
+	def _getNakshatra(self):
+		return nakshatras[
+			getOrdinalPosition(
+				self._chart.objects['moon'][
+					'longitude'
+				],
+				nakshatraCount,
+			)
+			- 1
 		]

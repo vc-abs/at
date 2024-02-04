@@ -1,10 +1,25 @@
 import inspect
-from core.constants import objects
+import math
 from os import path
+from core.constants import (
+	objects,
+	signCount,
+	degrees,
+)
 
 
 def isTraditionalObject(object):
 	return object['name'] in objects
+
+
+def getOrdinalPosition(
+	cardinalPosition,
+	segmentCount=signCount,
+):
+	return math.ceil(
+		cardinalPosition
+		/ (degrees / segmentCount)
+	)
 
 
 def selectObjects(
