@@ -17,7 +17,7 @@ from core.helpers import (
 	selectObjects,
 	fold,
 )
-from Cached import Cached
+from core.Cached import Cached
 
 
 def hasSunRisen(objects):
