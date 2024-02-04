@@ -14,6 +14,9 @@ from core.constants import (
 from core.helpers import (
 	getOrdinalPosition,
 )
+from panchang.getMuhurtaYoga import (
+	getMuhurtaYoga,
+)
 
 
 def hasSunRisen(objects):
@@ -87,3 +90,6 @@ class Panchang(Cached):
 			)
 			- 1
 		) % padasPerNakshatra + 1
+
+	def _getMuhurtaYoga(self):
+		return getMuhurtaYoga(self)
