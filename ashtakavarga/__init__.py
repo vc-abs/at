@@ -1,13 +1,15 @@
 from itertools import product
 import pandas as pd
-from helpers import resolveRelativePath
-from constants import (
+from core.helpers import (
+	resolveRelativePath,
+	select,
+)
+from core.constants import (
 	ashtaka,
 	planets,
 	signs,
 	houseCount,
 )
-from helpers import select
 
 ashtakavargaBaseDF = pd.read_csv(
 	resolveRelativePath(

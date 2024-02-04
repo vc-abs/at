@@ -1,5 +1,5 @@
 import inspect
-from constants import objects
+from core.constants import objects
 from os import path
 
 
