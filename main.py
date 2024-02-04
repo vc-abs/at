@@ -10,8 +10,8 @@ def main(
 	configFilePath='./examples/config.yml',
 ):
 	context = readConfig(configFilePath)
-	chart = Chart(context)
-	data = chart.panchang._chart.tithi
+	panchang = Chart(context).panchang
+	data = (panchang.tithi, panchang.vaar)
 	output({'data': data, **context})
 
 

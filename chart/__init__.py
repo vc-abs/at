@@ -1,4 +1,3 @@
-import math
 from sideralib import (
 	astrochart,
 	astrodata,
@@ -9,24 +8,12 @@ from panchang import Panchang
 from core.constants import (
 	objects,
 	signWidth,
-	signCount,
-	tithiCount,
-	degrees,
-	weekDays,
-	daysInAWeek,
 )
 from core.helpers import (
 	selectObjects,
 	fold,
 )
 from core.Cached import Cached
-
-
-def hasSunRisen(objects):
-	return (
-		objects['sun']['longitude']
-		<= objects['asc']['longitude']
-	)
 
 
 def formatPlanet(planetName, planet):
@@ -146,40 +133,6 @@ class Chart(Cached):
 
 	def _getPanchang(self):
 		return Panchang(self)
-
-	def _getTithi(self):
-		return (
-			math.ceil(
-				(
-					self.objects['moon'][
-						'longitude'
-					]
-					- self.objects['sun'][
-						'longitude'
-					]
-					+ degrees
-				)
-				% degrees
-				/ signCount
-			)
-			% tithiCount
-		)
-
-	def _getVaar(self):
-		sunriseAdjustment = (
-			0
-			if hasSunRisen(self.objects)
-			else -1
-		)
-
-		return weekDays[
-			(
-				self._config['date'].weekday()
-				+ 1
-				+ sunriseAdjustment
-			)
-			% daysInAWeek
-		]
 
 
 __all__ = [Chart]
