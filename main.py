@@ -6,7 +6,9 @@ from readWrite.readConfig import (
 from chart import Chart
 
 
-def main(configFilePath='./sample.yml'):
+def main(
+	configFilePath='./examples/config.yml',
+):
 	context = readConfig(configFilePath)
 	data = Chart(context).tithi
 	output({'data': data, **context})
