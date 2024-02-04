@@ -11,7 +11,10 @@ def main(
 ):
 	context = readConfig(configFilePath)
 	panchang = Chart(context).panchang
-	data = panchang.nakshatra
+	data = (
+		panchang.nakshatra,
+		panchang.nakshatraPada,
+	)
 	output({'data': data, **context})
 
 

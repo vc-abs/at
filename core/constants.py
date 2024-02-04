@@ -73,3 +73,7 @@ nakshatras = [
 ]
 
 nakshatraCount = len(nakshatras)
+padasPerNakshatra = 4
+padaCount = (
+	nakshatraCount * padasPerNakshatra
+)

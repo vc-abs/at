@@ -8,6 +8,8 @@ from core.constants import (
 	daysInAWeek,
 	nakshatras,
 	nakshatraCount,
+	padaCount,
+	padasPerNakshatra,
 )
 from core.helpers import (
 	getOrdinalPosition,
@@ -74,3 +76,14 @@ class Panchang(Cached):
 			)
 			- 1
 		]
+
+	def _getNakshatraPada(self):
+		return (
+			getOrdinalPosition(
+				self._chart.objects['moon'][
+					'longitude'
+				],
+				padaCount,
+			)
+			- 1
+		) % padasPerNakshatra + 1
