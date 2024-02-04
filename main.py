@@ -6,7 +6,7 @@ from chart import Chart
 
 def main(configFilePath='./sample.yml'):
 	context = readConfig(configFilePath)
-	data = Chart(context).tithiDetails
+	data = Chart(context).tithi
 	output({'data': data, **context})
 
 
