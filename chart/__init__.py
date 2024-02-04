@@ -122,7 +122,7 @@ def getObjectsFromHouse(house):
 
 class Chart(Cached):
 	def __init__(self, config):
-		super().__init__(config)
+		self._config = config
 		self.__cache__ = {
 			**self.__cache__,
 			**getChart(config),
@@ -138,6 +138,9 @@ class Chart(Cached):
 				)
 			]
 		)
+
+	def _getAshtakavarga(self):
+		return getAshtakavarga(self.objects)
 
 	def _getTithi(self):
 		return (
@@ -156,9 +159,6 @@ class Chart(Cached):
 			)
 			% tithiCount
 		)
-
-	def _getAshtakavarga(self):
-		return getAshtakavarga(self.objects)
 
 	def _getVaar(self):
 		sunriseAdjustment = (

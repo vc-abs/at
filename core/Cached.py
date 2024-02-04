@@ -1,9 +1,6 @@
 class Cached:
 	__cache__ = {}
 
-	def __init__(self, config):
-		self._config = config
-
 	def __getattr__(self, attr):
 		cache = self.__cache__
 
