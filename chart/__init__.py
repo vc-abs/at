@@ -4,6 +4,8 @@ from sideralib import (
 	astrodata,
 )
 from ashtakavarga import getAshtakavarga
+from panchang import Panchang
+
 from core.constants import (
 	objects,
 	signWidth,
@@ -141,6 +143,9 @@ class Chart(Cached):
 
 	def _getAshtakavarga(self):
 		return getAshtakavarga(self.objects)
+
+	def _getPanchang(self):
+		return Panchang(self)
 
 	def _getTithi(self):
 		return (
