@@ -10,6 +10,7 @@
 * Rename this package to Auspicious Times.
 * Improve the accuracy of Tithi Calculations.
 * Try to depend on chart objects, rather than python datetime for weekday calculations.
+* Prefer numbers over strings for calculations. Have a translation layer at the tail to make things readable. This could be done as a part of performance improvements, post initial development. This could lead to moving some data dependent decisions to calculations.
 
 ## Notes
 * Some computations might be off by a few minutes.
