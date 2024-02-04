@@ -1,6 +1,8 @@
 import sys
-from output import output
-from readConfig import readConfig
+from readWrite.output import output
+from readWrite.readConfig import (
+	readConfig,
+)
 from chart import Chart
 
 
