@@ -5,6 +5,7 @@ from datetime import (
 	timedelta,
 )
 
+selectAllQuery = 'ilevel_0 in ilevel_0'
 defaults = {
 	'ayanamsa': 'ay_raman',
 	'hour': 0,
@@ -22,7 +23,7 @@ defaults = {
 	'latitude': 28.12,
 	'longitude': 77,
 	'exportSeparator': '\t',
-	'query': 'h1 >= 0',
+	'query': selectAllQuery,
 }
 
 
