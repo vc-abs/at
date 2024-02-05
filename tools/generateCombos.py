@@ -13,12 +13,13 @@ def standardizeDate(dt):
 	}
 
 
-def getAshtakavargaForTime(config, dt):
+def getComboForTime(config, dt):
+	chart = Chart(
+		{**config, **standardizeDate(dt)}
+	)
 	return {
 		'time': dt,
-		**Chart(
-			{**config, **standardizeDate(dt)}
-		).ashtakavarga,
+		**chart.ashtakavarga,
 	}
 
 
@@ -36,7 +37,7 @@ def generateAshtakavarga(config):
 	df = pd.DataFrame(
 		list(
 			map(
-				lambda dt: getAshtakavargaForTime(
+				lambda dt: getComboForTime(
 					config, dt
 				),
 				timeSeries,
