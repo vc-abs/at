@@ -7,10 +7,13 @@ muhurtaYogaDF = pd.read_csv(
 	resolveRelativePath(
 		'./muhurtaYogaEffects.csv'
 	)
+).assign(
+	effect=lambda row: row['effect']
+	* row['impact']
 )
 
 
-def getMuhurtaYoga(panchang):
+def getMuhurtaYogas(panchang):
 	vaara = panchang.vaara
 	tithi = panchang.tithi
 	nakshatra = panchang.nakshatra
@@ -20,4 +23,16 @@ def getMuhurtaYoga(panchang):
 		+ 'tithi == @tithi and nakshatra == @nakshatra or '
 		+ 'vaara == @vaara and nakshatra == @nakshatra or '
 		+ 'tithi == @tithi and vaara == @vaara and nakshatra == @nakshatra'
-	)
+	)[['name', 'effect']]
+
+
+def getMuhurtaYogaEffect(panchang):
+	return getMuhurtaYogas(panchang)[
+		'effect'
+	].sum()
+
+
+__all__ = [
+	getMuhurtaYogas,
+	getMuhurtaYogaEffect,
+]

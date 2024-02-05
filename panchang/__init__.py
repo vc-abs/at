@@ -15,7 +15,8 @@ from core.helpers import (
 	getOrdinalPosition,
 )
 from panchang.getMuhurtaYoga import (
-	getMuhurtaYoga,
+	getMuhurtaYogas,
+	getMuhurtaYogaEffect,
 )
 
 
@@ -91,5 +92,8 @@ class Panchang(Cached):
 			- 1
 		) % padasPerNakshatra + 1
 
-	def _getMuhurtaYoga(self):
-		return getMuhurtaYoga(self)
+	def _getMuhurtaYogas(self):
+		return getMuhurtaYogas(self)
+
+	def _getMuhurtaYogaEffect(self):
+		return getMuhurtaYogaEffect(self)

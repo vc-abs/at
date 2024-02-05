@@ -11,7 +11,7 @@ def main(
 ):
 	context = readConfig(configFilePath)
 	panchang = Chart(context).panchang
-	data = panchang.muhurtaYoga
+	data = panchang.muhurtaYogaEffect
 	output({'data': data, **context})
 
 
