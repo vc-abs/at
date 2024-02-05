@@ -46,4 +46,23 @@ def generateCombos(config):
 		),
 	)
 
+	columns = config['columns']
+	keys = list(columns.keys())
+
+	values = (
+		pd.DataFrame(
+			map(
+				lambda exp: df.eval(exp),
+				columns.values(),
+			),
+		)
+		.transpose()
+		.rename(
+			columns={
+				k: v for k, v in enumerate(keys)
+			}
+		)
+	)
+	df[keys] = values
+
 	return df.query(config['query'])

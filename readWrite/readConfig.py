@@ -14,16 +14,19 @@ defaults = {
 	'year': 2024,
 	'month': 1,
 	'day': 1,
-	'freq': '60min',
-	'periods': 1000,
 	# India specific defaults.
 	'utcHour': 5,
 	'utcMinute': 30,
 	# Location of Delhi
 	'latitude': 28.12,
 	'longitude': 77,
+	# Records
+	'freq': '60min',
+	'periods': 1000,
+	# Export config.
 	'exportSeparator': '\t',
 	'query': selectAllQuery,
+	'columns': {},
 }
 
 

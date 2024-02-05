@@ -8,6 +8,9 @@ freq: "60min" # as supported by pandas.date_range.freq.
 periods: 1000
 query: "h1 >= 0"
 exportTo: "./.sample.csv"
+columns:
+  a: "h1"
+  b: "h1 + h2"
 # Timezone is split into hour and minute parts. The hour part could be negative.
 utcHour: 5
 utcMinute: 30
