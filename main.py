@@ -3,15 +3,16 @@ from readWrite.output import output
 from readWrite.readConfig import (
 	readConfig,
 )
-from chart import Chart
+from tools.generateCombos import (
+	generateCombos,
+)
 
 
 def main(
 	configFilePath='./examples/config.yml',
 ):
 	context = readConfig(configFilePath)
-	panchang = Chart(context).panchang
-	data = panchang.muhurtaYogaEffect
+	data = generateCombos(context)
 	output({'data': data, **context})
 
 

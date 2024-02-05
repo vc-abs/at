@@ -6,7 +6,7 @@ def standardizeDate(dt):
 	return {
 		'year': dt.year,
 		'month': dt.month,
-		'date': dt.day,
+		'day': dt.day,
 		'hour': dt.hour,
 		'minute': dt.minute,
 		'second': dt.second,
@@ -19,11 +19,12 @@ def getComboForTime(config, dt):
 	)
 	return {
 		'time': dt,
+		'muhurtaYogaEffect': chart.panchang.muhurtaYogaEffect,
 		**chart.ashtakavarga,
 	}
 
 
-def generateAshtakavarga(config):
+def generateCombos(config):
 	timeSeries = (
 		pd.date_range(
 			start=config['date'],
