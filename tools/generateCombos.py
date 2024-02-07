@@ -24,6 +24,26 @@ def getComboForTime(config, dt):
 	}
 
 
+def addColumns(df, columns):
+	keys = list(columns.keys())
+
+	values = (
+		pd.DataFrame(
+			map(
+				lambda exp: df.eval(exp),
+				columns.values(),
+			),
+		)
+		.transpose()
+		.rename(
+			columns={
+				k: v for k, v in enumerate(keys)
+			}
+		)
+	)
+	df[keys] = values
+
+
 def generateCombos(config):
 	timeSeries = (
 		pd.date_range(
@@ -46,23 +66,6 @@ def generateCombos(config):
 		),
 	)
 
-	columns = config['columns']
-	keys = list(columns.keys())
-
-	values = (
-		pd.DataFrame(
-			map(
-				lambda exp: df.eval(exp),
-				columns.values(),
-			),
-		)
-		.transpose()
-		.rename(
-			columns={
-				k: v for k, v in enumerate(keys)
-			}
-		)
-	)
-	df[keys] = values
+	addColumns(df, config['columns'])
 
 	return df.query(config['query'])
