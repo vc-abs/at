@@ -1,5 +1,6 @@
 class Cached:
-	__cache__ = {}
+	def __init__(self):
+		self.__cache__ = {}
 
 	def __getattr__(self, attr):
 		cache = self.__cache__

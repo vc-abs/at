@@ -2,9 +2,9 @@ from sideralib import (
 	astrochart,
 	astrodata,
 )
+
 from ashtakavarga import getAshtakavarga
 from panchang import Panchang
-
 from core.constants import (
 	objects,
 	signWidth,
@@ -111,9 +111,9 @@ def getObjectsFromHouse(house):
 
 class Chart(Cached):
 	def __init__(self, config):
+		super().__init__()
 		self._config = config
 		self.__cache__ = {
-			**self.__cache__,
 			**getChart(config),
 		}
 
