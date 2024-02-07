@@ -24,7 +24,7 @@ def getComboForTime(config, dt):
 	)
 	return {
 		'time': dt,
-		'muhurtaYogaEffect': chart.panchang.muhurtaYogaEffect,
+		**chart.panchang.muhurtaYogaEffects,
 		**chart.ashtakavarga,
 	}
 

@@ -26,13 +26,22 @@ def getMuhurtaYogas(panchang):
 	)[['name', 'effect']]
 
 
-def getMuhurtaYogaEffect(panchang):
-	return getMuhurtaYogas(panchang)[
-		'effect'
-	].sum()
+def getMuhurtaYogaEffects(panchang):
+	muhurtaYogas = getMuhurtaYogas(
+		panchang
+	)
+
+	return {
+		'positive': muhurtaYogas.query(
+			'effect > 1'
+		)['effect'].sum(),
+		'negative': muhurtaYogas.query(
+			'effect < 1'
+		)['effect'].sum(),
+	}
 
 
 __all__ = [
 	getMuhurtaYogas,
-	getMuhurtaYogaEffect,
+	getMuhurtaYogaEffects,
 ]

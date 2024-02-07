@@ -16,7 +16,7 @@ from core.helpers import (
 )
 from panchang.getMuhurtaYoga import (
 	getMuhurtaYogas,
-	getMuhurtaYogaEffect,
+	getMuhurtaYogaEffects,
 )
 
 
@@ -95,5 +95,5 @@ class Panchang(Cached):
 	def _getMuhurtaYogas(self):
 		return getMuhurtaYogas(self)
 
-	def _getMuhurtaYogaEffect(self):
-		return getMuhurtaYogaEffect(self)
+	def _getMuhurtaYogaEffects(self):
+		return getMuhurtaYogaEffects(self)
