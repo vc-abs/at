@@ -10,6 +10,9 @@ query: "dharma > 75"
 exportTo: "./.sample.csv"
 columns:
   dharma: "h1 + h5 + h9"
+order:
+  dharma: descending
+  h2: ascending
 # Timezone is split into hour and minute parts. The hour part could be negative.
 utcHour: 5
 utcMinute: 30

@@ -27,6 +27,7 @@ defaults = {
 	'exportSeparator': '\t',
 	'query': selectAllQuery,
 	'columns': {},
+	'order': {},
 }
 
 

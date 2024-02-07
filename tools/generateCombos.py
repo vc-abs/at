@@ -1,6 +1,11 @@
 import pandas as pd
 from chart import Chart
 
+orderMap = {
+	'ascending': True,
+	'descending': False,
+}
+
 
 def standardizeDate(dt):
 	return {
@@ -44,6 +49,22 @@ def addColumns(df, columns):
 	df[keys] = values
 
 
+def sortData(df, order):
+	keys = list(order.keys())
+	orders = list(
+		map(
+			lambda column: orderMap[column],
+			order.values(),
+		)
+	)
+
+	return df.sort_values(
+		by=keys,
+		ascending=orders,
+		inplace=True,
+	)
+
+
 def generateCombos(config):
 	timeSeries = (
 		pd.date_range(
@@ -67,5 +88,6 @@ def generateCombos(config):
 	)
 
 	addColumns(df, config['columns'])
+	sortData(df, config['order'])
 
 	return df.query(config['query'])
