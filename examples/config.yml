@@ -1,9 +1,16 @@
+ayanamsa: ay_raman # as supported by the underlying package, siderallib.
 year: 2020
 month: 1
 day: 4
 hour: 6
 minute: 0
 second: 0
+# Timezone is split into hour and minute parts. The hour part could be negative.
+utcHour: 5
+utcMinute: 30
+# Latitude and Longitude in Decimal Degrees (as given by Google Maps).
+latitude: 28.12
+longitude: 77
 freq: "60min" # as supported by pandas.date_range.freq.
 periods: 100
 query: "dharma > 75"
@@ -13,11 +20,4 @@ columns:
   muhurtaYogaEffect: "positive + negative"
 order:
   dharma: descending
-  muhurtaYogaEffect: ascending
-# Timezone is split into hour and minute parts. The hour part could be negative.
-utcHour: 5
-utcMinute: 30
-# Latitude and Longitude in Decimal Degrees (as given by Google Maps).
-latitude: 28.12
-longitude: 77
-ayanamsa: ay_raman # as supported by the underlying package, siderallib.
+  muhurtaYogaEffect: descending
