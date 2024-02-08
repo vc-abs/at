@@ -15,6 +15,7 @@ def standardizeDate(dt):
 		'hour': dt.hour,
 		'minute': dt.minute,
 		'second': dt.second,
+		'date': dt,
 	}
 
 
