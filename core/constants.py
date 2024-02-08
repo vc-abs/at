@@ -43,7 +43,7 @@ objects = ashtaka + nodes
 
 # #TODO: Create a CSV with other properties of nakshatras for better analysis.
 nakshatras = [
-	'ashwini',
+	'asvini',
 	'bharani',
 	'krittika',
 	'rohini',
@@ -57,7 +57,7 @@ nakshatras = [
 	'uttaraPhalguni',
 	'hasta',
 	'chitra',
-	'swati',
+	'svati',
 	'vishakha',
 	'anuradha',
 	'jyeshta',
