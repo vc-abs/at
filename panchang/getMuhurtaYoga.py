@@ -19,10 +19,10 @@ def getMuhurtaYogas(panchang):
 	nakshatra = panchang.nakshatra
 
 	return muhurtaYogaDF.query(
-		'tithi == @tithi and vaara == @vaara or '
-		+ 'tithi == @tithi and nakshatra == @nakshatra or '
-		+ 'vaara == @vaara and nakshatra == @nakshatra or '
-		+ 'tithi == @tithi and vaara == @vaara and nakshatra == @nakshatra'
+		'(tithi == @tithi and vaara == @vaara and nakshatra.isna()) or '
+		+ '(tithi == @tithi and vaara.isna() and nakshatra == @nakshatra) or '
+		+ '(tithi.isna() and vaara == @vaara and nakshatra == @nakshatra) or '
+		+ '(tithi == @tithi and vaara == @vaara and nakshatra == @nakshatra)'
 	)[['name', 'effect']]
 
 
