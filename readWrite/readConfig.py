@@ -17,9 +17,9 @@ defaults = {
 	# India specific defaults.
 	'utcHour': 5,
 	'utcMinute': 30,
-	# Location of Delhi
-	'latitude': 28.12,
-	'longitude': 77,
+	# Approximate Location of Mahakaal Jyotirlinga, Ujjain (to align with the many jyotish traditions across India).
+	'latitude': 23.101,
+	'longitude': 77.461,
 	# Records
 	'freq': '60min',
 	'periods': 1000,

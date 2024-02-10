@@ -18,7 +18,6 @@
 * Bring in the effects of other time scales like maasa, yoga, karana, chowgadiya, hora etc. These might need a different CSV file as the format is different, as their effects are not tied to other scales.
 * When possible include personal natal charts to find muhurta fitment.
 * Fine tune the analysis with input from: https://astrologerjolly.tripod.com/muhurtha.htm
-* Set the default position to Mahakaal at Ujjain.
 
 ## Notes
 * Some computations might be off by a few minutes.
