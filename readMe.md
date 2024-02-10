@@ -1,6 +1,6 @@
-# Astrology Trial
+# Auspicious Times
 
-	A trial of some existing astrology packages to find auspicious times.
+	A simple tool to find auspicious times for various occasions and endeavors.
 
 
 ## ToDO
@@ -8,7 +8,6 @@
 * Introduce proper package management.
 * Make the configuration a bit more human readable.
 * Support DMS notation for latitudes and longitudes.
-* Rename this package to Auspicious Times.
 * Improve the accuracy of Tithi Calculations.
 * Try to depend on chart objects, rather than python datetime for weekday calculations.
 * Prefer numbers over strings for calculations. Have a translation layer at the tail to make things readable. This could be done as a part of performance improvements, post initial development. This could lead to moving some data dependent decisions to calculations.
