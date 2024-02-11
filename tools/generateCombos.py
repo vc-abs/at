@@ -10,7 +10,9 @@ orderMap = {
 
 def getObjectHouses(chart):
 	return {
-		objectKey: object['house']
+		(objectKey[:2] + 'H'): object[
+			'house'
+		]
 		for (
 			objectKey,
 			object,
@@ -20,7 +22,7 @@ def getObjectHouses(chart):
 
 fieldSets = {
 	'muhurtaYogaEffects': lambda chart: chart.panchang.muhurtaYogaEffects,
-	'objects': getObjectHouses,
+	'objectHouses': getObjectHouses,
 	'ashtakavarga': lambda chart: chart.ashtakavarga,
 }
 
