@@ -20,6 +20,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 
 ## ToDO
 * Validate the presets with experts.
+* Get popular reference locations cross regions, from experts.
 * Try adding more muhurta yoga combinations.
 * Introduce proper package management.
 * Make the configuration a bit more human readable.
