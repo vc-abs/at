@@ -1,12 +1,13 @@
+from datetime import (
+	datetime,
+)
+
 selectAllQuery = 'ilevel_0 in ilevel_0'
 defaults = {
 	'ayanamsa': 'ay_raman',
 	'hour': 0,
 	'minute': 0,
 	'second': 0,
-	'year': 2024,
-	'month': 1,
-	'day': 1,
 	# India specific defaults.
 	'utcHour': 5,
 	'utcMinute': 30,
@@ -15,7 +16,7 @@ defaults = {
 	'longitude': 77.461,
 	# Records
 	'freq': '15min',
-	'periods': 1000,
+	'periods': 700,  # one week approx, when the frequency is 15 mins.
 	# Export config.
 	'exportSeparator': '\t',
 	'query': selectAllQuery,
@@ -25,6 +26,11 @@ defaults = {
 
 
 def getDefaultConfig():
+	now = datetime.now()
+
 	return {
 		**defaults,
+		'year': now.year,
+		'month': now.month,
+		'day': now.day,
 	}
