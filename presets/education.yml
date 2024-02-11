@@ -1,6 +1,7 @@
-query: "h4 > 30 and muhurtaYogaEffect > 0"
+query: "edu > 30 and muhurtaYogaEffect > 0"
 columns:
+  edu: "h4 + h5"
   muhurtaYogaEffect: "positive + negative"
 order:
-  h4: descending
+  edu: descending
   muhurtaYogaEffect: descending
