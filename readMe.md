@@ -6,6 +6,9 @@
 ```console
 $ # Simple run.
 $ python3 main.py ./examples/config.yml
+
+$ # Using presets. Configs to the right have more priority.
+$ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ```
 
 ## Notes
