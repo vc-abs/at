@@ -1,4 +1,4 @@
-import yaml
+import hiyapyco
 from datetime import (
 	datetime,
 	timezone,
@@ -31,25 +31,27 @@ defaults = {
 }
 
 
-def readConfig(filePath):
-	with open(filePath, 'r') as stream:
-		config = {
-			**defaults,
-			**yaml.safe_load(stream),
-		}
-		config['date'] = datetime(
-			config['year'],
-			config['month'],
-			config['day'],
-			config['hour'],
-			config['minute'],
-			config['second'],
-			000000,
-			tzinfo=timezone(
-				offset=timedelta(
-					hours=config['utcHour'],
-					minutes=config['utcMinute'],
-				)
-			),
-		)
-		return config
+def readConfig(filePaths):
+	yamlConfig = hiyapyco.load(
+		filePaths,
+		method=hiyapyco.METHOD_MERGE,
+	)
+	config = {
+		**defaults,
+		**yamlConfig,
+	}
+	config['date'] = datetime(
+		config['year'],
+		config['month'],
+		config['day'],
+		config['hour'],
+		config['minute'],
+		config['second'],
+		tzinfo=timezone(
+			offset=timedelta(
+				hours=config['utcHour'],
+				minutes=config['utcMinute'],
+			)
+		),
+	)
+	return config

@@ -7,14 +7,23 @@ from tools.generateCombos import (
 	generateCombos,
 )
 
+defaultConfigFilePaths = [
+	'./examples/config.yml'
+]
+
 
 def main(
-	configFilePath='./examples/config.yml',
+	inputConfigFilePaths,
 ):
-	context = readConfig(configFilePath)
+	configFilePaths = (
+		inputConfigFilePaths
+		if len(inputConfigFilePaths)
+		else defaultConfigFilePaths
+	)
+	context = readConfig(configFilePaths)
 	data = generateCombos(context)
 	output({'data': data, **context})
 
 
 if __name__ == '__main__':
-	main(*sys.argv[1:])
+	main(sys.argv[1:])
