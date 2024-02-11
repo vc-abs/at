@@ -8,16 +8,19 @@ orderMap = {
 }
 
 
-def formatObjects(chart):
+def getObjectHouses(chart):
 	return {
-		k: v['house']
-		for (k, v) in chart.objects.items()
+		objectKey: object['house']
+		for (
+			objectKey,
+			object,
+		) in chart.objects.items()
 	}
 
 
 fieldSets = {
 	'muhurtaYogaEffects': lambda chart: chart.panchang.muhurtaYogaEffects,
-	'objects': formatObjects,
+	'objects': getObjectHouses,
 	'ashtakavarga': lambda chart: chart.ashtakavarga,
 }
 
