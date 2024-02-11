@@ -7,22 +7,19 @@ orderMap = {
 	'descending': False,
 }
 
+
+def formatObjects(chart):
+	return {
+		k: v['house']
+		for (k, v) in chart.objects.items()
+	}
+
+
 fieldSets = {
 	'muhurtaYogaEffects': lambda chart: chart.panchang.muhurtaYogaEffects,
+	'objects': formatObjects,
 	'ashtakavarga': lambda chart: chart.ashtakavarga,
 }
-
-
-def standardizeDate(dt):
-	return {
-		'year': dt.year,
-		'month': dt.month,
-		'day': dt.day,
-		'hour': dt.hour,
-		'minute': dt.minute,
-		'second': dt.second,
-		'date': dt,
-	}
 
 
 def getFields(config, chart):
@@ -35,6 +32,18 @@ def getFields(config, chart):
 		),
 		[{}] + config['fieldSets'],
 	)
+
+
+def standardizeDate(dt):
+	return {
+		'year': dt.year,
+		'month': dt.month,
+		'day': dt.day,
+		'hour': dt.hour,
+		'minute': dt.minute,
+		'second': dt.second,
+		'date': dt,
+	}
 
 
 def getComboForTime(config, dt):

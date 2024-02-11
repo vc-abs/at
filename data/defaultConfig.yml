@@ -11,6 +11,7 @@ longitude: 77.461
 # Field Sets
 fieldSets:
   - muhurtaYogaEffects
+  - objects
   - ashtakavarga
 # Records
 freq: 15min
