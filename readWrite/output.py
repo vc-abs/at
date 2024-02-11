@@ -1,19 +1,24 @@
+from os import makedirs
 from pprint import pprint
 from pandas import DataFrame
 
 
-def output(context):
-	exportTo = context.get('exportTo')
-	exportSeparator = context[
-		'exportSeparator'
-	]
-	data = context['data']
+def exportToFile(context):
+	DataFrame(context['data']).to_csv(
+		context['exportTo'],
+		index=False,
+		sep=context['exportSeparator'],
+	)
 
-	if exportTo:
-		DataFrame(data).to_csv(
-			exportTo,
-			index=False,
-			sep=exportSeparator,
-		)
-	else:
-		pprint(data)
+
+def printToStdOut(context):
+	pprint(context['data'])
+
+
+def output(context):
+	action = (
+		exportToFile
+		if context.get('exportTo')
+		else printToStdOut
+	)
+	action(context)
