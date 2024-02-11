@@ -1,4 +1,4 @@
-query: "h4 > 3 and muhurtaYogaEffect > 0"
+query: "h4 > 30 and muhurtaYogaEffect > 0"
 columns:
   muhurtaYogaEffect: "positive + negative"
 order:
