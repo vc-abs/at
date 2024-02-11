@@ -1,11 +1,17 @@
-from os import makedirs
+from os import makedirs, path
 from pprint import pprint
 from pandas import DataFrame
 
 
 def exportToFile(context):
+	exportTo = context['exportTo']
+	makedirs(
+		path.dirname(exportTo),
+		exist_ok=True,
+	)
+
 	DataFrame(context['data']).to_csv(
-		context['exportTo'],
+		exportTo,
 		index=False,
 		sep=context['exportSeparator'],
 	)
