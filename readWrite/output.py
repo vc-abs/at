@@ -1,4 +1,5 @@
 from os import makedirs, path
+from io import StringIO
 from pprint import pprint
 from pandas import DataFrame
 
@@ -18,7 +19,15 @@ def exportToFile(context):
 
 
 def printToStdOut(context):
-	pprint(context['data'])
+	output = StringIO()
+
+	DataFrame(context['data']).to_csv(
+		output,
+		index=False,
+		sep=context['exportSeparator'],
+	)
+
+	print(output.getvalue())
 
 
 def output(context):
