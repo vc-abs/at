@@ -1,9 +1,15 @@
+from functools import reduce
 import pandas as pd
 from chart import Chart
 
 orderMap = {
 	'ascending': True,
 	'descending': False,
+}
+
+fieldSets = {
+	'muhurtaYogaEffects': lambda chart: chart.panchang.muhurtaYogaEffects,
+	'ashtakavarga': lambda chart: chart.ashtakavarga,
 }
 
 
@@ -19,14 +25,28 @@ def standardizeDate(dt):
 	}
 
 
+def getFields(config, chart):
+	return reduce(
+		lambda acc, fieldSet: (
+			{
+				**acc,
+				**fieldSets[fieldSet](chart),
+			}
+		),
+		[{}] + config['fieldSets'],
+	)
+
+
 def getComboForTime(config, dt):
 	chart = Chart(
 		{**config, **standardizeDate(dt)}
 	)
+
+	fields = getFields(config, chart)
+
 	return {
 		'time': dt,
-		**chart.panchang.muhurtaYogaEffects,
-		**chart.ashtakavarga,
+		**fields,
 	}
 
 
