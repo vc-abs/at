@@ -8,10 +8,20 @@ from readWrite.getDefaultConfig import (
 	getDefaultConfig,
 )
 
+from os import path
+
+projectRoot = path.realpath(
+	path.dirname(__file__) + '/../'
+)
+
 
 def readConfig(filePaths):
 	yamlConfig = hiyapyco.load(
-		filePaths,
+		[
+			projectRoot
+			+ '/data/defaultConfig.yml'
+		]
+		+ filePaths,
 		method=hiyapyco.METHOD_MERGE,
 	)
 	config = {
