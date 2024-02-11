@@ -19,6 +19,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Some names are in English and other in Sanskrit. This is a temporary situation for operational efficiency.
 
 ## ToDO
+* Validate the presets with experts.
 * Try adding more muhurta yoga combinations.
 * Introduce proper package management.
 * Make the configuration a bit more human readable.
