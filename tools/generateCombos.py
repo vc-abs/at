@@ -64,13 +64,39 @@ def getComboForTime(config, dt):
 	}
 
 
+def processSummaryColumn(df, summary):
+	summaryFn, summaryColumns = next(
+		iter(summary.items())
+	)
+
+	return getattr(
+		df[summaryColumns], summaryFn
+	)(axis=1)
+
+
+columnProcessors = {
+	'str': lambda df, exp: df.eval(exp),
+	'OrderedDict': processSummaryColumn,
+}
+
+
+def getType(value):
+	return type(value).__name__
+
+
+def addColumn(df, column):
+	return columnProcessors[
+		getType(column)
+	](df, column)
+
+
 def addColumns(df, columns):
 	keys = list(columns.keys())
 
 	values = (
 		pd.DataFrame(
 			map(
-				lambda exp: df.eval(exp),
+				lambda exp: addColumn(df, exp),
 				columns.values(),
 			),
 		)

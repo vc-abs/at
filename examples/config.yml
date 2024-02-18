@@ -18,6 +18,8 @@ exportTo: "./.sample.csv"
 columns:
   dharma: "h1 + h5 + h9"
   muhurtaYogaEffect: "positive + negative"
+  maxOfDharma:
+    max: ["h1", "h5", "h9"]
 order:
   dharma: descending
   muhurtaYogaEffect: descending
