@@ -1,0 +1,14 @@
+# #ToDo: Support intra dependency between columns.
+columns:
+  dharma: "h1 + h5 + h9"
+  artha: "h2 + h6 + h10"
+  kama: "h3 + h7 + h11"
+  moksha: "h4 + h8 + h12"
+  peak:
+    max:
+      - dharma
+      - artha
+      - kama
+      - moksha
+order:
+  peak: descending
