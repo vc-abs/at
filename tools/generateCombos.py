@@ -84,7 +84,7 @@ def getType(value):
 	return type(value).__name__
 
 
-def addColumn(df, column):
+def getColumn(df, column):
 	return columnProcessors[
 		getType(column)
 	](df, column)
@@ -93,21 +93,10 @@ def addColumn(df, column):
 def addColumns(df, columns):
 	keys = list(columns.keys())
 
-	values = (
-		pd.DataFrame(
-			map(
-				lambda exp: addColumn(df, exp),
-				columns.values(),
-			),
+	for key in keys:
+		df[key] = getColumn(
+			df, columns[key]
 		)
-		.transpose()
-		.rename(
-			columns={
-				k: v for k, v in enumerate(keys)
-			}
-		)
-	)
-	df[keys] = values
 
 
 def sortData(df, order):

@@ -19,7 +19,6 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Some names are in English and other in Sanskrit. This is a temporary situation for operational efficiency.
 
 ## ToDo
-* Generate the columns in the configs sequentially, so that there could be intra dependency.
 * Validate the presets with experts.
 * Get popular reference locations cross regions, from experts.
 * Try adding more muhurta yoga combinations.
