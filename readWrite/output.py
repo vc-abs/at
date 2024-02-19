@@ -27,7 +27,7 @@ def printToStdOut(context):
 		sep=context['exportSeparator'],
 	)
 
-	print(output.getvalue())
+	print(output.getvalue(), end='')
 
 
 def output(context):
