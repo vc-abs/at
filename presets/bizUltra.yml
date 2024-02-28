@@ -1,0 +1,7 @@
+query: "biz > 150 and muhurtaYogaEffect > 0"
+columns:
+  biz: "h2 + h6 + h9 + h10 + h11"
+  muhurtaYogaEffect: "positive + negative"
+order:
+  biz: descending
+  muhurtaYogaEffect: descending
