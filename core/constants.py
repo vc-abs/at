@@ -7,6 +7,7 @@ houseCount = signCount
 signWidth = degrees / signCount
 tithiCount = 30
 tithis = range(0, tithiCount)
+pakshaTithiCount = tithiCount / 2
 houses = [
 	i + 1 for i in range(0, houseCount)
 ]

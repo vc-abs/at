@@ -1,4 +1,7 @@
 import pandas as pd
+from core.constants import (
+	pakshaTithiCount,
+)
 from core.helpers import (
 	resolveRelativePath,
 )
@@ -15,14 +18,16 @@ muhurtaYogaDF = pd.read_csv(
 
 def getMuhurtaYogas(panchang):
 	vaara = panchang.vaara
-	tithi = panchang.tithi
+	pakshaTithi = (
+		panchang.tithi % pakshaTithiCount
+	)
 	nakshatra = panchang.nakshatra
 
 	return muhurtaYogaDF.query(
-		'(tithi == @tithi and vaara == @vaara and nakshatra.isna()) or '
-		+ '(tithi == @tithi and vaara.isna() and nakshatra == @nakshatra) or '
+		'(tithi == @pakshaTithi and vaara == @vaara and nakshatra.isna()) or '
+		+ '(tithi == @pakshaTithi and vaara.isna() and nakshatra == @nakshatra) or '
 		+ '(tithi.isna() and vaara == @vaara and nakshatra == @nakshatra) or '
-		+ '(tithi == @tithi and vaara == @vaara and nakshatra == @nakshatra)'
+		+ '(tithi == @pakshaTithi and vaara == @vaara and nakshatra == @nakshatra)'
 	)[['name', 'effect']]
 
 

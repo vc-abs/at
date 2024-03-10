@@ -19,6 +19,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Some names are in English and other in Sanskrit. This is a temporary situation for operational efficiency.
 
 ## ToDo
+* Check whether muhurtaYoga effects depend upon Pakshatithis.
 * Validate the presets with experts.
 * Get popular reference locations cross regions, from experts.
 * Try adding more muhurta yoga combinations.
