@@ -59,7 +59,7 @@ def getComboForTime(config, dt):
 	fields = getFields(config, chart)
 
 	return {
-		'time': dt,
+		'timestamp': dt,
 		**fields,
 	}
 
@@ -115,6 +115,32 @@ def sortData(df, order):
 	)
 
 
+def splitTimestamp(df):
+	df.insert(
+		0,
+		'date',
+		df['timestamp'].map(
+			lambda timestamp: timestamp.strftime(
+				'%Y-%m-%d'
+			)
+		),
+	)
+
+	df.insert(
+		1,
+		'time',
+		df['timestamp'].map(
+			lambda timestamp: timestamp.strftime(
+				'%H:%M:%S'
+			)
+		),
+	)
+
+	return df.drop(
+		columns=['timestamp'], inplace=True
+	)
+
+
 def generateCombos(config):
 	timeSeries = (
 		pd.date_range(
@@ -139,5 +165,6 @@ def generateCombos(config):
 
 	addColumns(df, config['columns'])
 	sortData(df, config['order'])
+	splitTimestamp(df)
 
 	return df.query(config['query'])
