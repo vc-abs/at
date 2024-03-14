@@ -9,15 +9,23 @@ orderMap = {
 
 
 def getObjectHouses(chart):
-	return {
-		(objectKey[:2] + 'H'): object[
-			'house'
-		]
-		for (
-			objectKey,
-			object,
-		) in chart.objects.items()
-	}
+	return dict(
+		{
+			'asS': chart.objects['asc'][
+				'sign'
+			]
+		},
+		**{
+			(objectKey[:2] + 'H'): object[
+				'house'
+			]
+			for (
+				objectKey,
+				object,
+			) in chart.objects.items()
+			if objectKey != 'asc'
+		},
+	)
 
 
 fieldSets = {
