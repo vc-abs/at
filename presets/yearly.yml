@@ -1,2 +1,2 @@
-freq: 15min
-periods: 35040
+freq: 1h
+periods: 8760
