@@ -109,6 +109,36 @@ def getObjectsFromHouse(house):
 	]
 
 
+# #NOTE: This wil not work with multi-threading.
+cache = {'zeroHourChart': None}
+
+zeroHour = dict(
+	hour=0,
+	minute=0,
+	second=0,
+)
+
+
+def isZeroChartCached(_config):
+	return getattr(
+		cache['zeroHourChart'],
+		'_config',
+		{'date': None},
+	)['date'] == _config['date'].replace(
+		**zeroHour,
+		microsecond=0,
+	)
+
+
+def getZeroChart(_config):
+	cache['zeroHourChart'] = (
+		cache['zeroHourChart']
+		if isZeroChartCached(_config)
+		else Chart({**_config, **zeroHour})
+	)
+	return cache['zeroHourChart']
+
+
 class Chart(Cached):
 	def __init__(self, config):
 		super().__init__()
@@ -116,6 +146,9 @@ class Chart(Cached):
 		self.__cache__ = {
 			**getChart(config),
 		}
+
+	def _getZeroHourChart(self):
+		return getZeroChart(self._config)
 
 	def _getObjects(self):
 		return fold(

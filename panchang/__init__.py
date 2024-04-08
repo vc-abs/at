@@ -20,10 +20,25 @@ from panchang.getMuhurtaYoga import (
 )
 
 
-def hasSunRisen(objects):
+def getObjectDistance(
+	source, destination
+):
 	return (
-		objects['sun']['longitude']
-		<= objects['asc']['longitude']
+		destination['longitude']
+		- source['longitude']
+		+ degrees
+	) % degrees
+
+
+def hasSunRisen(chart):
+	objects = chart.objects
+	zeroHourAscendant = (
+		chart.zeroHourChart.objects['asc']
+	)
+	return getObjectDistance(
+		zeroHourAscendant, objects['asc']
+	) >= getObjectDistance(
+		zeroHourAscendant, objects['sun']
 	)
 
 
@@ -53,9 +68,7 @@ class Panchang(Cached):
 	def _getVaara(self):
 		sunriseAdjustment = (
 			0
-			if hasSunRisen(
-				self._chart.objects
-			)
+			if hasSunRisen(self._chart)
 			else -1
 		)
 
