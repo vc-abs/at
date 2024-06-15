@@ -83,26 +83,22 @@ class Panchang(Cached):
 			% daysInAWeek
 		]
 
+	def _getNakshatraNumber(self):
+		return getOrdinalPosition(
+			self._chart.objects['moon'][
+				'longitude'
+			],
+			nakshatraCount,
+		)
+
 	def _getNakshatra(self):
 		return nakshatras[
-			getOrdinalPosition(
-				self._chart.objects['moon'][
-					'longitude'
-				],
-				nakshatraCount,
-			)
-			- 1
+			self._getNakshatraNumber() - 1
 		]
 
 	def _getNakshatraPada(self):
 		return (
-			getOrdinalPosition(
-				self._chart.objects['moon'][
-					'longitude'
-				],
-				padaCount,
-			)
-			- 1
+			self._getNakshatraNumber() - 1
 		) % padasPerNakshatra + 1
 
 	def _getMuhurtaYogas(self):
