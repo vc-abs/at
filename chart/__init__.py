@@ -65,7 +65,7 @@ def addAscendant(kundli, houses):
 
 
 def getChart(config):
-	data = astrodata.AstroData(
+	astroChart = astrodata.AstroData(
 		config['year'],
 		config['month'],
 		config['day'],
@@ -78,9 +78,11 @@ def getChart(config):
 		config['longitude'],
 		ayanamsa=config['ayanamsa'],
 	)
-	planet_data = data.planets_rashi()
+	planetData = (
+		astroChart.planets_rashi()
+	)
 	kundli = astrochart.Chart(
-		planet_data
+		planetData
 	).lagnaChart()
 
 	houses = [
@@ -120,22 +122,22 @@ zeroHour = dict(
 )
 
 
-def isZeroChartCached(_config):
+def isZeroChartCached(config):
 	return getattr(
 		cache['zeroHourChart'],
 		'_config',
 		{'date': None},
-	)['date'] == _config['date'].replace(
+	)['date'] == config['date'].replace(
 		**zeroHour,
 		microsecond=0,
 	)
 
 
-def getZeroChart(_config):
+def getZeroChart(config):
 	cache['zeroHourChart'] = (
 		cache['zeroHourChart']
-		if isZeroChartCached(_config)
-		else Chart({**_config, **zeroHour})
+		if isZeroChartCached(config)
+		else Chart({**config, **zeroHour})
 	)
 	return cache['zeroHourChart']
 
@@ -146,6 +148,7 @@ class Chart(Cached):
 		self._config = config
 		self.__cache__ = {
 			**getChart(config),
+			'config': config,
 		}
 
 	def _getZeroHourChart(self):
