@@ -3,6 +3,7 @@ signs = [
 	i + 1 for i in range(0, signCount)
 ]
 degrees = 360
+daysPerYear = 365.256364
 houseCount = signCount
 signWidth = degrees / signCount
 tithiCount = 30
@@ -74,6 +75,9 @@ nakshatras = [
 ]
 
 nakshatraCount = len(nakshatras)
+nakshatraWidth = (
+	degrees / nakshatraCount
+)
 padasPerNakshatra = 4
 padaCount = (
 	nakshatraCount * padasPerNakshatra

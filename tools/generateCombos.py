@@ -28,11 +28,26 @@ def getObjectHouses(chart):
 	)
 
 
+def getStartingDasha(chart):
+	startingDasha = (
+		chart.dasha.startingDasha
+	)
+
+	return {
+		'startingDashaPlanet': startingDasha[
+			'planet'
+		],
+		'startingDashaRemainder': startingDasha[
+			'remainder'
+		],
+	}
+
+
 fieldSets = {
 	'muhurtaYogaEffects': lambda chart: chart.panchang.muhurtaYogaEffects,
 	'objectHouses': getObjectHouses,
 	'ashtakavarga': lambda chart: chart.ashtakavarga,
-	'dasha': lambda chart: chart.dasha.nakshatraLord,
+	'dasha': getStartingDasha,
 }
 
 
@@ -62,7 +77,11 @@ def standardizeDate(dt):
 
 def getComboForTime(config, dt):
 	chart = Chart(
-		{**config, **standardizeDate(dt)}
+		{
+			**config,
+			**standardizeDate(dt),
+			'datetime': dt,
+		}
 	)
 
 	fields = getFields(config, chart)
