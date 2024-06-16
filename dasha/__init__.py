@@ -93,7 +93,7 @@ class Dasha(Cached):
 		return dashas
 
 	def _getStartingDasha(self):
-		datetime = self._chart.config[
+		chartTime = self._chart.config[
 			'datetime'
 		]
 		moonPosition = self._chart.objects[
@@ -120,7 +120,7 @@ class Dasha(Cached):
 			1 - nakshatraFraction
 		)
 
-		startDate = datetime
+		startDate = chartTime
 		remainingDashaYears = (
 			vimshottariDashaLength[
 				startPlanet

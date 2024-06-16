@@ -47,7 +47,7 @@ fieldSets = {
 	'muhurtaYogaEffects': lambda chart: chart.panchang.muhurtaYogaEffects,
 	'objectHouses': getObjectHouses,
 	'ashtakavarga': lambda chart: chart.ashtakavarga,
-	'dasha': getStartingDasha,
+	'startingDasha': getStartingDasha,
 }
 
 
