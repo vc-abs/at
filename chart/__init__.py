@@ -6,6 +6,7 @@ from sideralib import (
 from ashtakavarga import getAshtakavarga
 from panchang import Panchang
 from dasha import Dasha
+from shadBala import ShadBala
 from core.constants import (
 	objects,
 	signWidth,
@@ -173,6 +174,9 @@ class Chart(Cached):
 
 	def _getDasha(self):
 		return Dasha(self)
+
+	def _getShadBala(self):
+		return ShadBala(self)
 
 
 __all__ = [Chart]

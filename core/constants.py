@@ -43,6 +43,27 @@ ashtaka = angles + planets
 
 objects = ashtaka + nodes
 
+exaltationDegrees = {
+	'sun': 10,
+	'moon': 33,
+	'mars': 298,
+	'mercury': 165,
+	'jupiter': 95,
+	'venus': 357,
+	'saturn': 200,
+}
+
+debilitationDegrees = {
+	'sun': 190,
+	'moon': 213,
+	'mars': 118,
+	'mercury': 345,
+	'jupiter': 275,
+	'venus': 177,
+	'saturn': 20,
+}
+
+
 # #TODO: Create a CSV with other properties of nakshatras for better analysis.
 nakshatras = [
 	'asvini',
