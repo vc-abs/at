@@ -19,6 +19,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Some names are in English and other in Sanskrit. This is a temporary situation for operational efficiency.
 
 ## ToDo
+* Create CSV-s for storing all possible data in the constants file.
 * Think about having the start time as the default time.
 * Use a better package like (Astropy)[https://www.astropy.org/] compute sun-rise and sun-set times.
 * Use planetary short forms (IE: Me, Ju, etc) as the default.
