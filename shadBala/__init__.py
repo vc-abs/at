@@ -2,8 +2,7 @@ from math import fabs
 from core.Cached import Cached
 from core.constants import (
 	planets,
-	exaltationDegrees,
-	debilitationDegrees,
+	planetaryProps,
 	degrees,
 )
 
@@ -19,12 +18,14 @@ ucchaBalaScaleFactor = (
 def calculateUcchaBala(planet):
 	distanceToExaltation = fabs(
 		planet['longitude']
-		- exaltationDegrees[planet['name']]
+		- planetaryProps[planet['name']][
+			'exaltation'
+		]
 	)
 	distanceToDebilitation = fabs(
 		planet['longitude']
-		- debilitationDegrees[
-			planet['name']
+		- planetaryProps[planet['name']][
+			'debilitation'
 		]
 	)
 

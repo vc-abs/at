@@ -43,24 +43,35 @@ ashtaka = angles + planets
 
 objects = ashtaka + nodes
 
-exaltationDegrees = {
-	'sun': 10,
-	'moon': 33,
-	'mars': 298,
-	'mercury': 165,
-	'jupiter': 95,
-	'venus': 357,
-	'saturn': 200,
-}
-
-debilitationDegrees = {
-	'sun': 190,
-	'moon': 213,
-	'mars': 118,
-	'mercury': 345,
-	'jupiter': 275,
-	'venus': 177,
-	'saturn': 20,
+planetaryProps = {
+	'sun': {
+		'exaltation': 10,
+		'debilitation': 190,
+	},
+	'moon': {
+		'exaltation': 33,
+		'debilitation': 213,
+	},
+	'mars': {
+		'exaltation': 298,
+		'debilitation': 118,
+	},
+	'mercury': {
+		'exaltation': 165,
+		'debilitation': 345,
+	},
+	'jupiter': {
+		'exaltation': 95,
+		'debilitation': 275,
+	},
+	'venus': {
+		'exaltation': 357,
+		'debilitation': 177,
+	},
+	'saturn': {
+		'exaltation': 200,
+		'debilitation': 20,
+	},
 }
 
 signLords = [
