@@ -47,30 +47,38 @@ planetaryProps = {
 	'sun': {
 		'exaltation': 10,
 		'debilitation': 190,
+		'ojaYugmaBala': [15, 0],
 	},
 	'moon': {
 		'exaltation': 33,
 		'debilitation': 213,
+		'ojaYugmaBala': [0, 15],
 	},
 	'mars': {
 		'exaltation': 298,
 		'debilitation': 118,
+		'ojaYugmaBala': [15, 0],
 	},
 	'mercury': {
 		'exaltation': 165,
 		'debilitation': 345,
+		# #TODO: Looks like Mercury and Saturn is assigned zeroes like other planets in some systems, get better understanding here.
+		'ojaYugmaBala': [7.5, 15],
 	},
 	'jupiter': {
 		'exaltation': 95,
 		'debilitation': 275,
+		'ojaYugmaBala': [15, 0],
 	},
 	'venus': {
 		'exaltation': 357,
 		'debilitation': 177,
+		'ojaYugmaBala': [0, 15],
 	},
 	'saturn': {
 		'exaltation': 200,
 		'debilitation': 20,
+		'ojaYugmaBala': [15, 7.5],
 	},
 }
 

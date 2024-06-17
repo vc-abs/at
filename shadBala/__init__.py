@@ -52,7 +52,9 @@ def calculateSaptavargajaBala(planet):
 
 
 def calculateOjaYugmaBala(planet):
-	return 0
+	return planetaryProps[planet['name']][
+		'ojaYugmaBala'
+	][1 - (planet['sign'] % 2)]
 
 
 def calculateKendradiBala(planet):
