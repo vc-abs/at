@@ -20,10 +20,23 @@ vargaOffsets = {
 		'type': 'sign',
 		'offsets': [1, 9],
 	},
+	# #Note: The calculations for the varga, below are straight forward to calculate mathematically.
+	9: {
+		'type': 'sign',
+		'offsets': [1, 9, 5],
+	},
+	12: {
+		'type': 'sign',
+		'offsets': [1],
+	},
+	16: {
+		'type': 'sign',
+		'offsets': [1, 4, 7, 10],
+	},
 }
 
 
-def getDivisionOffset(
+def getVargaOffset(
 	offsetData, vargaPosition, sign
 ):
 	return (
@@ -32,7 +45,7 @@ def getDivisionOffset(
 	)
 
 
-def getSignOffset(
+def getRashiOffset(
 	offsetData, vargaPosition, sign
 ):
 	offsets = offsetData['offsets']
@@ -44,8 +57,8 @@ def getSignOffset(
 
 
 offsetTypeProcessors = {
-	'division': getDivisionOffset,
-	'sign': getSignOffset,
+	'division': getVargaOffset,
+	'sign': getRashiOffset,
 }
 
 
@@ -58,7 +71,7 @@ def getOffset(
 	](offsetData, vargaPosition, sign)
 
 
-def getVarga(planet, varga):
+def getVargaPosition(planet, varga):
 	longitude = planet['longitude']
 	signIndex = planet['sign'] - 1
 	degreesWithinSign = (
@@ -76,10 +89,8 @@ def getVarga(planet, varga):
 		(signIndex + offset) % signCount + 1
 	)
 	vargaDegree = (
-		degreesWithinSign
-		* varga
-		% signWidth
-	)
+		degreesWithinSign * varga
+	) % signWidth
 
 	return {
 		'sign': vargaSign,
