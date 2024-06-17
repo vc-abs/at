@@ -5,6 +5,8 @@ from core.constants import (
 	objects,
 	signCount,
 	degrees,
+	objectProps,
+	houseQualities,
 )
 
 
@@ -54,3 +56,13 @@ def resolveRelativePath(leaf):
 		),
 		leaf,
 	)
+
+
+def getPlanetaryQuality(planet):
+	return objectProps[planet['name']][
+		'quality'
+	]
+
+
+def getHouseQuality(house):
+	return houseQualities[(house + 2) % 3]

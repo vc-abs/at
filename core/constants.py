@@ -43,42 +43,80 @@ ashtaka = angles + planets
 
 objects = ashtaka + nodes
 
-planetaryProps = {
+objectProps = {
 	'sun': {
 		'exaltation': 10,
 		'debilitation': 190,
 		'ojaYugmaBala': [15, 0],
+		'quality': 'malefic',
 	},
 	'moon': {
 		'exaltation': 33,
 		'debilitation': 213,
 		'ojaYugmaBala': [0, 15],
+		# #TODO: Implement ways to find planetary quality for Moon and Mercury.
+		'quality': 'conditional',
 	},
 	'mars': {
 		'exaltation': 298,
 		'debilitation': 118,
 		'ojaYugmaBala': [15, 0],
+		'quality': 'malefic',
 	},
 	'mercury': {
 		'exaltation': 165,
 		'debilitation': 345,
 		# #TODO: Looks like Mercury and Saturn is assigned zeroes like other planets in some systems, get better understanding here.
 		'ojaYugmaBala': [7.5, 15],
+		'quality': 'conditional',
 	},
 	'jupiter': {
 		'exaltation': 95,
 		'debilitation': 275,
 		'ojaYugmaBala': [15, 0],
+		'quality': 'benefic',
 	},
 	'venus': {
 		'exaltation': 357,
 		'debilitation': 177,
 		'ojaYugmaBala': [0, 15],
+		'quality': 'benefic',
 	},
 	'saturn': {
 		'exaltation': 200,
 		'debilitation': 20,
 		'ojaYugmaBala': [15, 7.5],
+		'quality': 'malefic',
+	},
+	'rahu': {
+		'quality': 'malefic',
+	},
+	'ketu': {
+		'quality': 'malefic',
+	},
+}
+
+houseQualities = [
+	'kendra',
+	'panapara',
+	'apoklima',
+]
+
+kendradiBala = {
+	'kendra': {
+		'benefic': 60,
+		'malefic': 30,
+		'conditional': 45,
+	},
+	'panapara': {
+		'benefic': 30,
+		'malefic': 60,
+		'conditional': 45,
+	},
+	'apoklima': {
+		'benefic': 15,
+		'malefic': 15,
+		'conditional': 15,
 	},
 }
 

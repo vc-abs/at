@@ -2,8 +2,13 @@ from math import fabs
 from core.Cached import Cached
 from core.constants import (
 	planets,
-	planetaryProps,
+	objectProps,
 	degrees,
+	kendradiBala,
+)
+from core.helpers import (
+	getPlanetaryQuality,
+	getHouseQuality,
 )
 
 balaDefaultMaxScore = 60
@@ -18,13 +23,13 @@ ucchaBalaScaleFactor = (
 def calculateUcchaBala(planet):
 	distanceToExaltation = fabs(
 		planet['longitude']
-		- planetaryProps[planet['name']][
+		- objectProps[planet['name']][
 			'exaltation'
 		]
 	)
 	distanceToDebilitation = fabs(
 		planet['longitude']
-		- planetaryProps[planet['name']][
+		- objectProps[planet['name']][
 			'debilitation'
 		]
 	)
@@ -52,13 +57,16 @@ def calculateSaptavargajaBala(planet):
 
 
 def calculateOjaYugmaBala(planet):
-	return planetaryProps[planet['name']][
+	return objectProps[planet['name']][
 		'ojaYugmaBala'
 	][1 - (planet['sign'] % 2)]
 
 
+# #TODO: Verify the validity of the approach. The result per JyotishApp is slightly different.
 def calculateKendradiBala(planet):
-	return 0
+	return kendradiBala[
+		getHouseQuality(planet['house'])
+	][getPlanetaryQuality(planet)]
 
 
 def calculateDrekkanaBala(planet):
