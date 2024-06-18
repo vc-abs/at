@@ -3,7 +3,7 @@ from core.constants import (
 	signWidth,
 )
 
-vargaOffsets = {
+specialVargas = {
 	3: {
 		'type': 'division',
 		'offsets': [1, 5, 9],
@@ -20,20 +20,18 @@ vargaOffsets = {
 		'type': 'sign',
 		'offsets': [1, 9],
 	},
-	# #Note: The calculations for the varga, below are straight forward to calculate mathematically.
-	9: {
-		'type': 'sign',
-		'offsets': [1, 9, 5],
-	},
 	12: {
 		'type': 'sign',
 		'offsets': [1],
 	},
-	16: {
-		'type': 'sign',
-		'offsets': [1, 4, 7, 10],
-	},
+	24: {},
+	30: {},
+	40: {},
+	45: {},
+	60: {},
 }
+
+perfectVargas = [9, 16, 20, 27]
 
 
 def getVargaOffset(
@@ -65,7 +63,10 @@ offsetTypeProcessors = {
 def getOffset(
 	varga, vargaPosition, sign
 ):
-	offsetData = vargaOffsets[varga]
+	if varga in perfectVargas:
+		return 0
+
+	offsetData = specialVargas[varga]
 	return offsetTypeProcessors[
 		offsetData['type']
 	](offsetData, vargaPosition, sign)
