@@ -101,16 +101,15 @@ offsetTypeProcessors = {
 def getOffset(
 	varga, vargaPosition, sign
 ):
-	if varga in perfectVargas:
-		return 0
-
 	offsetData = specialVargas[varga]
 	return offsetTypeProcessors[
 		offsetData['type']
 	](offsetData, vargaPosition, sign)
 
 
-def getVargaPosition(planet, varga):
+def getOffsetVargaPosition(
+	planet, varga
+):
 	longitude = planet['longitude']
 	signIndex = planet['sign'] - 1
 	degreesWithinSign = (
@@ -135,3 +134,33 @@ def getVargaPosition(planet, varga):
 		'sign': vargaSign,
 		'degree': vargaDegree,
 	}
+
+
+def getPerfectVargaPosition(
+	planet, varga
+):
+	vargaLongitude = (
+		planet['longitude'] * varga
+	)
+	vargaDegree = (
+		vargaLongitude % signWidth
+	)
+	vargaSign = (
+		int(vargaLongitude // signWidth)
+		% signCount
+	) + 1
+
+	return {
+		'sign': vargaSign,
+		'degree': vargaDegree,
+	}
+
+
+def getVargaPosition(planet, varga):
+	get = (
+		getPerfectVargaPosition
+		if varga in perfectVargas
+		else getOffsetVargaPosition
+	)
+
+	return get(planet, varga)
