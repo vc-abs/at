@@ -69,7 +69,15 @@ specialVargas = {
 	},
 }
 
-perfectVargas = [9, 16, 20, 27]
+perfectVargas = [
+	6,
+	8,
+	9,
+	11,
+	16,
+	20,
+	27,
+]
 
 
 def getVargaOffset(
