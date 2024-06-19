@@ -10,6 +10,10 @@ from core.helpers import (
 	getPlanetaryQuality,
 	getHouseQuality,
 )
+from core.dignity import (
+	getPlanetDignity,
+)
+from core.varga import getVargaPosition
 
 balaDefaultMaxScore = 60
 balaDefaultMinScore = 0
@@ -52,8 +56,46 @@ def calculateUcchaBala(planet):
 	)
 
 
+planetDignityPoints = {
+	'exaltation': 60,
+	'moolatrikona': 45,
+	'own': 30,
+	'greatFriend': 22.5,
+	'friend': 15,
+	'neutral': 7.5,
+	'enemy': 3.75,
+	'greatEnemy': 1.875,
+	'debilitation': 0,
+}
+
+saptavargajaVargas = [
+	1,
+	2,
+	3,
+	7,
+	9,
+	12,
+	30,
+]
+
+
 def calculateSaptavargajaBala(planet):
-	return 0
+	# #TODO: The calculated Saptavargaja is different than that in 'Astro App'. It looks like it's due to not considering the temporary relationship between planets. Try fixing this.
+	# #NOTE: Decided to move with the imprecise calculation for now, as finding the correct methodology might not be feasible, now.
+	# #NOTE: There are some minor differences between various software, Ex: between JH and Astro App.
+	total = 0
+
+	for varga in saptavargajaVargas:
+		vargaPosition = getVargaPosition(
+			planet, varga
+		)
+		total += planetDignityPoints[
+			getPlanetDignity(
+				{**planet, **vargaPosition}
+			)
+		]
+
+	return total
 
 
 def calculateOjaYugmaBala(planet):
@@ -186,6 +228,7 @@ class ShadBala(Cached):
 		self._chart = chart
 
 	def _getPhalas(self):
+		# #TODO: Calculate Phalas for the chart instead of separate planets, as it helps with accuracy (Ex: Calculating temporary friendships).
 		planetPhalas = {}
 		for planet in planets:
 			shadbala = calculateShadbala(
