@@ -3,6 +3,45 @@ from core.constants import (
 	signWidth,
 )
 
+trimshamsaRulership = [
+	{
+		(0, 5): 2,
+		(5, 10): 6,
+		(
+			10,
+			18,
+		): 12,
+		(18, 25): 10,
+		(25, 30): 8,
+	},
+	{
+		(0, 5): 1,
+		(5, 10): 11,
+		(
+			10,
+			18,
+		): 9,
+		(18, 25): 3,
+		(25, 30): 7,
+	},
+]
+
+
+def getTrimshamsaSign(planet, varga):
+	degreeInSign = (
+		planet['longitude'] % signWidth
+	)
+
+	for (
+		(start, end),
+		sign,
+	) in trimshamsaRulership[
+		planet['sign'] % 2
+	].items():
+		if start <= degreeInSign < end:
+			return sign
+
+
 vargaConfig = {
 	3: {
 		'type': 'division',
@@ -65,7 +104,7 @@ vargaConfig = {
 	27: {'type': 'perfect'},
 	30: {
 		'type': 'custom',
-		'fn': lambda planet, varga: 0,
+		'fn': getTrimshamsaSign,
 	},
 	40: {
 		'type': 'sign',
