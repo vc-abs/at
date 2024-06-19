@@ -3,7 +3,7 @@ from core.constants import (
 	signWidth,
 )
 
-specialVargas = {
+vargaConfig = {
 	3: {
 		'type': 'division',
 		'offsets': [1, 5, 9],
@@ -12,18 +12,39 @@ specialVargas = {
 		'type': 'division',
 		'offsets': [1, 4, 7, 10],
 	},
+	5: {
+		'type': 'division',
+		'offsets': [
+			1,
+			11,
+			9,
+			3,
+			7,
+			2,
+			6,
+			12,
+			10,
+			8,
+		],
+	},
+	6: {'type': 'perfect'},
 	7: {
 		'type': 'sign',
 		'offsets': [1, 7],
 	},
+	8: {'type': 'perfect'},
+	9: {'type': 'perfect'},
 	10: {
 		'type': 'sign',
 		'offsets': [1, 9],
 	},
+	11: {'type': 'perfect'},
 	12: {
 		'type': 'sign',
 		'offsets': [1],
 	},
+	16: {'type': 'perfect'},
+	20: {'type': 'perfect'},
 	24: {
 		'type': 'sign',
 		'offsets': [
@@ -41,7 +62,8 @@ specialVargas = {
 			5,
 		],
 	},
-	30: {},
+	27: {'type': 'perfect'},
+	30: {'type': 'custom'},
 	40: {
 		'type': 'sign',
 		'offsets': [
@@ -68,16 +90,6 @@ specialVargas = {
 		'offsets': [1],
 	},
 }
-
-perfectVargas = [
-	6,
-	8,
-	9,
-	11,
-	16,
-	20,
-	27,
-]
 
 
 def getVargaOffset(
@@ -109,7 +121,7 @@ offsetTypeProcessors = {
 def getOffset(
 	varga, vargaPosition, sign
 ):
-	offsetData = specialVargas[varga]
+	offsetData = vargaConfig[varga]
 	return offsetTypeProcessors[
 		offsetData['type']
 	](offsetData, vargaPosition, sign)
@@ -164,11 +176,25 @@ def getPerfectVargaPosition(
 	}
 
 
-def getVargaPosition(planet, varga):
-	get = (
-		getPerfectVargaPosition
-		if varga in perfectVargas
-		else getOffsetVargaPosition
-	)
+def getCustomVargaPosition(
+	planet, varga
+):
+	return 0
 
-	return get(planet, varga)
+
+vargaTypeProcessors = {
+	'perfect': getPerfectVargaPosition,
+	'sign': getOffsetVargaPosition,
+	'division': getOffsetVargaPosition,
+	'custom': getCustomVargaPosition,
+}
+
+
+def getVargaPosition(planet, varga):
+	vargaType = vargaConfig.get(
+		varga, {}
+	).get('type', 'perfect')
+
+	return vargaTypeProcessors[vargaType](
+		planet, varga
+	)
