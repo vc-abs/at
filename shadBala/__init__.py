@@ -5,6 +5,7 @@ from core.constants import (
 	objectProps,
 	degrees,
 	kendradiBala,
+	signWidth,
 )
 from core.helpers import (
 	getPlanetaryQuality,
@@ -111,8 +112,29 @@ def calculateKendradiBala(planet):
 	][getPlanetaryQuality(planet)]
 
 
+# #FROM: https://sacred-astrology.blogspot.com/2008/03/shadbala-and-its-conceptual-details.html
+drekkanaPositions = [
+	'male',
+	'neutral',
+	'female',
+]
+drekkanaPoints = 15
+drekkanaWidth = int(signWidth / 3)
+
+
 def calculateDrekkanaBala(planet):
-	return 0
+	drekkana = int(
+		(planet['longitude']) % signWidth
+	) // (drekkanaWidth)
+
+	return (
+		drekkanaPoints
+		if drekkanaPositions[drekkana]
+		== objectProps[planet['name']][
+			'gender'
+		]
+		else 0
+	)
 
 
 def calculateSthanaBala(planet):

@@ -49,6 +49,7 @@ objectProps = {
 		'debilitation': 190,
 		'ojaYugmaBala': [15, 0],
 		'quality': 'malefic',
+		'gender': 'male',
 	},
 	'moon': {
 		'exaltation': 33,
@@ -56,12 +57,14 @@ objectProps = {
 		'ojaYugmaBala': [0, 15],
 		# #TODO: Implement ways to find planetary quality for Moon and Mercury.
 		'quality': 'conditional',
+		'gender': 'female',
 	},
 	'mars': {
 		'exaltation': 298,
 		'debilitation': 118,
 		'ojaYugmaBala': [15, 0],
 		'quality': 'malefic',
+		'gender': 'male',
 	},
 	'mercury': {
 		'exaltation': 165,
@@ -69,24 +72,28 @@ objectProps = {
 		# #TODO: Looks like Mercury and Saturn is assigned zeroes like other planets in some systems, get better understanding here.
 		'ojaYugmaBala': [7.5, 15],
 		'quality': 'conditional',
+		'gender': 'neutral',
 	},
 	'jupiter': {
 		'exaltation': 95,
 		'debilitation': 275,
 		'ojaYugmaBala': [15, 0],
 		'quality': 'benefic',
+		'gender': 'male',
 	},
 	'venus': {
 		'exaltation': 357,
 		'debilitation': 177,
 		'ojaYugmaBala': [0, 15],
 		'quality': 'benefic',
+		'gender': 'female',
 	},
 	'saturn': {
 		'exaltation': 200,
 		'debilitation': 20,
 		'ojaYugmaBala': [15, 7.5],
 		'quality': 'malefic',
+		'gender': 'neutral',
 	},
 	'rahu': {
 		'quality': 'malefic',
