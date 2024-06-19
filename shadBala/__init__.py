@@ -202,6 +202,10 @@ def calculateKaalaBala(planet):
 	)
 
 
+def calculateDigBala(planet):
+	return 0
+
+
 def calculateCheshtaBala(planet):
 	return (
 		balaDefaultMaxScore
@@ -214,10 +218,23 @@ def calculateDrikBala(planet):
 	return 0
 
 
+naisargikaBalaPoints = {
+	'sun': 60,
+	'moon': 51,
+	'mars': 32,
+	'mercury': 7,
+	'jupiter': 56,
+	'venus': 52,
+	'saturn': 5,
+}
+
+
 def calculateNaisargikaBala(
 	planet, config
 ):
-	return 0
+	return naisargikaBalaPoints[
+		planet['name']
+	]
 
 
 def calculateShadbala(
@@ -226,6 +243,8 @@ def calculateShadbala(
 ):
 	return (
 		calculateSthanaBala(planet)
+		+ calculateDigBala(planet)
+		+ calculateKaalaBala(planet)
 		+ calculateCheshtaBala(planet)
 		+ calculateDrikBala(planet)
 		+ calculateNaisargikaBala(
