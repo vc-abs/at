@@ -3,6 +3,22 @@ from core.constants import (
 	signWidth,
 )
 
+
+def getHoraSign(planet, varga):
+	degreeInSign = (
+		planet['longitude'] % signWidth
+	)
+	vargaPosition = degreeInSign // (
+		signWidth // varga
+	)
+
+	return (
+		4
+		+ (planet['sign'] + vargaPosition)
+		% varga
+	)
+
+
 trimshamsaRulership = [
 	{
 		(0, 5): 2,
@@ -43,6 +59,10 @@ def getTrimshamsaSign(planet, varga):
 
 
 vargaConfig = {
+	2: {
+		'type': 'custom',
+		'fn': getHoraSign,
+	},
 	3: {
 		'type': 'division',
 		'offsets': [1, 5, 9],
