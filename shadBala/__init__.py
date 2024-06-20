@@ -1,4 +1,3 @@
-from math import fabs
 from core.Cached import Cached
 from core.constants import (
 	planets,
@@ -28,17 +27,23 @@ ucchaBalaScaleFactor = (
 
 
 def calculateUcchaBala(planet):
-	distanceToExaltation = fabs(
-		planet['longitude']
-		- objectProps[planet['name']][
-			'exaltation'
-		]
+	distanceToExaltation = (
+		getShortestDistanceInCircle(
+			degrees,
+			planet['longitude'],
+			objectProps[planet['name']][
+				'exaltation'
+			],
+		)
 	)
-	distanceToDebilitation = fabs(
-		planet['longitude']
-		- objectProps[planet['name']][
-			'debilitation'
-		]
+	distanceToDebilitation = (
+		getShortestDistanceInCircle(
+			degrees,
+			planet['longitude'],
+			objectProps[planet['name']][
+				'debilitation'
+			],
+		)
 	)
 
 	return (
@@ -83,9 +88,9 @@ saptavargajaVargas = [
 
 
 def calculateSaptavargajaBala(planet):
-	# #TODO: The calculated Saptavargaja is different than that in 'Astro App'. It looks like it's due to not considering the temporary relationship between planets. Try fixing this.
+	# #TODO: The calculated Saptavargaja is different than that in 'Jyotish App'. It looks like it's due to not considering the temporary relationship between planets. Try fixing this.
 	# #NOTE: Decided to move with the imprecise calculation for now, as finding the correct methodology might not be feasible, now.
-	# #NOTE: There are some minor differences between various software, Ex: between JH and Astro App.
+	# #NOTE: There are some minor differences between various software, Ex: between JH and Jyotish App.
 	total = 0
 
 	for varga in saptavargajaVargas:
@@ -102,6 +107,7 @@ def calculateSaptavargajaBala(planet):
 
 
 def calculateOjaYugmaBala(planet):
+	# #FIX: This differs from Jyotish App.
 	return objectProps[planet['name']][
 		'ojaYugmaBala'
 	][1 - (planet['sign'] % 2)]
@@ -109,6 +115,7 @@ def calculateOjaYugmaBala(planet):
 
 # #TODO: Verify the validity of the approach. The result per JyotishApp is slightly different.
 def calculateKendradiBala(planet):
+	# #FIX: This differs from Jyotish App.
 	return kendradiBala[
 		getHouseQuality(planet['house'])
 	][getPlanetaryQuality(planet)]
@@ -233,6 +240,7 @@ def calculateKaalaBala(planet):
 
 
 def calculateCheshtaBala(planet):
+	# #FIX: Make this calculation precise by taking into account, the planetary speed.
 	return (
 		balaDefaultMaxScore
 		if not planet['retrograde']
