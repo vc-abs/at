@@ -3,6 +3,7 @@ signs = [
 	i + 1 for i in range(0, signCount)
 ]
 degrees = 360
+maxPossibleDistance = degrees / 2
 daysPerYear = 365.256364
 houseCount = signCount
 signWidth = degrees / signCount
@@ -50,6 +51,7 @@ objectProps = {
 		'ojaYugmaBala': [15, 0],
 		'quality': 'malefic',
 		'gender': 'male',
+		'digBalaHouse': 10,
 	},
 	'moon': {
 		'exaltation': 33,
@@ -58,6 +60,7 @@ objectProps = {
 		# #TODO: Implement ways to find planetary quality for Moon and Mercury.
 		'quality': 'conditional',
 		'gender': 'female',
+		'digBalaHouse': 4,
 	},
 	'mars': {
 		'exaltation': 298,
@@ -65,6 +68,7 @@ objectProps = {
 		'ojaYugmaBala': [15, 0],
 		'quality': 'malefic',
 		'gender': 'male',
+		'digBalaHouse': 10,
 	},
 	'mercury': {
 		'exaltation': 165,
@@ -73,6 +77,7 @@ objectProps = {
 		'ojaYugmaBala': [7.5, 15],
 		'quality': 'conditional',
 		'gender': 'neutral',
+		'digBalaHouse': 1,
 	},
 	'jupiter': {
 		'exaltation': 95,
@@ -80,6 +85,7 @@ objectProps = {
 		'ojaYugmaBala': [15, 0],
 		'quality': 'benefic',
 		'gender': 'male',
+		'digBalaHouse': 1,
 	},
 	'venus': {
 		'exaltation': 357,
@@ -87,6 +93,7 @@ objectProps = {
 		'ojaYugmaBala': [0, 15],
 		'quality': 'benefic',
 		'gender': 'female',
+		'digBalaHouse': 4,
 	},
 	'saturn': {
 		'exaltation': 200,
@@ -94,6 +101,7 @@ objectProps = {
 		'ojaYugmaBala': [15, 7.5],
 		'quality': 'malefic',
 		'gender': 'neutral',
+		'digBalaHouse': 7,
 	},
 	'rahu': {
 		'quality': 'malefic',

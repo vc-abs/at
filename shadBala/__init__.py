@@ -6,10 +6,12 @@ from core.constants import (
 	degrees,
 	kendradiBala,
 	signWidth,
+	signCount,
 )
 from core.helpers import (
 	getPlanetaryQuality,
 	getHouseQuality,
+	getShortestDistanceInCircle,
 )
 from core.dignity import (
 	getPlanetDignity,
@@ -147,8 +149,36 @@ def calculateSthanaBala(planet):
 	)
 
 
+fullDigBalaPoints = 60
+maxPossibleDigBalaDistance = (
+	signCount / 2
+)
+
+
+# #TODO: Calculate Dig Bala using distance from ascendant, rather than with houses, for better accuracy.
 def calculateDigBala(planet):
-	return 0
+	fullDigBalaHouse = objectProps[
+		planet['name']
+	]['digBalaHouse']
+
+	distance = (
+		getShortestDistanceInCircle(
+			signCount,
+			planet['house'],
+			fullDigBalaHouse,
+		)
+	)
+
+	strength = (
+		fullDigBalaPoints
+		* (
+			maxPossibleDigBalaDistance
+			- distance
+		)
+		/ maxPossibleDigBalaDistance
+	)
+
+	return strength
 
 
 def calculateNatonnataBala(planet):
@@ -200,10 +230,6 @@ def calculateKaalaBala(planet):
 		+ calculateAyanaBala(planet)
 		+ calculateYuddhaBala(planet)
 	)
-
-
-def calculateDigBala(planet):
-	return 0
 
 
 def calculateCheshtaBala(planet):

@@ -66,3 +66,22 @@ def getPlanetaryQuality(planet):
 
 def getHouseQuality(house):
 	return houseQualities[(house + 2) % 3]
+
+
+def getShortestDistanceInCircle(
+	circumference, p1Distance, p2Distance
+):
+	return min(
+		(
+			circumference
+			+ p1Distance
+			- p2Distance
+		)
+		% circumference,
+		(
+			circumference
+			+ p2Distance
+			- p1Distance
+		)
+		% circumference,
+	)
