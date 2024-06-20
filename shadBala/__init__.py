@@ -220,12 +220,12 @@ def calculateDrikBala(planet):
 
 naisargikaBalaPoints = {
 	'sun': 60,
-	'moon': 51,
-	'mars': 32,
-	'mercury': 7,
-	'jupiter': 56,
-	'venus': 52,
-	'saturn': 5,
+	'moon': 51.43,
+	'mars': 17.4,
+	'mercury': 25.71,
+	'jupiter': 34.29,
+	'venus': 42.86,
+	'saturn': 8.57,
 }
 
 
