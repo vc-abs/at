@@ -74,7 +74,7 @@ dignityClassifiers = {
 }
 
 
-def getPlanetDignity(planet):
+def getPlanetDignity(chart, planet={}):
 	for (
 		dignity,
 		classify,

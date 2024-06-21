@@ -87,7 +87,9 @@ saptavargajaVargas = [
 ]
 
 
-def calculateSaptavargajaBala(planet):
+def calculateSaptavargajaBala(
+	planet, chart
+):
 	# #TODO: The calculated Saptavargaja is different than that in 'Jyotish App'. It looks like it's due to not considering the temporary relationship between planets. Try fixing this.
 	# #NOTE: Decided to move with the imprecise calculation for now, as finding the correct methodology might not be feasible, now.
 	# #NOTE: There are some minor differences between various software, Ex: between JH and Jyotish App.
@@ -99,7 +101,11 @@ def calculateSaptavargajaBala(planet):
 		)
 		total += planetDignityPoints[
 			getPlanetDignity(
-				{**planet, **vargaPosition}
+				chart=chart,
+				planet={
+					**planet,
+					**vargaPosition,
+				},
 			)
 		]
 
@@ -146,10 +152,12 @@ def calculateDrekkanaBala(planet):
 	)
 
 
-def calculateSthanaBala(planet):
+def calculateSthanaBala(planet, chart):
 	return (
 		calculateUcchaBala(planet)
-		+ calculateSaptavargajaBala(planet)
+		+ calculateSaptavargajaBala(
+			planet, chart
+		)
 		+ calculateOjaYugmaBala(planet)
 		+ calculateKendradiBala(planet)
 		+ calculateDrekkanaBala(planet)
@@ -263,27 +271,20 @@ naisargikaBalaPoints = {
 }
 
 
-def calculateNaisargikaBala(
-	planet, config
-):
+def calculateNaisargikaBala(planet):
 	return naisargikaBalaPoints[
 		planet['name']
 	]
 
 
-def calculateShadbala(
-	planet,
-	config,
-):
+def calculateShadbala(planet, chart):
 	return (
-		calculateSthanaBala(planet)
+		calculateSthanaBala(planet, chart)
 		+ calculateDigBala(planet)
 		+ calculateKaalaBala(planet)
 		+ calculateCheshtaBala(planet)
 		+ calculateDrikBala(planet)
-		+ calculateNaisargikaBala(
-			planet, config
-		)
+		+ calculateNaisargikaBala(planet)
 	)
 
 
@@ -308,7 +309,7 @@ class ShadBala(Cached):
 		for planet in planets:
 			shadbala = calculateShadbala(
 				self._chart.objects[planet],
-				self._chart.config,
+				self._chart,
 			)
 			ishtaPhala = calculateIshtaPhala(
 				shadbala
