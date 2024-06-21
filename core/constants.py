@@ -76,8 +76,7 @@ objectProps = {
 	'mercury': {
 		'exaltation': 165,
 		'debilitation': 345,
-		# #TODO: Looks like Mercury and Saturn is assigned zeroes like other planets in some systems, get better understanding here.
-		'ojaYugmaBala': [7.5, 15],
+		'ojaYugmaBala': [15, 0],
 		'aspects': [7],
 		'quality': 'conditional',
 		'gender': 'neutral',
@@ -104,7 +103,7 @@ objectProps = {
 	'saturn': {
 		'exaltation': 200,
 		'debilitation': 20,
-		'ojaYugmaBala': [15, 7.5],
+		'ojaYugmaBala': [15, 0],
 		'aspects': [3, 7, 10],
 		'quality': 'malefic',
 		'gender': 'neutral',
@@ -125,21 +124,9 @@ houseQualities = [
 ]
 
 kendradiBala = {
-	'kendra': {
-		'benefic': 60,
-		'malefic': 30,
-		'conditional': 45,
-	},
-	'panapara': {
-		'benefic': 30,
-		'malefic': 60,
-		'conditional': 45,
-	},
-	'apoklima': {
-		'benefic': 15,
-		'malefic': 15,
-		'conditional': 15,
-	},
+	'kendra': 60,
+	'panapara': 30,
+	'apoklima': 15,
 }
 
 signLords = [

@@ -8,7 +8,6 @@ from core.constants import (
 	signCount,
 )
 from core.helpers import (
-	getPlanetaryQuality,
 	getHouseQuality,
 	getShortestDistanceInCircle,
 )
@@ -112,19 +111,41 @@ def calculateSaptavargajaBala(
 	return total
 
 
+ojaYugmaVargas = [1, 9]
+
+
+def calculateOjaYugmaForVarga(
+	planet, varga
+):
+	vargaPosition = getVargaPosition(
+		planet, varga
+	)
+	vargaPlanet = {
+		**planet,
+		**vargaPosition,
+	}
+	return objectProps[
+		vargaPlanet['name']
+	]['ojaYugmaBala'][
+		1 - (vargaPlanet['sign'] % 2)
+	]
+
+
 def calculateOjaYugmaBala(planet):
-	# #FIX: This differs from Jyotish App.
-	return objectProps[planet['name']][
-		'ojaYugmaBala'
-	][1 - (planet['sign'] % 2)]
+	bala = 0
+
+	for varga in ojaYugmaVargas:
+		bala += calculateOjaYugmaForVarga(
+			planet, varga
+		)
+
+	return bala
 
 
-# #TODO: Verify the validity of the approach. The result per JyotishApp is slightly different.
 def calculateKendradiBala(planet):
-	# #FIX: This differs from Jyotish App.
 	return kendradiBala[
 		getHouseQuality(planet['house'])
-	][getPlanetaryQuality(planet)]
+	]
 
 
 # #FROM: https://sacred-astrology.blogspot.com/2008/03/shadbala-and-its-conceptual-details.html
@@ -304,7 +325,6 @@ class ShadBala(Cached):
 		self._chart = chart
 
 	def _getPhalas(self):
-		# #TODO: Calculate Phalas for the chart instead of separate planets, as it helps with accuracy (Ex: Calculating temporary friendships).
 		planetPhalas = {}
 		for planet in planets:
 			shadbala = calculateShadbala(
