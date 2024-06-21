@@ -5,7 +5,7 @@ from core.constants import (
 	degrees,
 	kendradiBala,
 	signWidth,
-	signCount,
+	maxPossibleDistance,
 )
 from core.helpers import (
 	getHouseQuality,
@@ -186,32 +186,30 @@ def calculateSthanaBala(planet, chart):
 
 
 fullDigBalaPoints = 60
-maxPossibleDigBalaDistance = (
-	signCount / 2
-)
 
 
-# #TODO: Calculate Dig Bala using distance from ascendant, rather than with houses, for better accuracy.
-def calculateDigBala(planet):
+# #TODO: The results are fairly close to that of Jyotish App. Yet, the accuracy can be improved.
+def calculateDigBala(planet, chart):
 	fullDigBalaHouse = objectProps[
 		planet['name']
 	]['digBalaHouse']
-
+	fullDigBalaLongitude = (
+		fullDigBalaHouse - 1
+	) * signWidth + chart.objects['asc'][
+		'longitude'
+	]
 	distance = (
 		getShortestDistanceInCircle(
-			signCount,
-			planet['house'],
-			fullDigBalaHouse,
+			degrees,
+			planet['longitude'],
+			fullDigBalaLongitude,
 		)
 	)
 
 	strength = (
 		fullDigBalaPoints
-		* (
-			maxPossibleDigBalaDistance
-			- distance
-		)
-		/ maxPossibleDigBalaDistance
+		* (maxPossibleDistance - distance)
+		/ maxPossibleDistance
 	)
 
 	return strength
@@ -301,7 +299,7 @@ def calculateNaisargikaBala(planet):
 def calculateShadbala(planet, chart):
 	return (
 		calculateSthanaBala(planet, chart)
-		+ calculateDigBala(planet)
+		+ calculateDigBala(planet, chart)
 		+ calculateKaalaBala(planet)
 		+ calculateCheshtaBala(planet)
 		+ calculateDrikBala(planet)
