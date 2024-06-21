@@ -53,6 +53,7 @@ objectProps = {
 		'quality': 'malefic',
 		'gender': 'male',
 		'digBalaHouse': 10,
+		'moolaTrikona': [120, 140],
 	},
 	'moon': {
 		'exaltation': 33,
@@ -63,6 +64,7 @@ objectProps = {
 		'quality': 'conditional',
 		'gender': 'female',
 		'digBalaHouse': 4,
+		'moolaTrikona': [33, 60],
 	},
 	'mars': {
 		'exaltation': 298,
@@ -72,6 +74,7 @@ objectProps = {
 		'quality': 'malefic',
 		'gender': 'male',
 		'digBalaHouse': 10,
+		'moolaTrikona': [0, 12],
 	},
 	'mercury': {
 		'exaltation': 165,
@@ -81,6 +84,7 @@ objectProps = {
 		'quality': 'conditional',
 		'gender': 'neutral',
 		'digBalaHouse': 1,
+		'moolaTrikona': [165, 170],
 	},
 	'jupiter': {
 		'exaltation': 95,
@@ -90,6 +94,7 @@ objectProps = {
 		'quality': 'benefic',
 		'gender': 'male',
 		'digBalaHouse': 1,
+		'moolaTrikona': [240, 250],
 	},
 	'venus': {
 		'exaltation': 357,
@@ -99,6 +104,7 @@ objectProps = {
 		'quality': 'benefic',
 		'gender': 'female',
 		'digBalaHouse': 4,
+		'moolaTrikona': [180, 195],
 	},
 	'saturn': {
 		'exaltation': 200,
@@ -108,6 +114,7 @@ objectProps = {
 		'quality': 'malefic',
 		'gender': 'neutral',
 		'digBalaHouse': 7,
+		'moolaTrikona': [300, 320],
 	},
 	'rahu': {
 		'quality': 'malefic',
@@ -116,7 +123,6 @@ objectProps = {
 		'quality': 'malefic',
 	},
 }
-
 houseQualities = [
 	'kendra',
 	'panapara',
@@ -218,17 +224,6 @@ planetaryFriendships = {
 	('ketu', 'venus'): 0,
 	('ketu', 'saturn'): 0,
 	('ketu', 'rahu'): -1,
-}
-
-# #FROM: The book Vedic Astrology - An Integrated Approach by P. V. R. Narasimmha Rao.
-moolaTrikonaPositions = {
-	'sun': {'start': 120, 'end': 140},
-	'moon': {'start': 33, 'end': 60},
-	'mars': {'start': 0, 'end': 12},
-	'mercury': {'start': 165, 'end': 170},
-	'jupiter': {'start': 240, 'end': 250},
-	'venus': {'start': 180, 'end': 195},
-	'saturn': {'start': 300, 'end': 320},
 }
 
 nakshatras = [

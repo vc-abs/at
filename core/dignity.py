@@ -1,6 +1,5 @@
 from core.constants import (
 	planetaryFriendships,
-	moolaTrikonaPositions,
 	objectProps,
 	signLords,
 )
@@ -13,17 +12,17 @@ dignityRangeInDegrees = 2
 
 
 def isInMoolaTrikona(planet, *_):
-	moolaTrikonaRange = (
-		moolaTrikonaPositions.get(
-			planet['name'],
-			{'start': 0, 'end': 0},
+	moolaTrikonaStart, moolaTrikonaEnd = (
+		objectProps[planet['name']].get(
+			'moolaTrikona',
+			[0, 0],
 		)
 	)
 
 	return (
-		moolaTrikonaRange['start']
+		moolaTrikonaStart
 		<= planet['longitude']
-		< moolaTrikonaRange['end']
+		< moolaTrikonaEnd
 	)
 
 
