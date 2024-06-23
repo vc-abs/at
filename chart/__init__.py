@@ -7,6 +7,7 @@ from ashtakavarga import getAshtakavarga
 from panchang import Panchang
 from dasha import Dasha
 from shadBala import ShadBala
+from core.varga import Varga
 from core.constants import (
 	objects,
 	signWidth,
@@ -177,6 +178,9 @@ class Chart(Cached):
 
 	def _getShadBala(self):
 		return ShadBala(self)
+
+	def _getVarga(self):
+		return Varga(self)
 
 
 __all__ = [Chart]
