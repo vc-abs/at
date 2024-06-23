@@ -287,14 +287,10 @@ def getVargaPosition(planet, varga):
 
 
 def getVargaPositions(varga, objects):
-	return list(
-		map(
-			lambda object: getVargaPosition(
-				object, varga
-			),
-			objects.values(),
-		)
-	)
+	return {
+		key: getVargaPosition(object, varga)
+		for key, object in objects.items()
+	}
 
 
 class Varga(Cached):
