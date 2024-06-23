@@ -4,7 +4,7 @@ from core.constants import (
 	signLords,
 )
 from core.helpers import (
-	getHouseDistance,
+	getSignDistance,
 )
 
 # #TODO: Fix the exaltations for Rahu and Ketu, as they are considered to be exalted throughout the rashi.
@@ -29,15 +29,28 @@ def isInMoolaTrikona(planet, *_):
 def getTemporaryRelationshipPoints(
 	planet, dispositor
 ):
-	houseDistance = getHouseDistance(
-		planet, dispositor
+	signDistance = getSignDistance(
+		planet['sign'], dispositor['sign']
 	)
+
 	return (
 		1
-		if 9 > houseDistance
-		or houseDistance < 5
+		if (
+			1 < signDistance < 5
+			or 9 < signDistance
+		)
 		else -1
 	)
+
+
+compositeDignities = [
+	'greatEnemy',
+	'enemy',
+	'neutral',
+	'friend',
+	'greatFriend',
+	'own',
+]
 
 
 def getDispositorRelationship(
@@ -47,7 +60,7 @@ def getDispositorRelationship(
 		planet['sign']
 	]
 	dispositor = objects[dispositorName]
-	return (
+	dignityIndex = (
 		3
 		if dispositorName == planet['name']
 		else planetaryFriendships[
@@ -59,59 +72,31 @@ def getDispositorRelationship(
 		+ getTemporaryRelationshipPoints(
 			planet, dispositor
 		)
-	)
+	) + 2
+
+	dignity = compositeDignities[
+		dignityIndex
+	]
+
+	return dignity
 
 
 dignityClassifiers = {
-	'exaltation': lambda planet, *_: abs(
-		planet['longitude']
-		- objectProps[planet['name']][
-			'exaltation'
-		]
-	)
-	< dignityRangeInDegrees,
-	'debilitation': lambda planet,
-	*_: abs(
-		planet['longitude']
-		- objectProps[planet['name']][
-			'debilitation'
-		]
-	)
-	< dignityRangeInDegrees,
+	# #NOTE: exaltation and debilitation is not considered as its not found in many references.
 	'moolatrikona': isInMoolaTrikona,
-	'own': lambda planet,
-	dispositorRelationship: dispositorRelationship
-	== 3,
-	# #TODO: Use lists to improve the efficiency of dignity calculations.
-	'greatFriend': lambda planet,
-	dispositorRelationship: dispositorRelationship
-	== 2,
-	'friend': lambda planet,
-	dispositorRelationship: dispositorRelationship
-	== 1,
-	'neutral': lambda planet,
-	dispositorRelationship: dispositorRelationship
-	== 0,
-	'enemy': lambda planet,
-	dispositorRelationship: dispositorRelationship
-	== -1,
-	'greatEnemy': lambda planet,
-	dispositorRelationship: dispositorRelationship
-	== -2,
 }
 
 
-def getPlanetDignity(chart, planet={}):
-	dispositorRelationship = (
-		getDispositorRelationship(
-			planet, chart.objects
-		)
-	)
+def getPlanetDignity(
+	objects, planet={}
+):
 	for (
 		dignity,
 		classify,
 	) in dignityClassifiers.items():
-		if classify(
-			planet, dispositorRelationship
-		):
+		if classify(planet):
 			return dignity
+
+	return getDispositorRelationship(
+		planet, objects
+	)

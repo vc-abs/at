@@ -87,13 +87,7 @@ def getShortestDistanceInCircle(
 	)
 
 
-def getHouseDistance(
-	fromObject, toObject
-):
-	fromHouse = fromObject['house']
-	toHouse = toObject['house']
+def getSignDistance(fromSign, toSign):
 	return (
-		abs(toHouse + signCount - fromHouse)
-	) % (signCount) + (
-		1 if toHouse <= fromHouse else 0
-	)
+		abs(toSign + signCount - fromSign)
+	) % signCount + 1
