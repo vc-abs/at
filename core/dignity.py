@@ -6,10 +6,9 @@ from core.helpers import (
 	getSignDistance,
 )
 
-# #NOTE: exaltation and debilitation is not considered, as its not found in many references.
+
+# #NOTE: exaltation and debilitation is not considered for dignity calculation, as its not found in many references.
 # #NOTE: Moolatrikona is not used, as it's not used in JH or JA.
-# #TODO: Fix the exaltations for Rahu and Ketu, as they are considered to be exalted throughout the rashi.
-dignityRangeInDegrees = 2
 
 
 def getTemporaryRelationshipPoints(
