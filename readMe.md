@@ -54,3 +54,4 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ## 	Log
 * 2406250100 - Found out that the difference between the Saptavargaja Calculation of JH and JA are due the differences in calculating D2 chart. JH by default doesn't use the traditional Parasara Hora. And also found out that there are many systems of calculating divisional charts.
 * 2406250100 - The varga computation used here ended up to be really closer the the Custom Divisional Chart from JH.
+* 2406270340 - Got the Saptavargaja calculation right, after a long struggle due to not understanding some fundamental concepts.

@@ -63,24 +63,21 @@ def calculateUcchaBala(planet):
 	)
 
 
-planetDignityPoints = {
-	'exaltation': 60,
-	'moolatrikona': 45,
+saptavargajaDignityPoints = {
 	'own': 30,
 	'greatFriend': 22.5,
 	'friend': 15,
 	'neutral': 7.5,
 	'enemy': 3.75,
 	'greatEnemy': 1.875,
-	'debilitation': 0,
 }
 
 saptavargajaVargas = [
 	1,
 	2,
 	3,
-	7,
 	9,
+	7,
 	12,
 	30,
 ]
@@ -89,23 +86,20 @@ saptavargajaVargas = [
 def calculateSaptavargajaBala(
 	planet, chart
 ):
-	# #TODO: The calculated Saptavargaja is different than that in 'Jyotish App'. It looks like it's due to not considering the temporary relationship between planets. Try fixing this.
-	# #NOTE: Decided to move with the imprecise calculation for now, as finding the correct methodology might not be feasible, now.
-	# #NOTE: There are some minor differences between various software, Ex: between JH and Jyotish App.
 	total = 0
 
 	for varga in saptavargajaVargas:
-		vargaPosition = getVargaPosition(
+		vargaPlanet = getVargaPosition(
 			planet, varga
 		)
-		total += planetDignityPoints[
-			getPlanetDignity(
-				chart=chart,
-				planet={
-					**planet,
-					**vargaPosition,
-				},
-			)
+
+		dignity = getPlanetDignity(
+			chart=chart,
+			planet=vargaPlanet,
+		)
+
+		total += saptavargajaDignityPoints[
+			dignity
 		]
 
 	return total

@@ -1,29 +1,15 @@
 from core.constants import (
 	planetaryFriendships,
-	objectProps,
 	signLords,
 )
 from core.helpers import (
 	getSignDistance,
 )
 
+# #NOTE: exaltation and debilitation is not considered, as its not found in many references.
+# #NOTE: Moolatrikona is not used, as it's not used in JH or JA.
 # #TODO: Fix the exaltations for Rahu and Ketu, as they are considered to be exalted throughout the rashi.
 dignityRangeInDegrees = 2
-
-
-def isInMoolaTrikona(planet, *_):
-	moolaTrikonaStart, moolaTrikonaEnd = (
-		objectProps[planet['name']].get(
-			'moolaTrikona',
-			[0, 0],
-		)
-	)
-
-	return (
-		moolaTrikonaStart
-		<= planet['longitude']
-		< moolaTrikonaEnd
-	)
 
 
 def getTemporaryRelationshipPoints(
@@ -59,18 +45,18 @@ def getDispositorRelationship(
 	dispositorName = signLords[
 		planet['sign']
 	]
-	dispositor = objects[dispositorName]
 	dignityIndex = (
 		3
 		if dispositorName == planet['name']
 		else planetaryFriendships[
 			(
 				planet['name'],
-				signLords[planet['sign']],
+				dispositorName,
 			)
 		]
 		+ getTemporaryRelationshipPoints(
-			planet, dispositor
+			objects[planet['name']],
+			objects[dispositorName],
 		)
 	) + 2
 
@@ -81,22 +67,8 @@ def getDispositorRelationship(
 	return dignity
 
 
-dignityClassifiers = {
-	# #NOTE: exaltation and debilitation is not considered as its not found in many references.
-	'moolatrikona': isInMoolaTrikona,
-}
-
-
-def getPlanetDignity(
-	objects, planet={}
-):
-	for (
-		dignity,
-		classify,
-	) in dignityClassifiers.items():
-		if classify(planet):
-			return dignity
-
+def getPlanetDignity(chart, planet={}):
+	objects = chart.objects
 	return getDispositorRelationship(
 		planet, objects
 	)
