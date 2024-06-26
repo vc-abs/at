@@ -7,7 +7,7 @@ from ashtakavarga import getAshtakavarga
 from panchang import Panchang
 from dasha import Dasha
 from shadBala import ShadBala
-from core.varga import Varga
+from varga import Varga
 from core.constants import (
 	objects,
 	signWidth,
