@@ -44,6 +44,26 @@ ashtaka = angles + planets
 
 objects = ashtaka + nodes
 
+dayRulers = [
+	'sun',
+	'moon',
+	'mars',
+	'mercury',
+	'jupiter',
+	'venus',
+	'saturn',
+]
+
+horaSequence = [
+	'sun',
+	'venus',
+	'mercury',
+	'moon',
+	'saturn',
+	'jupiter',
+	'mars',
+]
+
 objectProps = {
 	'sun': {
 		'exaltation': 10,
@@ -54,6 +74,7 @@ objectProps = {
 		'gender': 'male',
 		'digBalaHouse': 10,
 		'moolaTrikona': [120, 140],
+		'tod': 'day',
 	},
 	'moon': {
 		'exaltation': 33,
@@ -65,6 +86,7 @@ objectProps = {
 		'gender': 'female',
 		'digBalaHouse': 4,
 		'moolaTrikona': [33, 60],
+		'tod': 'night',
 	},
 	'mars': {
 		'exaltation': 298,
@@ -75,6 +97,7 @@ objectProps = {
 		'gender': 'male',
 		'digBalaHouse': 10,
 		'moolaTrikona': [0, 12],
+		'tod': 'night',
 	},
 	'mercury': {
 		'exaltation': 165,
@@ -85,6 +108,7 @@ objectProps = {
 		'gender': 'neutral',
 		'digBalaHouse': 1,
 		'moolaTrikona': [165, 170],
+		'tod': 'day',
 	},
 	'jupiter': {
 		'exaltation': 95,
@@ -95,6 +119,7 @@ objectProps = {
 		'gender': 'male',
 		'digBalaHouse': 1,
 		'moolaTrikona': [240, 250],
+		'tod': 'day',
 	},
 	'venus': {
 		'exaltation': 357,
@@ -105,6 +130,7 @@ objectProps = {
 		'gender': 'female',
 		'digBalaHouse': 4,
 		'moolaTrikona': [180, 195],
+		'tod': 'day',
 	},
 	'saturn': {
 		'exaltation': 200,
@@ -115,6 +141,7 @@ objectProps = {
 		'gender': 'neutral',
 		'digBalaHouse': 7,
 		'moolaTrikona': [300, 320],
+		'tod': 'night',
 	},
 	'rahu': {
 		'quality': 'malefic',
