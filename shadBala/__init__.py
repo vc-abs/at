@@ -209,8 +209,17 @@ def calculateDigBala(planet, chart):
 	return strength
 
 
-def calculateNatonnataBala(planet):
-	return 0
+def calculateNatonnataBala(
+	planet, chart
+):
+	return (
+		60
+		if chart.panchang.tod
+		== objectProps[planet['name']][
+			'tod'
+		]
+		else 0
+	)
 
 
 def calculatePakshaBala(planet):
@@ -245,10 +254,11 @@ def calculateYuddhaBala(planet):
 	return 0
 
 
-def calculateKaalaBala(planet):
+def calculateKaalaBala(planet, chart):
 	return (
-		calculateNatonnataBala(planet)
-		+ calculateNatonnataBala(planet)
+		calculateNatonnataBala(
+			planet, chart
+		)
 		+ calculatePakshaBala(planet)
 		+ calculateTribaghaBala(planet)
 		+ calculateAbdaBala(planet)
@@ -294,7 +304,7 @@ def calculateShadbala(planet, chart):
 	return (
 		calculateSthanaBala(planet, chart)
 		+ calculateDigBala(planet, chart)
-		+ calculateKaalaBala(planet)
+		+ calculateKaalaBala(planet, chart)
 		+ calculateCheshtaBala(planet)
 		+ calculateDrikBala(planet)
 		+ calculateNaisargikaBala(planet)

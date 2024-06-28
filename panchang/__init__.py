@@ -69,6 +69,20 @@ class Panchang(Cached):
 			self._chart._config
 		)
 
+	def _getTod(self):
+		riseAndSetTimes = (
+			self._getRiseAndSet()
+		)
+		return (
+			'day'
+			if (
+				riseAndSetTimes['sunrise']
+				< self._chart.config['datetime']
+				< riseAndSetTimes['sunset']
+			)
+			else 'night'
+		)
+
 	def _getVaara(self):
 		sunriseAdjustment = (
 			0
