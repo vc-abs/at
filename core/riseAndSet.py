@@ -6,6 +6,9 @@ from datetime import (
 )
 
 gregflag = swe.GREG_CAL
+# pressure & temperature or irrelevant for hindu method, can be set to 0
+atmo = (1013.25, 15)
+planet = swe.SUN
 
 
 def floatToHMS(floatHours):
@@ -45,20 +48,20 @@ def parseSweTime(tret, tzinfo):
 # #NOTE: There's some one minute difference in both sunrise and sunset times, when compared to JH. The flags used are to get closer to those values, and are not from proper understanding.
 # #TODO: Fix the discrepancy in time calculation.
 # #FROM: https://astrorigin.com/pyswisseph/sphinx/programmers_manual/planetary_phenomena/risings_settings_meridian_transits.html?highlight=bit_hindu_rising
-def getRiseAndSetTimes(
-	dt,
-	longitude,
-	latitude,
-	altitude=0.0,
-):
-	# pressure & temperature or irrelevant for hindu method, can be set to 0
-	atmo = (1013.25, 15)
+def getRiseAndSetTimes(config):
+	dt, latitude, longitude = (
+		config['datetime'],
+		config['latitude'],
+		config['longitude'],
+	)
+	print(dt, latitude, longitude)
+	altitude = 0.0
 	geopos = (
 		longitude,
 		latitude,
 		altitude,
 	)
-	pl = swe.SUN
+
 	tjd = swe.julday(
 		dt.year,
 		dt.month,
@@ -74,7 +77,7 @@ def getRiseAndSetTimes(
 	)
 	isRiseMissing, tRise = swe.rise_trans(
 		tjd,
-		pl,
+		planet,
 		rsmi,
 		geopos,
 		atmo[0],
@@ -86,7 +89,7 @@ def getRiseAndSetTimes(
 	)
 	isSetMissing, tSet = swe.rise_trans(
 		tjd,
-		pl,
+		planet,
 		rsmi,
 		geopos,
 		atmo[0],

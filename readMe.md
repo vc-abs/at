@@ -21,7 +21,6 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ## ToDo
 * Create CSV-s for storing all possible data in the constants file.
 * Think about having the start time as the default time.
-* Use a better package like (Astropy)[https://www.astropy.org/] compute sun-rise and sun-set times.
 * Use planetary short forms (IE: Me, Ju, etc) as the default.
 * Try using (Pyswisseph)[https://github.com/astrorigin/pyswisseph] instead of depending on sideralib. This might interfere Ayanamsa customization, as BV-Raman ayanamsa seems not to be available.
 * Replace periods with a single period config, with values with same type as frequency.

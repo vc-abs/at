@@ -8,8 +8,10 @@ from core.constants import (
 	daysInAWeek,
 	nakshatras,
 	nakshatraCount,
-	padaCount,
 	padasPerNakshatra,
+)
+from core.riseAndSet import (
+	getRiseAndSetTimes,
 )
 from core.helpers import (
 	getOrdinalPosition,
@@ -30,15 +32,12 @@ def getObjectDistance(
 	) % degrees
 
 
-def hasSunRisen(chart):
-	objects = chart.objects
-	zeroHourAscendant = (
-		chart.zeroHourChart.objects['asc']
-	)
-	return getObjectDistance(
-		zeroHourAscendant, objects['asc']
-	) >= getObjectDistance(
-		zeroHourAscendant, objects['sun']
+def hasSunRisen(
+	config, riseAndSetTimes
+):
+	return (
+		config['datetime']
+		>= riseAndSetTimes['sunrise']
 	)
 
 
@@ -65,13 +64,20 @@ class Panchang(Cached):
 			% tithiCount
 		)
 
+	def _getRiseAndSet(self):
+		return getRiseAndSetTimes(
+			self._chart._config
+		)
+
 	def _getVaara(self):
 		sunriseAdjustment = (
 			0
-			if hasSunRisen(self._chart)
+			if hasSunRisen(
+				self._chart.config,
+				self.riseAndSet,
+			)
 			else -1
 		)
-
 		return weekDays[
 			(
 				self._chart._config[
