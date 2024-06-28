@@ -8,63 +8,45 @@ from datetime import (
 gregflag = swe.GREG_CAL
 
 
-def changeTimezone(
-	dt_utc, offset_hours, offset_minutes
-):
-	# Create a timedelta object with the specified offset
-	offset = timedelta(
-		hours=offset_hours,
-		minutes=offset_minutes,
-	)
-
-	# Apply the offset to the UTC datetime
-	dt_with_offset = dt_utc + offset
-
-	return dt_with_offset
-
-
-def floatHMS(float_hours):
-	hours = int(float_hours)
-	remaining_hours = float_hours - hours
-	minutes = int(remaining_hours * 60)
-	remaining_minutes = (
-		remaining_hours * 60
+def floatToHMS(floatHours):
+	hours = int(floatHours)
+	remainingHours = floatHours - hours
+	minutes = int(remainingHours * 60)
+	remainingMinutes = (
+		remainingHours * 60
 	) - minutes
-	seconds = int(remaining_minutes * 60)
+	seconds = int(remainingMinutes * 60)
 
 	return hours, minutes, seconds
 
 
-def parseSweTime(tret):
+def parseSweTime(tret, tzinfo):
 	year, month, day, floatHour = (
 		swe.revjul(tret[0], gregflag)
 	)
 
-	hour, min, sec = floatHMS(floatHour)
-	return changeTimezone(
-		datetime(
-			year,
-			month,
-			day,
-			hour,
-			min,
-			sec,
-			tzinfo=timezone(
-				offset=timedelta(
-					hours=0,
-					minutes=0,
-				)
-			),
+	hour, min, sec = floatToHMS(floatHour)
+	return datetime(
+		year,
+		month,
+		day,
+		hour,
+		min,
+		sec,
+		tzinfo=timezone(
+			offset=timedelta(
+				hours=0,
+				minutes=0,
+			)
 		),
-		5,
-		30,
-	)
+	).astimezone(tzinfo)
 
 
+# #NOTE: There's some one minute difference in both sunrise and sunset times, when compared to JH. The flags used are to get closer to those values, and are not from proper understanding.
+# #TODO: Fix the discrepancy in time calculation.
+# #FROM: https://astrorigin.com/pyswisseph/sphinx/programmers_manual/planetary_phenomena/risings_settings_meridian_transits.html?highlight=bit_hindu_rising
 def getRiseAndSetTimes(
-	year,
-	month,
-	day,
+	dt,
 	longitude,
 	latitude,
 	altitude=0.0,
@@ -76,20 +58,19 @@ def getRiseAndSetTimes(
 		latitude,
 		altitude,
 	)
-	epheflag = swe.FLG_SWIEPH
-	swe.set_topo(*geopos)
 	pl = swe.SUN
 	tjd = swe.julday(
-		year, month, day, 0, gregflag
+		dt.year,
+		dt.month,
+		dt.day,
+		0,
+		gregflag,
 	)
-	dt = longitude / 360.0
-	tjd = tjd - dt
+
+	tjd = tjd - (longitude / 360.0)
 
 	rsmi = (
-		swe.CALC_RISE
-		# | swe.BIT_DISC_CENTER
-		| swe.BIT_HINDU_RISING
-		# | swe.BIT_NO_REFRACTION
+		swe.CALC_RISE | swe.BIT_DISC_CENTER
 	)
 	isRiseMissing, tRise = swe.rise_trans(
 		tjd,
@@ -98,13 +79,10 @@ def getRiseAndSetTimes(
 		geopos,
 		atmo[0],
 		atmo[1],
-		epheflag,
 	)
 
 	rsmi = (
-		swe.CALC_SET
-		| swe.BIT_DISC_CENTER
-		| swe.BIT_NO_REFRACTION
+		swe.CALC_SET | swe.BIT_HINDU_RISING
 	)
 	isSetMissing, tSet = swe.rise_trans(
 		tjd,
@@ -113,14 +91,13 @@ def getRiseAndSetTimes(
 		geopos,
 		atmo[0],
 		atmo[1],
-		epheflag,
 	)
 
 	return {
 		'sunrise': None
 		if isRiseMissing
-		else parseSweTime(tRise),
+		else parseSweTime(tRise, dt.tzinfo),
 		'sunset': None
 		if isSetMissing
-		else parseSweTime(tSet),
+		else parseSweTime(tSet, dt.tzinfo),
 	}
