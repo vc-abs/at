@@ -148,7 +148,7 @@ def calculateKendradiBala(planet):
 	]
 
 
-# #FROM: https://sacred-astrology.blogspot.com/2008/03/shadbala-and-its-conceptual-details.html
+# #FROM: https://sacred-astrology.blogspot.com/2008/03/shadBala-and-its-conceptual-details.html
 drekkanaPositions = [
 	'male',
 	'neutral',
@@ -174,15 +174,28 @@ def calculateDrekkanaBala(planet):
 
 
 def calculateSthanaBala(planet, chart):
-	return (
-		calculateUcchaBala(planet)
-		+ calculateSaptavargajaBala(
+	balas = {
+		'ucchaBala': calculateUcchaBala(
+			planet
+		),
+		'saptavargajaBala': calculateSaptavargajaBala(
 			planet, chart
-		)
-		+ calculateOjaYugmaBala(planet)
-		+ calculateKendradiBala(planet)
-		+ calculateDrekkanaBala(planet)
-	)
+		),
+		'ojaYugmaBala': calculateOjaYugmaBala(
+			planet
+		),
+		'kendradiBala': calculateKendradiBala(
+			planet
+		),
+		'drekkanaBala': calculateDrekkanaBala(
+			planet
+		),
+	}
+
+	return {
+		**balas,
+		'sthanaBala': sum(balas.values()),
+	}
 
 
 # #TODO: The results are fairly close to that of Jyotish App. Yet, the accuracy can be improved.
@@ -294,19 +307,39 @@ def calculateYuddhaBala(planet):
 
 
 def calculateKaalaBala(planet, chart):
-	return (
-		calculateNatonnataBala(
+	balas = {
+		'natonnataBala': calculateNatonnataBala(
 			planet, chart
-		)
-		+ calculatePakshaBala(planet, chart)
-		+ calculateTribaghaBala(planet)
-		+ calculateAbdaBala(planet)
-		+ calculateMaasaBala(planet)
-		+ calculateVaaraBala(planet, chart)
-		+ calculateHoraBala(planet)
-		+ calculateAyanaBala(planet)
-		+ calculateYuddhaBala(planet)
-	)
+		),
+		'pakshaBala': calculatePakshaBala(
+			planet, chart
+		),
+		'tribaghaBala': calculateTribaghaBala(
+			planet
+		),
+		'abdaBala': calculateAbdaBala(
+			planet
+		),
+		'maasaBala': calculateMaasaBala(
+			planet
+		),
+		'vaaraBala': calculateVaaraBala(
+			planet, chart
+		),
+		'horaBala': calculateHoraBala(
+			planet
+		),
+		'ayanaBala': calculateAyanaBala(
+			planet
+		),
+		'yuddhaBala': calculateYuddhaBala(
+			planet
+		),
+	}
+	return {
+		**balas,
+		'kaalaBala': sum(balas.values()),
+	}
 
 
 def calculateCheshtaBala(planet):
@@ -340,23 +373,38 @@ def calculateNaisargikaBala(planet):
 
 
 def calculateShadbala(planet, chart):
-	return (
-		calculateSthanaBala(planet, chart)
-		+ calculateDigBala(planet, chart)
-		+ calculateKaalaBala(planet, chart)
-		+ calculateCheshtaBala(planet)
-		+ calculateDrikBala(planet)
-		+ calculateNaisargikaBala(planet)
-	)
+	balas = {
+		**calculateSthanaBala(
+			planet, chart
+		),
+		'digBala': calculateDigBala(
+			planet, chart
+		),
+		'cheshtaBala': calculateCheshtaBala(
+			planet
+		),
+		'drikBala': calculateDrikBala(
+			planet
+		),
+		'naisargikaBala': calculateNaisargikaBala(
+			planet
+		),
+		**calculateKaalaBala(planet, chart),
+	}
+
+	return {
+		**balas,
+		'shadBala': sum(balas.values()),
+	}
 
 
-def calculateIshtaPhala(shadbala):
-	ishtaPhala = (shadbala - 1) / 2
+def calculateIshtaPhala(shadBala):
+	ishtaPhala = (shadBala - 1) / 2
 	return ishtaPhala
 
 
-def calculateKashtaPhala(shadbala):
-	kashtaPhala = (shadbala + 1) / 2
+def calculateKashtaPhala(shadBala):
+	kashtaPhala = (shadBala + 1) / 2
 	return kashtaPhala
 
 
@@ -368,18 +416,20 @@ class ShadBala(Cached):
 	def _getPhalas(self):
 		planetPhalas = {}
 		for planet in planets:
-			shadbala = calculateShadbala(
+			shadBala = calculateShadbala(
 				self._chart.objects[planet],
 				self._chart,
 			)
 			ishtaPhala = calculateIshtaPhala(
-				shadbala
+				shadBala['shadBala']
 			)
 			kashtaPhala = (
-				calculateKashtaPhala(shadbala)
+				calculateKashtaPhala(
+					shadBala['shadBala']
+				)
 			)
 			planetPhalas[planet] = {
-				'shadbala': shadbala,
+				**shadBala,
 				'ishtaPhala': ishtaPhala,
 				'kashtaPhala': kashtaPhala,
 			}
