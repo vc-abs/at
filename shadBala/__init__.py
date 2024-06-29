@@ -198,16 +198,17 @@ def calculateSthanaBala(planet, chart):
 	}
 
 
-# #TODO: The results are fairly close to that of Jyotish App. Yet, the accuracy can be improved.
+# #TODO: The results are fairly close to that of JA. There's some difference due to minor differences in the positions of fast moving planets.
 def calculateDigBala(planet, chart):
 	fullDigBalaHouse = objectProps[
 		planet['name']
 	]['digBalaHouse']
+
 	fullDigBalaLongitude = (
-		fullDigBalaHouse - 1
-	) * signWidth + chart.objects['asc'][
-		'longitude'
-	]
+		chart.objects['asc']['longitude']
+		+ (fullDigBalaHouse - 1) * signWidth
+	) % degrees
+
 	distance = (
 		getShortestDistanceInCircle(
 			degrees,
@@ -216,13 +217,9 @@ def calculateDigBala(planet, chart):
 		)
 	)
 
-	strength = (
-		balaDefaultMaxScore
-		* (maxPossibleDistance - distance)
-		/ maxPossibleDistance
-	)
-
-	return strength
+	return (
+		maxPossibleDistance - distance
+	) * distanceToScoreFactor
 
 
 def calculateNatonnataBala(
