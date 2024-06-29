@@ -1,7 +1,4 @@
 ayanamsa: ay_raman
-hour: 0
-minute: 0
-second: 0
 # India specific defaults.
 utcHour: 5
 utcMinute: 30
