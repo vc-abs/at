@@ -13,7 +13,7 @@ pakshaTithiCount = tithiCount / 2
 houses = [
 	i + 1 for i in range(0, houseCount)
 ]
-weekDays = [
+weekdays = [
 	'sunday',
 	'monday',
 	'tuesday',
@@ -22,7 +22,7 @@ weekDays = [
 	'friday',
 	'saturday',
 ]
-daysInAWeek = len(weekDays)
+daysInAWeek = len(weekdays)
 planets = [
 	'sun',
 	'moon',
@@ -75,7 +75,7 @@ objectProps = {
 		'digBalaHouse': 10,
 		'moolaTrikona': [120, 140],
 		'tod': 'day',
-		'weekDay': 'sunday',
+		'weekday': 'sunday',
 	},
 	'moon': {
 		'exaltation': 33,
@@ -88,7 +88,7 @@ objectProps = {
 		'digBalaHouse': 4,
 		'moolaTrikona': [33, 60],
 		'tod': 'night',
-		'weekDay': 'monday',
+		'weekday': 'monday',
 	},
 	'mars': {
 		'exaltation': 298,
@@ -100,7 +100,7 @@ objectProps = {
 		'digBalaHouse': 10,
 		'moolaTrikona': [0, 12],
 		'tod': 'night',
-		'weekDay': 'tuesday',
+		'weekday': 'tuesday',
 	},
 	'mercury': {
 		'exaltation': 165,
@@ -112,7 +112,7 @@ objectProps = {
 		'digBalaHouse': 1,
 		'moolaTrikona': [165, 170],
 		'tod': 'day',
-		'weekDay': 'wednesday',
+		'weekday': 'wednesday',
 	},
 	'jupiter': {
 		'exaltation': 95,
@@ -124,7 +124,7 @@ objectProps = {
 		'digBalaHouse': 1,
 		'moolaTrikona': [240, 250],
 		'tod': 'day',
-		'weekDay': 'thursday',
+		'weekday': 'thursday',
 	},
 	'venus': {
 		'exaltation': 357,
@@ -136,7 +136,7 @@ objectProps = {
 		'digBalaHouse': 4,
 		'moolaTrikona': [180, 195],
 		'tod': 'day',
-		'weekDay': 'friday',
+		'weekday': 'friday',
 	},
 	'saturn': {
 		'exaltation': 200,
@@ -148,7 +148,7 @@ objectProps = {
 		'digBalaHouse': 7,
 		'moolaTrikona': [300, 320],
 		'tod': 'night',
-		'weekDay': 'saturday',
+		'weekday': 'saturday',
 	},
 	'rahu': {
 		'quality': 'malefic',

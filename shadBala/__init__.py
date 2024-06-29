@@ -275,7 +275,7 @@ def calculateVaaraBala(planet, chart):
 		balaDefaultMaxScore
 		if chart.panchang.vaara
 		== objectProps[planet['name']][
-			'weekDay'
+			'weekday'
 		]
 		else balaDefaultMinScore
 	)

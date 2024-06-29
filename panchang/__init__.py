@@ -4,7 +4,7 @@ from core.constants import (
 	signCount,
 	tithiCount,
 	degrees,
-	weekDays,
+	weekdays,
 	daysInAWeek,
 	nakshatras,
 	nakshatraCount,
@@ -92,7 +92,7 @@ class Panchang(Cached):
 			)
 			else -1
 		)
-		return weekDays[
+		return weekdays[
 			(
 				self._chart._config[
 					'date'
