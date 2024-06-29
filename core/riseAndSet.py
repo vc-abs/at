@@ -54,7 +54,6 @@ def getRiseAndSetTimes(config):
 		config['latitude'],
 		config['longitude'],
 	)
-	print(dt, latitude, longitude)
 	altitude = 0.0
 	geopos = (
 		longitude,

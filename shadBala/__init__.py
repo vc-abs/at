@@ -25,9 +25,8 @@ distanceToScoreFactor = (
 	balaDefaultMaxScore
 	/ maxPossibleDistance
 )
-maxDistanceBetweenPoints = degrees / 2
 ucchaBalaScaleFactor = (
-	maxDistanceBetweenPoints
+	maxPossibleDistance
 	/ balaDefaultMaxScore
 )
 
@@ -186,9 +185,6 @@ def calculateSthanaBala(planet, chart):
 	)
 
 
-fullDigBalaPoints = 60
-
-
 # #TODO: The results are fairly close to that of Jyotish App. Yet, the accuracy can be improved.
 def calculateDigBala(planet, chart):
 	fullDigBalaHouse = objectProps[
@@ -208,7 +204,7 @@ def calculateDigBala(planet, chart):
 	)
 
 	strength = (
-		fullDigBalaPoints
+		balaDefaultMaxScore
 		* (maxPossibleDistance - distance)
 		/ maxPossibleDistance
 	)
@@ -220,12 +216,12 @@ def calculateNatonnataBala(
 	planet, chart
 ):
 	return (
-		60
+		balaDefaultMaxScore
 		if chart.panchang.tod
 		== objectProps[planet['name']][
 			'tod'
 		]
-		else 0
+		else balaDefaultMinScore
 	)
 
 
