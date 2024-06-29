@@ -9,6 +9,7 @@ from core.constants import (
 )
 from core.helpers import (
 	getHouseQuality,
+	getDistanceInCircle,
 	getShortestDistanceInCircle,
 )
 from core.dignity import (
@@ -268,8 +269,41 @@ def calculatePakshaBala(planet, chart):
 	) * pakshaBalaMultiplier
 
 
-def calculateTribaghaBala(planet):
-	return 0
+tribaghaPlanetOrder = [
+	'mercury',
+	'sun',
+	'saturn',
+	'moon',
+	'venus',
+	'mars',
+]
+
+
+def calculateTribaghaBala(
+	planet, chart
+):
+	if planet['name'] == 'jupiter':
+		return balaDefaultMaxScore
+
+	sunToAscDistance = (
+		getDistanceInCircle(
+			degrees,
+			chart.objects['sun']['longitude'],
+			chart.objects['asc']['longitude'],
+		)
+	)
+	tribaghaIndex = int(
+		sunToAscDistance // 60
+	)
+
+	return (
+		balaDefaultMaxScore
+		if tribaghaPlanetOrder[
+			tribaghaIndex
+		]
+		== planet['name']
+		else balaDefaultMinScore
+	)
 
 
 def calculateAbdaBala(planet):
@@ -312,7 +346,7 @@ def calculateKaalaBala(planet, chart):
 			planet, chart
 		),
 		'tribaghaBala': calculateTribaghaBala(
-			planet
+			planet, chart
 		),
 		'abdaBala': calculateAbdaBala(
 			planet
