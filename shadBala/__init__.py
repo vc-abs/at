@@ -270,8 +270,15 @@ def calculateMaasaBala(planet):
 	return 0
 
 
-def calculateVaaraBala(planet):
-	return 0
+def calculateVaaraBala(planet, chart):
+	return (
+		balaDefaultMaxScore
+		if chart.panchang.vaara
+		== objectProps[planet['name']][
+			'weekDay'
+		]
+		else balaDefaultMinScore
+	)
 
 
 def calculateHoraBala(planet):
@@ -295,7 +302,7 @@ def calculateKaalaBala(planet, chart):
 		+ calculateTribaghaBala(planet)
 		+ calculateAbdaBala(planet)
 		+ calculateMaasaBala(planet)
-		+ calculateVaaraBala(planet)
+		+ calculateVaaraBala(planet, chart)
 		+ calculateHoraBala(planet)
 		+ calculateAyanaBala(planet)
 		+ calculateYuddhaBala(planet)

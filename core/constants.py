@@ -75,6 +75,7 @@ objectProps = {
 		'digBalaHouse': 10,
 		'moolaTrikona': [120, 140],
 		'tod': 'day',
+		'weekDay': 'sunday',
 	},
 	'moon': {
 		'exaltation': 33,
@@ -87,6 +88,7 @@ objectProps = {
 		'digBalaHouse': 4,
 		'moolaTrikona': [33, 60],
 		'tod': 'night',
+		'weekDay': 'monday',
 	},
 	'mars': {
 		'exaltation': 298,
@@ -98,6 +100,7 @@ objectProps = {
 		'digBalaHouse': 10,
 		'moolaTrikona': [0, 12],
 		'tod': 'night',
+		'weekDay': 'tuesday',
 	},
 	'mercury': {
 		'exaltation': 165,
@@ -109,6 +112,7 @@ objectProps = {
 		'digBalaHouse': 1,
 		'moolaTrikona': [165, 170],
 		'tod': 'day',
+		'weekDay': 'wednesday',
 	},
 	'jupiter': {
 		'exaltation': 95,
@@ -120,6 +124,7 @@ objectProps = {
 		'digBalaHouse': 1,
 		'moolaTrikona': [240, 250],
 		'tod': 'day',
+		'weekDay': 'thursday',
 	},
 	'venus': {
 		'exaltation': 357,
@@ -131,6 +136,7 @@ objectProps = {
 		'digBalaHouse': 4,
 		'moolaTrikona': [180, 195],
 		'tod': 'day',
+		'weekDay': 'friday',
 	},
 	'saturn': {
 		'exaltation': 200,
@@ -142,6 +148,7 @@ objectProps = {
 		'digBalaHouse': 7,
 		'moolaTrikona': [300, 320],
 		'tod': 'night',
+		'weekDay': 'saturday',
 	},
 	'rahu': {
 		'quality': 'malefic',
