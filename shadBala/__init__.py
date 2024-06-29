@@ -15,9 +15,16 @@ from core.dignity import (
 	getPlanetDignity,
 )
 from core.varga import getVargaPosition
+from core.planetQuality import (
+	getPlanetQuality,
+)
 
 balaDefaultMaxScore = 60
 balaDefaultMinScore = 0
+distanceToScoreFactor = (
+	balaDefaultMaxScore
+	/ maxPossibleDistance
+)
 maxDistanceBetweenPoints = degrees / 2
 ucchaBalaScaleFactor = (
 	maxDistanceBetweenPoints
@@ -222,8 +229,37 @@ def calculateNatonnataBala(
 	)
 
 
-def calculatePakshaBala(planet):
-	return 0
+def calculatePakshaBala(planet, chart):
+	pakshaBalaDirection = (
+		1
+		if getPlanetQuality(planet, chart)
+		!= 'malefic'
+		else -1
+	)
+	objects = chart.objects
+	pakshaBalaMultiplier = (
+		2 if planet['name'] == 'moon' else 1
+	)
+
+	sunMoonDistance = (
+		getShortestDistanceInCircle(
+			degrees,
+			objects['sun']['longitude'],
+			objects['moon']['longitude'],
+		)
+	)
+	pakshaBalaValue = (
+		sunMoonDistance
+		* distanceToScoreFactor
+	)
+
+	return (
+		balaDefaultMinScore
+		+ pakshaBalaValue
+		if pakshaBalaDirection > 0
+		else balaDefaultMaxScore
+		- pakshaBalaValue
+	) * pakshaBalaMultiplier
 
 
 def calculateTribaghaBala(planet):
@@ -259,7 +295,7 @@ def calculateKaalaBala(planet, chart):
 		calculateNatonnataBala(
 			planet, chart
 		)
-		+ calculatePakshaBala(planet)
+		+ calculatePakshaBala(planet, chart)
 		+ calculateTribaghaBala(planet)
 		+ calculateAbdaBala(planet)
 		+ calculateMaasaBala(planet)
