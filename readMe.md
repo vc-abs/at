@@ -11,6 +11,11 @@ $ # Using presets. Configs to the right have more priority.
 $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ```
 
+## Thanks To
+* [Jagannatha Hora](https://www.vedicastrologer.org/jh/), a vedic astrology software by P. V. R. Narasimmha Rao.
+* [JyotishApp](https://play.google.com/store/apps/details?id=com.vishdroid.jyotisha), an android app by Vishnuvardhana SV.
+* [JyotishyaMitra](https://github.com/VicharaVandana/jyotishyamitra/), a python package by Shyam Bhat.
+
 ## Notes
 * Some computations might be off by a few minutes.
 * The preferred ayanamsa is "ay_raman" as it's closer to the Pushya at 16Cn, suggested by PVN Rao.
@@ -22,7 +27,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Create CSV-s for storing all possible data in the constants file.
 * Think about having the start time as the default time.
 * Use planetary short forms (IE: Me, Ju, etc) as the default.
-* Try using (Pyswisseph)[https://github.com/astrorigin/pyswisseph] instead of depending on sideralib. This might interfere Ayanamsa customization, as BV-Raman ayanamsa seems not to be available.
+* Try using [Pyswisseph](https://github.com/astrorigin/pyswisseph) instead of depending on sideralib. This might interfere Ayanamsa customization, as BV-Raman ayanamsa seems not to be available.
 * Replace periods with a single period config, with values with same type as frequency.
 * Check whether muhurtaYoga effects depend upon Pakshatithis.
 * Validate the presets with experts.
@@ -47,8 +52,8 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Amritsiddhi Muhurtayoga is a subset of Sarvarthasiddhi yoga.
 
 ## Glossary
-* **JH**: Jagannatha Hora, a vedic astrology software by P. V. R. Narasimmha Rao.
-* **JA**: Jyotish App, an android app by Vishnuvardhana SV.
+* **JH**: Jagannatha Hora.
+* **JA**: JyotishApp.
 
 ## 	Log
 * 2406250100 - Found out that the difference between the Saptavargaja Calculation of JH and JA are due the differences in calculating D2 chart. JH by default doesn't use the traditional Parasara Hora. And also found out that there are many systems of calculating divisional charts.
