@@ -236,8 +236,11 @@ def calculateNatonnataBala(
 def calculatePakshaBala(planet, chart):
 	pakshaBalaDirection = (
 		1
-		if getPlanetQuality(planet, chart)
-		!= 'malefic'
+		if (
+			planet['name'] == 'moon'
+			or getPlanetQuality(planet, chart)
+			!= 'malefic'
+		)
 		else -1
 	)
 	objects = chart.objects
