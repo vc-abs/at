@@ -69,28 +69,32 @@ def getHouseQuality(house):
 
 
 def getDistanceInCircle(
-	circumference, p1Distance, p2Distance
+	p1DistanceFromStart,
+	p2DistanceFromStart,
+	circumference=degrees,
 ):
 	return (
 		circumference
-		+ p2Distance
-		- p1Distance
+		+ p2DistanceFromStart
+		- p1DistanceFromStart
 	) % circumference
 
 
 def getShortestDistanceInCircle(
-	circumference, p1Distance, p2Distance
+	p1DistanceFromStart,
+	p2DistanceFromStart,
+	circumference=degrees,
 ):
 	return min(
 		getDistanceInCircle(
+			p1DistanceFromStart,
+			p2DistanceFromStart,
 			circumference,
-			p1Distance,
-			p2Distance,
 		),
 		getDistanceInCircle(
+			p2DistanceFromStart,
+			p1DistanceFromStart,
 			circumference,
-			p2Distance,
-			p1Distance,
 		),
 	)
 

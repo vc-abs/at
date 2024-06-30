@@ -35,7 +35,6 @@ ucchaBalaScaleFactor = (
 def calculateUcchaBala(planet):
 	distanceToExaltation = (
 		getShortestDistanceInCircle(
-			degrees,
 			planet['longitude'],
 			objectProps[planet['name']][
 				'exaltation'
@@ -44,7 +43,6 @@ def calculateUcchaBala(planet):
 	)
 	distanceToDebilitation = (
 		getShortestDistanceInCircle(
-			degrees,
 			planet['longitude'],
 			objectProps[planet['name']][
 				'debilitation'
@@ -212,7 +210,6 @@ def calculateDigBala(planet, chart):
 
 	distance = (
 		getShortestDistanceInCircle(
-			degrees,
 			planet['longitude'],
 			fullDigBalaLongitude,
 		)
@@ -250,7 +247,6 @@ def calculatePakshaBala(planet, chart):
 
 	sunMoonDistance = (
 		getShortestDistanceInCircle(
-			degrees,
 			objects['sun']['longitude'],
 			objects['moon']['longitude'],
 		)
@@ -287,7 +283,6 @@ def calculateTribaghaBala(
 
 	sunToAscDistance = (
 		getDistanceInCircle(
-			degrees,
 			chart.objects['sun']['longitude'],
 			chart.objects['asc']['longitude'],
 		)
