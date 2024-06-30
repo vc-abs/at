@@ -1,6 +1,10 @@
 from np import sign
 from core.constants import (
 	objectProps,
+	maxPossibleDistance,
+)
+from core.helpers import (
+	getShortestDistanceInCircle,
 )
 
 planetQualities = [
@@ -46,8 +50,13 @@ def getMercuryQuality(chart):
 
 
 conditionalQualifiers = {
+	# #NOTE: There could be a minor discrepancy with JA in calculating the quality of the moon, as it depends upon tithis and below it depends upon degrees.
 	'moon': lambda chart: 1
-	if chart.panchang.tithi < 15
+	if getShortestDistanceInCircle(
+		chart.objects['sun']['longitude'],
+		chart.objects['moon']['longitude'],
+	)
+	> maxPossibleDistance / 2
 	else -1,
 	'mercury': getMercuryQuality,
 }
