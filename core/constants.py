@@ -76,6 +76,7 @@ objectProps = {
 		'moolaTrikona': [120, 140],
 		'tod': 'day',
 		'weekday': 'sunday',
+		'ayana': 'north',
 	},
 	'moon': {
 		'exaltation': 33,
@@ -89,6 +90,7 @@ objectProps = {
 		'moolaTrikona': [33, 60],
 		'tod': 'night',
 		'weekday': 'monday',
+		'ayana': 'south',
 	},
 	'mars': {
 		'exaltation': 298,
@@ -101,6 +103,7 @@ objectProps = {
 		'moolaTrikona': [0, 12],
 		'tod': 'night',
 		'weekday': 'tuesday',
+		'ayana': 'north',
 	},
 	'mercury': {
 		'exaltation': 165,
@@ -113,6 +116,7 @@ objectProps = {
 		'moolaTrikona': [165, 170],
 		'tod': 'day',
 		'weekday': 'wednesday',
+		'ayana': 'both',
 	},
 	'jupiter': {
 		'exaltation': 95,
@@ -125,6 +129,7 @@ objectProps = {
 		'moolaTrikona': [240, 250],
 		'tod': 'day',
 		'weekday': 'thursday',
+		'ayana': 'north',
 	},
 	'venus': {
 		'exaltation': 357,
@@ -137,6 +142,7 @@ objectProps = {
 		'moolaTrikona': [180, 195],
 		'tod': 'day',
 		'weekday': 'friday',
+		'ayana': 'north',
 	},
 	'saturn': {
 		'exaltation': 200,
@@ -149,6 +155,7 @@ objectProps = {
 		'moolaTrikona': [300, 320],
 		'tod': 'night',
 		'weekday': 'saturday',
+		'ayana': 'south',
 	},
 	'rahu': {
 		'quality': 'malefic',

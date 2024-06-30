@@ -1,3 +1,5 @@
+import math
+from math import sin, radians
 from core.Cached import Cached
 from core.constants import (
 	planets,
@@ -22,6 +24,10 @@ from core.planetQuality import (
 
 balaDefaultMaxScore = 60
 balaDefaultMinScore = 0
+balaDefaultMidScore = (
+	balaDefaultMaxScore
+	- balaDefaultMinScore
+) / 2
 distanceToScoreFactor = (
 	balaDefaultMaxScore
 	/ maxPossibleDistance
@@ -327,10 +333,95 @@ def calculateHoraBala(planet):
 	return 0
 
 
+# #NOTE: The given ayana bala computation is not well understood, despite the availability of few Python resources. The results were verified to be  approximately close to the results from JA for a couple of charts. Conversely the differences between the results might have been due to the differences in planetary longitudes, as seen with the impact on Dig Bala calculations.
+declinationTable = [
+	0,
+	362 / 60.0,
+	703 / 60.0,
+	1002 / 60.0,
+	1238 / 60.0,
+	1388 / 60.0,
+	1440 / 60.0,
+]
+
+obliquity = 23.44  # Current obliquity of the ecliptic in degrees
+
+
+def calcKranti(longitude):
+	sign = (
+		-1 if 180 < longitude <= 360 else 1
+	)
+
+	if 0 < longitude <= 90:
+		bhuja = longitude
+	elif 90 < longitude <= 180:
+		bhuja = 180.0 - longitude
+	elif 180 < longitude <= 270:
+		bhuja = longitude - 180
+	elif 270 < longitude <= 360:
+		bhuja = 360.0 - longitude
+	else:
+		bhuja = 0.0
+
+	dividend = int(bhuja // 15)
+	remainder = bhuja % 15
+	remDecl = (
+		(
+			declinationTable[dividend + 1]
+			- declinationTable[dividend]
+		)
+		* remainder
+	) / 15.0
+
+	return (
+		declinationTable[dividend] + remDecl
+	) * sign + obliquity
+
+
 def calculateAyanaBala(planet):
-	return 0
+	currentAyana = (
+		'north'
+		if 1 <= planet['sign'] <= 6
+		else 'south'
+	)
+	planetAyana = objectProps[
+		planet['name']
+	]['ayana']
+	ayanaDirection = (
+		1
+		if (
+			planetAyana == 'both'
+			or planetAyana == currentAyana
+		)
+		else -1
+	)
+	balaMultiplier = (
+		2 if planet['name'] == 'sun' else 1
+	)
+
+	bala = (
+		balaDefaultMidScore
+		* (
+			1
+			+ (
+				ayanaDirection
+				* calcKranti(
+					planet['longitude']
+				)
+				/ 48
+			)
+		)
+		* balaMultiplier
+	)
+	print(
+		planet['name'],
+		planet['longitude'] % signWidth,
+		bala,
+	)
+	return bala
 
 
+# #NOTE: Yuddha Bala calculation is postponed due to the following reasons. JH doesn't seem to have it. JA has the values from -1 to 1, thus with almost no impact. The information available elsewhere doesn't seem to help much in figuring out the method of calculation.
 def calculateYuddhaBala(planet):
 	return 0
 
