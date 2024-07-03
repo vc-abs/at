@@ -10,7 +10,7 @@ from core.constants import (
 	nakshatraCount,
 	padasPerNakshatra,
 )
-from core.riseAndSet import (
+from core.sweHelpers import (
 	getRiseAndSetTimes,
 )
 from core.helpers import (

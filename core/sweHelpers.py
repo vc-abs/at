@@ -10,6 +10,13 @@ gregflag = swe.GREG_CAL
 atmo = (1013.25, 15)
 planet = swe.SUN
 
+utcTimeZone = timezone(
+	offset=timedelta(
+		hours=0,
+		minutes=0,
+	)
+)
+
 
 def floatToHMS(floatHours):
 	hours = int(floatHours)
@@ -23,12 +30,15 @@ def floatToHMS(floatHours):
 	return hours, minutes, seconds
 
 
-def parseSweTime(tret, tzinfo):
+def parseSweTime(
+	tret, tzinfo=utcTimeZone
+):
 	year, month, day, floatHour = (
 		swe.revjul(tret[0], gregflag)
 	)
 
 	hour, min, sec = floatToHMS(floatHour)
+
 	return datetime(
 		year,
 		month,
@@ -36,12 +46,7 @@ def parseSweTime(tret, tzinfo):
 		hour,
 		min,
 		sec,
-		tzinfo=timezone(
-			offset=timedelta(
-				hours=0,
-				minutes=0,
-			)
-		),
+		tzinfo=utcTimeZone,
 	).astimezone(tzinfo)
 
 
