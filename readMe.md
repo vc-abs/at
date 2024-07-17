@@ -23,10 +23,11 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Astrology software in general seem to have at least a few minor bugs in handling sunrise and sunset times at higher latitudes.
 * Some names are in English and other in Sanskrit. This is a temporary situation for operational efficiency.
 * AbdaBala and MaasaBala calculations doesn't seem to be precise, as the length of an year (based Jupiter's movement across signs) is considered to be 360 days, instead of ~361.08333 days. The same anchors are used for computing MaasaBala too. This might render the values incorrect. This might need some new calculation methods by analyzing Astro Data Banks.
-
+* Rise and Set calculations of polar regions could be imprecise.
 
 ## ToDo
 * Create CSV-s for storing all possible data in the constants file.
+* Explore True [Pushya Nakshatra Ayanamsa by PVRNR](https://astrorigin.com/pyswisseph/sphinx/ephemerides/sidereal/suryasiddhanta_and_aryabhata.html#true-pushya-paksha-ayanamsha) (swe.SIDM_TRUE_PUSHYA).
 * Think about having the start time as the default time.
 * Use planetary short forms (IE: Me, Ju, etc) as the default.
 * Try using [Pyswisseph](https://github.com/astrorigin/pyswisseph) instead of depending on sideralib, as the former has become essential for comparatively complex calculations.
@@ -48,6 +49,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Bring in the effects of other time scales like maasa, yoga, karana, chowgadiya, hora etc. These might need a different CSV file as the format is different, as their effects are not tied to other scales.
 * When possible include personal natal charts to find muhurta fitment.
 * Fine tune the analysis with input from: https://astrologerjolly.tripod.com/muhurtha.htm
+* Understand the impact of altitude on charts, as the sunrise time would be different.
 
 ## References
 * Krakacha yoga is formed when tithi + vaara = 13.

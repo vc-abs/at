@@ -11,7 +11,8 @@ from sideralib import (
 gregflag = swe.GREG_CAL
 # pressure & temperature or irrelevant for hindu method, can be set to 0
 atmo = (1013.25, 15)
-planet = swe.SUN
+altitude = 0.0
+SUN = swe.SUN
 
 utcTimeZone = timezone(
 	offset=timedelta(
@@ -79,7 +80,6 @@ def getRiseAndSetTimes(config):
 		config['latitude'],
 		config['longitude'],
 	)
-	altitude = 0.0
 	geopos = (
 		longitude,
 		latitude,
@@ -96,25 +96,40 @@ def getRiseAndSetTimes(config):
 
 	tjd = tjd - (longitude / 360.0)
 
-	rsmi = (
+	riseFlags = (
 		swe.CALC_RISE | swe.BIT_DISC_CENTER
 	)
 	isRiseMissing, tRise = swe.rise_trans(
 		tjd,
-		planet,
-		rsmi,
+		SUN,
+		riseFlags,
 		geopos,
 		atmo[0],
 		atmo[1],
 	)
 
-	rsmi = (
-		swe.CALC_SET | swe.BIT_HINDU_RISING
+	tNextRise = (
+		None
+		if isRiseMissing
+		else (
+			swe.rise_trans(
+				tRise[0] + 0.001,
+				SUN,
+				riseFlags,
+				geopos,
+				atmo[0],
+				atmo[1],
+			)[1]
+		)
+	)
+
+	setFlags = (
+		swe.CALC_SET | swe.BIT_DISC_CENTER
 	)
 	isSetMissing, tSet = swe.rise_trans(
 		tjd,
-		planet,
-		rsmi,
+		SUN,
+		setFlags,
 		geopos,
 		atmo[0],
 		atmo[1],
@@ -130,6 +145,11 @@ def getRiseAndSetTimes(config):
 		if isSetMissing
 		else jdtToDateTime(
 			tSet[0], dt.tzinfo
+		),
+		'nextRise': None
+		if not tNextRise
+		else jdtToDateTime(
+			tNextRise[0], dt.tzinfo
 		),
 	}
 

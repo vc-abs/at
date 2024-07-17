@@ -1,4 +1,9 @@
 import math
+from datetime import (
+	datetime,
+	time,
+	timezone,
+)
 from core.Cached import Cached
 from core.constants import (
 	signCount,
@@ -69,10 +74,32 @@ class Panchang(Cached):
 			self._chart._config
 		)
 
+	def _getDayLengths(self):
+		riseAndSet = self.riseAndSet
+		eventTime = self._chart.config[
+			'datetime'
+		]
+
+		dayStart = datetime.combine(
+			eventTime.date(), time.min
+		).replace(tzinfo=timezone.utc)
+
+		elapsed = (
+			eventTime - dayStart
+		).total_seconds()
+		length = (
+			riseAndSet['nextRise']
+			- riseAndSet['sunrise']
+		).total_seconds()
+
+		return {
+			'elapsed': elapsed,
+			'total': length,
+		}
+
 	def _getTod(self):
-		riseAndSetTimes = (
-			self._getRiseAndSet()
-		)
+		riseAndSetTimes = self.riseAndSet
+
 		return (
 			'day'
 			if (
