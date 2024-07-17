@@ -4,8 +4,17 @@ from datetime import (
 	timedelta,
 )
 import swisseph as swe
-from sideralib import (
-	astrodata,
+
+minutesPerHor = 60
+secondsPerHour = 3600
+secondsPerMinute = 60
+floatingPointPrecisionCorrectionSeconds = 0.001
+
+riseFlags = (
+	swe.CALC_RISE | swe.BIT_DISC_CENTER
+)
+setFlags = (
+	swe.CALC_SET | swe.BIT_DISC_CENTER
 )
 
 gregflag = swe.GREG_CAL
@@ -23,14 +32,19 @@ utcTimeZone = timezone(
 
 
 def floatToHMS(floatHours):
-	# #TODO: Fix the minor inconsistency (of 1 second), happening probably due to difference in floating point operations, when the timezone is +05:30.
 	hours = int(floatHours)
 	remainingHours = floatHours - hours
-	minutes = int(remainingHours * 60)
 	remainingMinutes = (
-		remainingHours * 60
+		remainingHours * minutesPerHor
+	)
+	minutes = int(remainingMinutes)
+	minutesFraction = (
+		remainingMinutes
 	) - minutes
-	seconds = int(remainingMinutes * 60)
+	seconds = int(
+		minutesFraction * secondsPerMinute
+		+ floatingPointPrecisionCorrectionSeconds
+	)
 
 	return hours, minutes, seconds
 
@@ -62,20 +76,56 @@ def dateTimeToJDT(fromValue):
 			utcTimeZone
 		).utcoffset()
 	).seconds
-
 	return swe.julday(
 		fromValue.year,
 		fromValue.month,
 		fromValue.day,
-		(offsetSeconds / 3600),
+		fromValue.hour
+		+ (
+			(
+				fromValue.minute
+				* secondsPerMinute
+				+ fromValue.second
+				- offsetSeconds
+				+ floatingPointPrecisionCorrectionSeconds
+			)
+			/ secondsPerHour
+		),
+	)
+
+
+# #Note: Precision of JDT is more than that of eventTime configuration, which is at the second level. This creates issues in computing rise and set times and is fixed by neglecting tiny differences.
+def isJDTGreater(baseJDT, comparedJDT):
+	isDifferenceTiny = (
+		abs(baseJDT - comparedJDT) < 0.00001
+	)
+
+	return (
+		False
+		if isDifferenceTiny
+		else baseJDT > comparedJDT
+	)
+
+
+def getNextRise(tjd, geopos):
+	isRiseMissing, tRise = swe.rise_trans(
+		tjd,
+		SUN,
+		riseFlags,
+		geopos,
+		atmo[0],
+		atmo[1],
+	)
+
+	return (
+		None if isRiseMissing else tRise[0]
 	)
 
 
 # #NOTE: There's some one minute difference in both sunrise and sunset times, when compared to JH. The flags used are to get closer to those values, and are not from proper understanding.
-# #TODO: Fix the discrepancy in time calculation.
 # #FROM: https://astrorigin.com/pyswisseph/sphinx/programmers_manual/planetary_phenomena/risings_settings_meridian_transits.html?highlight=bit_hindu_rising
 def getRiseAndSetTimes(config):
-	dt, latitude, longitude = (
+	eventTime, latitude, longitude = (
 		config['datetime'],
 		config['latitude'],
 		config['longitude'],
@@ -87,45 +137,48 @@ def getRiseAndSetTimes(config):
 	)
 
 	tjd = swe.julday(
-		dt.year,
-		dt.month,
-		dt.day,
+		eventTime.year,
+		eventTime.month,
+		eventTime.day,
 		0,
 		gregflag,
 	)
-
+	eventTimeJulian = dateTimeToJDT(
+		eventTime
+	)
 	tjd = tjd - (longitude / 360.0)
-
-	riseFlags = (
-		swe.CALC_RISE | swe.BIT_DISC_CENTER
+	tThisRise = getNextRise(tjd, geopos)
+	direction = tThisRise and (
+		-1
+		if isJDTGreater(
+			tThisRise, eventTimeJulian
+		)
+		else 1
 	)
-	isRiseMissing, tRise = swe.rise_trans(
-		tjd,
-		SUN,
-		riseFlags,
-		geopos,
-		atmo[0],
-		atmo[1],
-	)
+	offset = (
+		1.999 if direction < 0 else 0.001
+	) * direction
 
-	tNextRise = (
+	tOtherRise = (
 		None
-		if isRiseMissing
-		else (
-			swe.rise_trans(
-				tRise[0] + 0.001,
-				SUN,
-				riseFlags,
-				geopos,
-				atmo[0],
-				atmo[1],
-			)[1]
+		if tThisRise is None
+		else getNextRise(
+			tThisRise + offset,
+			geopos,
 		)
 	)
 
-	setFlags = (
-		swe.CALC_SET | swe.BIT_DISC_CENTER
+	tRise = (
+		tThisRise
+		if direction > 0
+		else tOtherRise
 	)
+	tNextRise = (
+		tOtherRise
+		if direction > 0
+		else tThisRise
+	)
+
 	isSetMissing, tSet = swe.rise_trans(
 		tjd,
 		SUN,
@@ -137,19 +190,19 @@ def getRiseAndSetTimes(config):
 
 	return {
 		'sunrise': None
-		if isRiseMissing
+		if tRise is None
 		else jdtToDateTime(
-			tRise[0], dt.tzinfo
+			tRise, eventTime.tzinfo
 		),
 		'sunset': None
 		if isSetMissing
 		else jdtToDateTime(
-			tSet[0], dt.tzinfo
+			tSet[0], eventTime.tzinfo
 		),
 		'nextRise': None
 		if not tNextRise
 		else jdtToDateTime(
-			tNextRise[0], dt.tzinfo
+			tNextRise, eventTime.tzinfo
 		),
 	}
 
