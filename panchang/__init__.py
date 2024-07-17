@@ -79,18 +79,18 @@ class Panchang(Cached):
 		eventTime = self._chart.config[
 			'datetime'
 		]
-
-		dayStart = datetime.combine(
-			eventTime.date(), time.min
-		).replace(tzinfo=timezone.utc)
-
-		elapsed = (
-			eventTime - dayStart
-		).total_seconds()
-		length = (
-			riseAndSet['nextRise']
-			- riseAndSet['sunrise']
-		).total_seconds()
+		elapsed = int(
+			(
+				eventTime
+				- riseAndSet['sunrise']
+			).total_seconds()
+		)
+		length = int(
+			(
+				riseAndSet['nextRise']
+				- riseAndSet['sunrise']
+			).total_seconds()
+		)
 
 		return {
 			'elapsed': elapsed,
