@@ -22,12 +22,14 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Jagannatha Hora seems to be more stable in handling higher latitudes than JyotishApp.
 * Astrology software in general seem to have at least a few minor bugs in handling sunrise and sunset times at higher latitudes.
 * Some names are in English and other in Sanskrit. This is a temporary situation for operational efficiency.
+* AbdaBala and MaasaBala calculations doesn't seem to be precise, as the length of an year (based Jupiter's movement across signs) is considered to be 360 days, instead of ~361.08333 days. The same anchors are used for computing MaasaBala too. This might render the values incorrect. This might need some new calculation methods by analyzing Astro Data Banks.
+
 
 ## ToDo
 * Create CSV-s for storing all possible data in the constants file.
 * Think about having the start time as the default time.
 * Use planetary short forms (IE: Me, Ju, etc) as the default.
-* Try using [Pyswisseph](https://github.com/astrorigin/pyswisseph) instead of depending on sideralib. This might interfere Ayanamsa customization, as BV-Raman ayanamsa seems not to be available.
+* Try using [Pyswisseph](https://github.com/astrorigin/pyswisseph) instead of depending on sideralib, as the former has become essential for comparatively complex calculations.
 * Replace periods with a single period config, with values with same type as frequency.
 * Check whether muhurtaYoga effects depend upon Pakshatithis.
 * Validate the presets with experts.

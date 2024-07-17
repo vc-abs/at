@@ -1,4 +1,9 @@
-import math
+import swisseph as swe
+import datetime
+from datetime import (
+	timezone,
+	timedelta,
+)
 from math import sin, radians
 from core.Cached import Cached
 from core.constants import (
@@ -310,8 +315,65 @@ def calculateTribaghaBala(
 	)
 
 
-def calculateAbdaBala(planet):
-	return 0
+indiaTZ = timezone(
+	offset=timedelta(
+		hours=5,
+		minutes=30,
+	)
+)
+aharganaAnchorDate = datetime.datetime(
+	2024,
+	6,
+	17,  # NOTE: Midnight of the previous date.
+	tzinfo=indiaTZ,
+)
+
+
+def getAharganaDays(chart):
+	eventTime = chart.config['datetime']
+	dayOffset = (
+		-1
+		if chart.panchang.riseAndSet[
+			'sunrise'
+		]
+		> eventTime
+		else 0
+	)
+
+	return (
+		eventTime - aharganaAnchorDate
+	).days + dayOffset
+
+
+abdaLordOrder = [
+	'moon',
+	'jupiter',
+	'sun',
+	'mercury',
+	'saturn',
+	'mars',
+	'venus',
+]
+abdaLordCount = len(abdaLordOrder)
+bvrAbdaYearLengthInDays = 360
+maxAbdaBalaPoints = 15
+
+
+def calculateAbdaBala(planet, chart):
+	abdaYear = (
+		getAharganaDays(chart)
+		// bvrAbdaYearLengthInDays
+	)
+	abdaStartingDayLord = abdaLordOrder[
+		abdaYear % abdaLordCount
+	]
+
+	return (
+		balaDefaultMinScore
+		if planet['name']
+		!= abdaStartingDayLord
+		else maxAbdaBalaPoints
+	)
 
 
 def calculateMaasaBala(planet):
@@ -413,11 +475,7 @@ def calculateAyanaBala(planet):
 		)
 		* balaMultiplier
 	)
-	print(
-		planet['name'],
-		planet['longitude'] % signWidth,
-		bala,
-	)
+
 	return bala
 
 
@@ -438,7 +496,7 @@ def calculateKaalaBala(planet, chart):
 			planet, chart
 		),
 		'abdaBala': calculateAbdaBala(
-			planet
+			planet, chart
 		),
 		'maasaBala': calculateMaasaBala(
 			planet
