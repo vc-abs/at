@@ -345,7 +345,7 @@ def getAharganaDays(chart):
 	).days + dayOffset
 
 
-abdaLordOrder = [
+bvrAbdaLordOrder = [
 	'moon',
 	'jupiter',
 	'sun',
@@ -354,30 +354,52 @@ abdaLordOrder = [
 	'mars',
 	'venus',
 ]
-abdaLordCount = len(abdaLordOrder)
+abdaLordCount = len(bvrAbdaLordOrder)
 bvrAbdaYearLengthInDays = 360
 maxAbdaBalaPoints = 15
 
 
 def calculateAbdaBala(planet, chart):
-	abdaYear = (
+	abdaLordIndex = (
 		getAharganaDays(chart)
 		// bvrAbdaYearLengthInDays
-	)
-	abdaStartingDayLord = abdaLordOrder[
-		abdaYear % abdaLordCount
-	]
+	) % abdaLordCount
 
 	return (
 		balaDefaultMinScore
 		if planet['name']
-		!= abdaStartingDayLord
+		!= bvrAbdaLordOrder[abdaLordIndex]
 		else maxAbdaBalaPoints
 	)
 
 
-def calculateMaasaBala(planet):
-	return 0
+bvrMaasaLordOrder = [
+	'moon',
+	'mercury',
+	'jupiter',
+	'saturn',
+	'mars',
+	'venus',
+	'sun',
+]
+bvrMaasaLengthInDays = (
+	bvrAbdaYearLengthInDays // 12
+)
+maxMaasaBalaPoints = 30
+
+
+def calculateMaasaBala(planet, chart):
+	maasaLordIndex = (
+		getAharganaDays(chart)
+		// bvrMaasaLengthInDays
+	) % abdaLordCount
+
+	return (
+		balaDefaultMinScore
+		if planet['name']
+		!= bvrMaasaLordOrder[maasaLordIndex]
+		else maxMaasaBalaPoints
+	)
 
 
 def calculateVaaraBala(planet, chart):
@@ -499,7 +521,7 @@ def calculateKaalaBala(planet, chart):
 			planet, chart
 		),
 		'maasaBala': calculateMaasaBala(
-			planet
+			planet, chart
 		),
 		'vaaraBala': calculateVaaraBala(
 			planet, chart
