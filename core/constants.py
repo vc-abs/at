@@ -13,6 +13,7 @@ pakshaTithiCount = tithiCount / 2
 houses = [
 	i + 1 for i in range(0, houseCount)
 ]
+horasPerDay = 24
 weekdays = [
 	'sunday',
 	'monday',
@@ -53,8 +54,11 @@ dayRulers = [
 	'venus',
 	'saturn',
 ]
-
-horaSequence = [
+weekdayLords = {
+	k: v
+	for k, v in zip(weekdays, dayRulers)
+}
+horaLordSequence = [
 	'sun',
 	'venus',
 	'mercury',

@@ -1,9 +1,4 @@
 import math
-from datetime import (
-	datetime,
-	time,
-	timezone,
-)
 from core.Cached import Cached
 from core.constants import (
 	signCount,
@@ -11,6 +6,9 @@ from core.constants import (
 	degrees,
 	weekdays,
 	daysInAWeek,
+	weekdayLords,
+	horaLordSequence,
+	horasPerDay,
 	nakshatras,
 	nakshatraCount,
 	padasPerNakshatra,
@@ -128,6 +126,28 @@ class Panchang(Cached):
 				+ sunriseAdjustment
 			)
 			% daysInAWeek
+		]
+
+	def _getHora(self):
+		vaara = self.vaara
+		dayStartHoraLordIndex = (
+			horaLordSequence.index(
+				weekdayLords[vaara]
+			)
+		)
+		eventHora = int(
+			horasPerDay
+			* (
+				self.dayLengths['elapsed']
+				/ self.dayLengths['total']
+			)
+		)
+		eventHoraLordIndex = (
+			dayStartHoraLordIndex + eventHora
+		) % daysInAWeek
+
+		return horaLordSequence[
+			eventHoraLordIndex
 		]
 
 	def _getNakshatraNumber(self):
