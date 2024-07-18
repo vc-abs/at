@@ -35,15 +35,6 @@ def getObjectDistance(
 	) % degrees
 
 
-def hasSunRisen(
-	config, riseAndSetTimes
-):
-	return (
-		config['datetime']
-		>= riseAndSetTimes['sunrise']
-	)
-
-
 class Panchang(Cached):
 	def __init__(self, chart):
 		super().__init__()
@@ -109,21 +100,20 @@ class Panchang(Cached):
 		)
 
 	def _getVaara(self):
-		sunriseAdjustment = (
-			0
-			if hasSunRisen(
-				self._chart.config,
-				self.riseAndSet,
-			)
-			else -1
+		calendarDayAdjustment = (
+			self.riseAndSet['sunrise'].day
+			- self._chart.config[
+				'datetime'
+			].day
 		)
+
 		return weekdays[
 			(
 				self._chart._config[
 					'date'
 				].weekday()
 				+ 1
-				+ sunriseAdjustment
+				+ calendarDayAdjustment
 			)
 			% daysInAWeek
 		]
