@@ -289,19 +289,14 @@ tribaghaPlanetOrder = [
 
 
 def calculateTribaghaBala(
-	planet, chart
+	planet, kaalaValues
 ):
 	if planet['name'] == 'jupiter':
 		return balaDefaultMaxScore
 
-	sunToAscDistance = (
-		getDistanceInCircle(
-			chart.objects['sun']['longitude'],
-			chart.objects['asc']['longitude'],
-		)
-	)
 	tribaghaIndex = int(
-		sunToAscDistance // 60
+		kaalaValues['sunToAscDistance']
+		// 60
 	)
 
 	return (
@@ -358,9 +353,11 @@ bvrAbdaYearLengthInDays = 360
 maxAbdaBalaPoints = 15
 
 
-def calculateAbdaBala(planet, chart):
+def calculateAbdaBala(
+	planet, kaalaValues
+):
 	abdaLordIndex = (
-		getAharganaDays(chart)
+		kaalaValues['aharganaDays']
 		// bvrAbdaYearLengthInDays
 	) % abdaLordCount
 
@@ -387,9 +384,11 @@ bvrMaasaLengthInDays = (
 maxMaasaBalaPoints = 30
 
 
-def calculateMaasaBala(planet, chart):
+def calculateMaasaBala(
+	planet, kaalaValues
+):
 	maasaLordIndex = (
-		getAharganaDays(chart)
+		kaalaValues['aharganaDays']
 		// bvrMaasaLengthInDays
 	) % abdaLordCount
 
@@ -401,10 +400,12 @@ def calculateMaasaBala(planet, chart):
 	)
 
 
-def calculateVaaraBala(planet, chart):
+def calculateVaaraBala(
+	planet, kaalaValues
+):
 	return (
 		balaDefaultMaxScore
-		if chart.panchang.vaara
+		if kaalaValues['vaara']
 		== objectProps[planet['name']][
 			'weekday'
 		]
@@ -415,11 +416,13 @@ def calculateVaaraBala(planet, chart):
 maxHoraBalaPoints = 60
 
 
-def calculateHoraBala(planet, chart):
+def calculateHoraBala(
+	planet, kaalaValues
+):
 	return (
 		balaDefaultMinScore
 		if planet['name']
-		!= chart.panchang.hora
+		!= kaalaValues['hora']
 		else maxHoraBalaPoints
 	)
 
@@ -515,6 +518,23 @@ def calculateYuddhaBala(planet):
 
 def calculateKaalaBala(planet, chart):
 	# #TODO: Introduce pre-computation or caching of values to avoid recalculating them, per planet.
+	kaalaValues = {
+		'sunToAscDistance': (
+			getDistanceInCircle(
+				chart.objects['sun'][
+					'longitude'
+				],
+				chart.objects['asc'][
+					'longitude'
+				],
+			)
+		),
+		'aharganaDays': getAharganaDays(
+			chart
+		),
+		'vaara': chart.panchang.vaara,
+		'hora': chart.panchang.hora,
+	}
 	balas = {
 		'natonnataBala': calculateNatonnataBala(
 			planet, chart
@@ -523,19 +543,19 @@ def calculateKaalaBala(planet, chart):
 			planet, chart
 		),
 		'tribaghaBala': calculateTribaghaBala(
-			planet, chart
+			planet, kaalaValues
 		),
 		'abdaBala': calculateAbdaBala(
-			planet, chart
+			planet, kaalaValues
 		),
 		'maasaBala': calculateMaasaBala(
-			planet, chart
+			planet, kaalaValues
 		),
 		'vaaraBala': calculateVaaraBala(
-			planet, chart
+			planet, kaalaValues
 		),
 		'horaBala': calculateHoraBala(
-			planet, chart
+			planet, kaalaValues
 		),
 		'ayanaBala': calculateAyanaBala(
 			planet
