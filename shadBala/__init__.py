@@ -4,7 +4,6 @@ from datetime import (
 	timezone,
 	timedelta,
 )
-from math import sin, radians
 from core.Cached import Cached
 from core.constants import (
 	planets,
@@ -413,8 +412,16 @@ def calculateVaaraBala(planet, chart):
 	)
 
 
-def calculateHoraBala(planet):
-	return 0
+maxHoraBalaPoints = 60
+
+
+def calculateHoraBala(planet, chart):
+	return (
+		balaDefaultMinScore
+		if planet['name']
+		!= chart.panchang.hora
+		else maxHoraBalaPoints
+	)
 
 
 # #NOTE: The given ayana bala computation is not well understood, despite the availability of few Python resources. The results were verified to be  approximately close to the results from JA for a couple of charts. Conversely the differences between the results might have been due to the differences in planetary longitudes, as seen with the impact on Dig Bala calculations.
@@ -507,6 +514,7 @@ def calculateYuddhaBala(planet):
 
 
 def calculateKaalaBala(planet, chart):
+	# #TODO: Introduce pre-computation or caching of values to avoid recalculating them, per planet.
 	balas = {
 		'natonnataBala': calculateNatonnataBala(
 			planet, chart
@@ -527,7 +535,7 @@ def calculateKaalaBala(planet, chart):
 			planet, chart
 		),
 		'horaBala': calculateHoraBala(
-			planet
+			planet, chart
 		),
 		'ayanaBala': calculateAyanaBala(
 			planet
