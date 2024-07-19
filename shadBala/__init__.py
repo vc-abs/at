@@ -267,7 +267,8 @@ def getNatonnataBalaTODValues(chart):
 	).total_seconds()
 
 	todBala = balaDefaultMaxScore * (
-		abs(todDuration / 2 - todElapsed)
+		1
+		- abs(todDuration / 2 - todElapsed)
 		/ todDuration
 	)
 
