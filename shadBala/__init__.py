@@ -183,7 +183,7 @@ def calculateDrekkanaBala(planet):
 
 
 def calculateSthanaBala(planet, chart):
-	balas = {
+	return {
 		'ucchaBala': calculateUcchaBala(
 			planet
 		),
@@ -199,11 +199,6 @@ def calculateSthanaBala(planet, chart):
 		'drekkanaBala': calculateDrekkanaBala(
 			planet
 		),
-	}
-
-	return {
-		**balas,
-		'sthanaBala': sum(balas.values()),
 	}
 
 
@@ -565,7 +560,8 @@ def calculateKaalaBala(
 	planet, chart, context
 ):
 	kaalaValues = context['kaalaValues']
-	balas = {
+
+	return {
 		'natonnataBala': calculateNatonnataBala(
 			planet, kaalaValues
 		),
@@ -593,10 +589,6 @@ def calculateKaalaBala(
 		'yuddhaBala': calculateYuddhaBala(
 			planet
 		),
-	}
-	return {
-		**balas,
-		'kaalaBala': sum(balas.values()),
 	}
 
 
@@ -633,10 +625,13 @@ def calculateNaisargikaBala(planet):
 def calculateShadbala(
 	planet, chart, context
 ):
-	balas = {
-		**calculateSthanaBala(
-			planet, chart
-		),
+	sthanaBala = calculateSthanaBala(
+		planet, chart
+	)
+	kaalaBala = calculateKaalaBala(
+		planet, chart, context
+	)
+	otherBalas = {
 		'digBala': calculateDigBala(
 			planet, chart
 		),
@@ -649,14 +644,24 @@ def calculateShadbala(
 		'naisargikaBala': calculateNaisargikaBala(
 			planet
 		),
-		**calculateKaalaBala(
-			planet, chart, context
-		),
 	}
 
+	sthanaBalaTotal = sum(
+		sthanaBala.values()
+	)
+	kaalaBalaTotal = sum(
+		kaalaBala.values()
+	)
+
 	return {
-		**balas,
-		'shadBala': sum(balas.values()),
+		**sthanaBala,
+		'sthanaBala': sthanaBalaTotal,
+		**otherBalas,
+		**kaalaBala,
+		'kaalaBala': kaalaBalaTotal,
+		'shadBala': sthanaBalaTotal
+		+ kaalaBalaTotal
+		+ sum(otherBalas.values()),
 	}
 
 
