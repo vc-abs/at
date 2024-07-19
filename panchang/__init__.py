@@ -93,7 +93,9 @@ class Panchang(Cached):
 			'day'
 			if (
 				riseAndSetTimes['sunrise']
-				< self._chart.config['datetime']
+				<= self._chart.config[
+					'datetime'
+				]
 				< riseAndSetTimes['sunset']
 			)
 			else 'night'

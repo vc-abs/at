@@ -180,7 +180,7 @@ def getRiseAndSetTimes(config):
 	)
 
 	isSetMissing, tSet = swe.rise_trans(
-		tjd,
+		tRise,
 		SUN,
 		setFlags,
 		geopos,
