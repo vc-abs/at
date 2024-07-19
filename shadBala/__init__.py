@@ -694,6 +694,27 @@ def calculateKashtaPhala(shadBala):
 	return kashtaPhala
 
 
+def calculatePlanetBalas(
+	planet, chart, context
+):
+	shadBala = calculateShadbala(
+		chart.objects[planet],
+		chart,
+		context,
+	)
+	ishtaPhala = calculateIshtaPhala(
+		shadBala['shadBala']
+	)
+	kashtaPhala = calculateKashtaPhala(
+		shadBala['shadBala']
+	)
+	return {
+		**shadBala,
+		'ishtaPhala': ishtaPhala,
+		'kashtaPhala': kashtaPhala,
+	}
+
+
 class ShadBala(Cached):
 	def __init__(self, chart):
 		super().__init__()
@@ -701,25 +722,9 @@ class ShadBala(Cached):
 
 	def _getPhalas(self):
 		context = buildContext(self._chart)
-		planetPhalas = {}
-		for planet in planets:
-			shadBala = calculateShadbala(
-				self._chart.objects[planet],
-				self._chart,
-				context,
+		return {
+			planet: calculatePlanetBalas(
+				planet, self._chart, context
 			)
-			ishtaPhala = calculateIshtaPhala(
-				shadBala['shadBala']
-			)
-			kashtaPhala = (
-				calculateKashtaPhala(
-					shadBala['shadBala']
-				)
-			)
-			planetPhalas[planet] = {
-				**shadBala,
-				'ishtaPhala': ishtaPhala,
-				'kashtaPhala': kashtaPhala,
-			}
-
-		return planetPhalas
+			for planet in planets
+		}
