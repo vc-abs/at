@@ -11,10 +11,10 @@ secondsPerMinute = 60
 floatingPointPrecisionCorrectionSeconds = 0.001
 
 riseFlags = (
-	swe.CALC_RISE | swe.BIT_DISC_CENTER
+	swe.CALC_RISE | swe.BIT_HINDU_RISING
 )
 setFlags = (
-	swe.CALC_SET | swe.BIT_DISC_CENTER
+	swe.CALC_SET | swe.BIT_HINDU_RISING
 )
 
 gregflag = swe.GREG_CAL
