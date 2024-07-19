@@ -87,7 +87,6 @@ objectProps = {
 		'debilitation': 213,
 		'ojaYugmaBala': [0, 15],
 		'aspects': [7],
-		# #TODO: Implement ways to find planetary quality for Moon and Mercury.
 		'quality': 'conditional',
 		'gender': 'female',
 		'digBalaHouse': 4,
@@ -118,7 +117,7 @@ objectProps = {
 		'gender': 'neutral',
 		'digBalaHouse': 1,
 		'moolaTrikona': [165, 170],
-		'tod': 'day',
+		'tod': 'both',
 		'weekday': 'wednesday',
 		'ayana': 'both',
 	},

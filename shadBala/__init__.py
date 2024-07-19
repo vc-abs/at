@@ -230,17 +230,61 @@ def calculateDigBala(planet, chart):
 	) * distanceToScoreFactor
 
 
-def calculateNatonnataBala(
-	planet, chart
-):
-	return (
-		balaDefaultMaxScore
-		if chart.panchang.tod
-		== objectProps[planet['name']][
-			'tod'
-		]
-		else balaDefaultMinScore
+natonnataTODValueMaps = {
+	'day': {
+		'startTime': 'sunrise',
+		'endTime': 'sunset',
+		'otherTOD': 'night',
+	},
+	'night': {
+		'startTime': 'sunset',
+		'endTime': 'nextRise',
+		'otherTOD': 'day',
+	},
+}
+
+
+def getNatonnataBalaTODValues(chart):
+	eventTime = chart.config['datetime']
+	riseAndSet = chart.panchang.riseAndSet
+	tod = chart.panchang.tod
+	natonnataTODValueMap = (
+		natonnataTODValueMaps[tod]
 	)
+	todDuration = (
+		riseAndSet[
+			natonnataTODValueMap['endTime']
+		]
+		- riseAndSet[
+			natonnataTODValueMap['startTime']
+		]
+	).total_seconds()
+	todElapsed = (
+		eventTime
+		- riseAndSet[
+			natonnataTODValueMap['startTime']
+		]
+	).total_seconds()
+
+	todBala = balaDefaultMaxScore * (
+		abs(todDuration / 2 - todElapsed)
+		/ todDuration
+	)
+
+	return {
+		'both': balaDefaultMaxScore,
+		f'{tod}': todBala,
+		f'{natonnataTODValueMap["otherTOD"]}': balaDefaultMaxScore
+		- todBala,
+	}
+
+
+def calculateNatonnataBala(
+	planet, kaalaValues
+):
+	return kaalaValues[
+		'natonnataBalaTODValues'
+	][objectProps[planet['name']]['tod']]
 
 
 def calculatePakshaBala(planet, chart):
@@ -534,10 +578,13 @@ def calculateKaalaBala(planet, chart):
 		),
 		'vaara': chart.panchang.vaara,
 		'hora': chart.panchang.hora,
+		'natonnataBalaTODValues': getNatonnataBalaTODValues(
+			chart
+		),
 	}
 	balas = {
 		'natonnataBala': calculateNatonnataBala(
-			planet, chart
+			planet, kaalaValues
 		),
 		'pakshaBala': calculatePakshaBala(
 			planet, chart
