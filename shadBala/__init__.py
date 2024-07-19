@@ -560,28 +560,10 @@ def calculateYuddhaBala(planet):
 	return 0
 
 
-def calculateKaalaBala(planet, chart):
-	# #TODO: Introduce pre-computation or caching of values to avoid recalculating them, per planet.
-	kaalaValues = {
-		'sunToAscDistance': (
-			getDistanceInCircle(
-				chart.objects['sun'][
-					'longitude'
-				],
-				chart.objects['asc'][
-					'longitude'
-				],
-			)
-		),
-		'aharganaDays': getAharganaDays(
-			chart
-		),
-		'vaara': chart.panchang.vaara,
-		'hora': chart.panchang.hora,
-		'natonnataBalaTODValues': getNatonnataBalaTODValues(
-			chart
-		),
-	}
+def calculateKaalaBala(
+	planet, chart, context
+):
+	kaalaValues = context['kaalaValues']
 	balas = {
 		'natonnataBala': calculateNatonnataBala(
 			planet, kaalaValues
@@ -647,7 +629,9 @@ def calculateNaisargikaBala(planet):
 	]
 
 
-def calculateShadbala(planet, chart):
+def calculateShadbala(
+	planet, chart, context
+):
 	balas = {
 		**calculateSthanaBala(
 			planet, chart
@@ -664,7 +648,9 @@ def calculateShadbala(planet, chart):
 		'naisargikaBala': calculateNaisargikaBala(
 			planet
 		),
-		**calculateKaalaBala(planet, chart),
+		**calculateKaalaBala(
+			planet, chart, context
+		),
 	}
 
 	return {
@@ -678,6 +664,31 @@ def calculateIshtaPhala(shadBala):
 	return ishtaPhala
 
 
+def buildContext(chart):
+	return {
+		'kaalaValues': {
+			'sunToAscDistance': (
+				getDistanceInCircle(
+					chart.objects['sun'][
+						'longitude'
+					],
+					chart.objects['asc'][
+						'longitude'
+					],
+				)
+			),
+			'aharganaDays': getAharganaDays(
+				chart
+			),
+			'vaara': chart.panchang.vaara,
+			'hora': chart.panchang.hora,
+			'natonnataBalaTODValues': getNatonnataBalaTODValues(
+				chart
+			),
+		}
+	}
+
+
 def calculateKashtaPhala(shadBala):
 	kashtaPhala = (shadBala + 1) / 2
 	return kashtaPhala
@@ -689,11 +700,13 @@ class ShadBala(Cached):
 		self._chart = chart
 
 	def _getPhalas(self):
+		context = buildContext(self._chart)
 		planetPhalas = {}
 		for planet in planets:
 			shadBala = calculateShadbala(
 				self._chart.objects[planet],
 				self._chart,
+				context,
 			)
 			ishtaPhala = calculateIshtaPhala(
 				shadBala['shadBala']
