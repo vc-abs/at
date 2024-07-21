@@ -52,6 +52,9 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Understand the impact of altitude on charts, as the sunrise time would be different.
 
 ## References
+* [ShadBala Calculations by Dr Mahesh Joshi](https://www.youtube.com/watch?v=d7GX4Jm39Is)
+
+## Findings
 * Krakacha yoga is formed when tithi + vaara = 13.
 * Amritsiddhi Muhurtayoga is a subset of Sarvarthasiddhi yoga.
 

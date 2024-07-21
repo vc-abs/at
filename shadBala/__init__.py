@@ -1,4 +1,3 @@
-import swisseph as swe
 import datetime
 from datetime import (
 	timezone,
@@ -24,6 +23,9 @@ from core.dignity import (
 from core.varga import getVargaPosition
 from core.planetQuality import (
 	getPlanetQuality,
+)
+from core.sweHelpers import (
+	getAyanamsaOffset,
 )
 
 balaDefaultMaxScore = 60
@@ -467,8 +469,8 @@ def calculateHoraBala(
 	)
 
 
-# #NOTE: The given ayana bala computation is not well understood, despite the availability of few Python resources. The results were verified to be  approximately close to the results from JA for a couple of charts. Conversely the differences between the results might have been due to the differences in planetary longitudes, as seen with the impact on Dig Bala calculations.
-declinationTable = [
+# #NOTE: The the given ayana bala computation is somewhat understood, the results seems to be  approximately close to the results from JA for a couple of charts. These may be due to the differences in planetary longitudes, as seen with the impact on Dig Bala calculations. Or some minor issues with computations.
+declinationsInDegrees = [
 	0,
 	362 / 60.0,
 	703 / 60.0,
@@ -477,55 +479,66 @@ declinationTable = [
 	1388 / 60.0,
 	1440 / 60.0,
 ]
+declinationHouseWidth = 15
+maxDeclination = declinationsInDegrees[
+	-1
+]
+equinoxPoint = 180
+halfEquinoxPoint = equinoxPoint / 2
 
-obliquity = 23.44  # Current obliquity of the ecliptic in degrees
 
-
-def calcKranti(longitude):
-	sign = (
-		-1 if 180 < longitude <= 360 else 1
+def calcDeclination(sayanaLongitude):
+	bhuja = halfEquinoxPoint - abs(
+		(sayanaLongitude % equinoxPoint)
+		- halfEquinoxPoint
 	)
 
-	if 0 < longitude <= 90:
-		bhuja = longitude
-	elif 90 < longitude <= 180:
-		bhuja = 180.0 - longitude
-	elif 180 < longitude <= 270:
-		bhuja = longitude - 180
-	elif 270 < longitude <= 360:
-		bhuja = 360.0 - longitude
-	else:
-		bhuja = 0.0
-
-	dividend = int(bhuja // 15)
-	remainder = bhuja % 15
-	remDecl = (
-		(
-			declinationTable[dividend + 1]
-			- declinationTable[dividend]
-		)
-		* remainder
-	) / 15.0
+	dividend = int(
+		bhuja // declinationHouseWidth
+	)
+	remainder = (
+		bhuja % declinationHouseWidth
+	)
+	remainingDeclination = (
+		declinationsInDegrees[dividend + 1]
+		- declinationsInDegrees[dividend]
+	) * (
+		remainder / declinationHouseWidth
+	)
 
 	return (
-		declinationTable[dividend] + remDecl
-	) * sign + obliquity
+		declinationsInDegrees[dividend]
+		+ remainingDeclination
+	)
 
 
-def calculateAyanaBala(planet):
-	currentAyana = (
+def calculateAyanaBala(
+	planet, kaalaValues
+):
+	ayanamsaOffset = kaalaValues[
+		'ayanamsaOffset'
+	]
+	sayanaLongitude = (
+		planet['longitude'] + ayanamsaOffset
+	)
+	declination = calcDeclination(
+		sayanaLongitude
+	)
+
+	planetAyana = (
 		'north'
-		if 1 <= planet['sign'] <= 6
+		if 0 <= sayanaLongitude < 180
 		else 'south'
 	)
-	planetAyana = objectProps[
-		planet['name']
-	]['ayana']
-	ayanaDirection = (
+	beneficialAyanaForPlanet = (
+		objectProps[planet['name']]['ayana']
+	)
+	balaImpactDirection = (
 		1
 		if (
-			planetAyana == 'both'
-			or planetAyana == currentAyana
+			beneficialAyanaForPlanet == 'both'
+			or beneficialAyanaForPlanet
+			== planetAyana
 		)
 		else -1
 	)
@@ -537,16 +550,11 @@ def calculateAyanaBala(planet):
 		balaDefaultMidScore
 		* (
 			1
-			+ (
-				ayanaDirection
-				* calcKranti(
-					planet['longitude']
-				)
-				/ 48
-			)
+			+ balaImpactDirection
+			* declination
+			/ maxDeclination
 		)
-		* balaMultiplier
-	)
+	) * balaMultiplier
 
 	return bala
 
@@ -584,7 +592,7 @@ def calculateKaalaBala(
 			planet, kaalaValues
 		),
 		'ayanaBala': calculateAyanaBala(
-			planet
+			planet, kaalaValues
 		),
 		'yuddhaBala': calculateYuddhaBala(
 			planet
@@ -671,8 +679,13 @@ def calculateIshtaPhala(shadBala):
 
 
 def buildContext(chart):
+	config = chart.config
 	return {
 		'kaalaValues': {
+			'ayanamsaOffset': getAyanamsaOffset(
+				config['datetime'],
+				config['ayanamsa'],
+			),
 			'sunToAscDistance': (
 				getDistanceInCircle(
 					chart.objects['sun'][

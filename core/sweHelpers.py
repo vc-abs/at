@@ -4,6 +4,7 @@ from datetime import (
 	timedelta,
 )
 import swisseph as swe
+from sideralib import astrodata
 
 minutesPerHor = 60
 secondsPerHour = 3600
@@ -207,20 +208,16 @@ def getRiseAndSetTimes(config):
 	}
 
 
-# #NOTE: This function is not actively used, but was kept as it seems useful and it incurred quite a chunk of effort.
 def getAyanamsaOffset(
-	forTime=None, ayanamsaName=None
+	eventTime, ayanamsaName
 ):
-	forTime = forTime or datetime.now()
-	swe.set_sid_mode(swe.SIDM_RAMAN, 0, 0)
+	eventTimeJD = dateTimeToJDT(eventTime)
 
 	return swe.get_ayanamsa_ex(
-		swe.julday(
-			2024,
-			1,
-			1,
-		),
-		0,
+		eventTimeJD,
+		astrodata.SWE_AYANAMSA[
+			ayanamsaName
+		],
 	)[1]
 
 
