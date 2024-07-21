@@ -442,11 +442,14 @@ def calculateMaasaBala(
 	)
 
 
+maxVaaraBalaPoints = 45
+
+
 def calculateVaaraBala(
 	planet, kaalaValues
 ):
 	return (
-		balaDefaultMaxScore
+		maxVaaraBalaPoints
 		if kaalaValues['vaara']
 		== objectProps[planet['name']][
 			'weekday'
