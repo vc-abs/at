@@ -1,3 +1,5 @@
+import swisseph as swe
+
 signCount = 12
 signs = [
 	i + 1 for i in range(0, signCount)
@@ -81,6 +83,9 @@ objectProps = {
 		'tod': 'day',
 		'weekday': 'sunday',
 		'ayana': 'north',
+		'position': 'anchor',
+		'meanSpeed': 0.9856,  # degrees per day
+		'sweID': swe.SUN,
 	},
 	'moon': {
 		'exaltation': 33,
@@ -94,6 +99,9 @@ objectProps = {
 		'tod': 'night',
 		'weekday': 'monday',
 		'ayana': 'south',
+		'position': 'satellite',
+		'meanSpeed': 13.1764,
+		'sweID': swe.MOON,
 	},
 	'mars': {
 		'exaltation': 298,
@@ -107,6 +115,9 @@ objectProps = {
 		'tod': 'night',
 		'weekday': 'tuesday',
 		'ayana': 'north',
+		'position': 'outer',
+		'meanSpeed': 0.5240,
+		'sweID': swe.MARS,
 	},
 	'mercury': {
 		'exaltation': 165,
@@ -120,6 +131,9 @@ objectProps = {
 		'tod': 'both',
 		'weekday': 'wednesday',
 		'ayana': 'both',
+		'position': 'inner',
+		'meanSpeed': 1.3833,
+		'sweID': swe.MERCURY,
 	},
 	'jupiter': {
 		'exaltation': 95,
@@ -133,6 +147,9 @@ objectProps = {
 		'tod': 'day',
 		'weekday': 'thursday',
 		'ayana': 'north',
+		'position': 'outer',
+		'meanSpeed': 0.0831,
+		'sweID': swe.JUPITER,
 	},
 	'venus': {
 		'exaltation': 357,
@@ -145,7 +162,10 @@ objectProps = {
 		'moolaTrikona': [180, 195],
 		'tod': 'day',
 		'weekday': 'friday',
+		'position': 'inner',
 		'ayana': 'north',
+		'meanSpeed': 1.2,
+		'sweID': swe.VENUS,
 	},
 	'saturn': {
 		'exaltation': 200,
@@ -159,13 +179,22 @@ objectProps = {
 		'tod': 'night',
 		'weekday': 'saturday',
 		'ayana': 'south',
+		'position': 'outer',
+		'meanSpeed': 0.0335,
+		'sweID': swe.SATURN,
 	},
 	'rahu': {
 		'quality': 'malefic',
+		'sweID': swe.MEAN_NODE,
 	},
 	'ketu': {
 		'quality': 'malefic',
 	},
+}
+objectIDs = {
+	object: objectAttrs['sweID']
+	for object, objectAttrs in objectProps.items()
+	if 'sweID' in objectAttrs
 }
 houseQualities = [
 	'kendra',
@@ -317,3 +346,34 @@ padasPerNakshatra = 4
 padaCount = (
 	nakshatraCount * padasPerNakshatra
 )
+
+ayanamsaSWEConstants = {
+	'fagan_bradley': swe.SIDM_FAGAN_BRADLEY,
+	'lahiri': swe.SIDM_LAHIRI,
+	'deluce': swe.SIDM_DELUCE,
+	'raman': swe.SIDM_RAMAN,
+	'ushashashi': swe.SIDM_USHASHASHI,
+	'krishnamurti': swe.SIDM_KRISHNAMURTI,
+	'djwhal_khul': swe.SIDM_DJWHAL_KHUL,
+	'yukteshwar': swe.SIDM_YUKTESHWAR,
+	'jn_bhasin': swe.SIDM_JN_BHASIN,
+	'aldebaran_15tau': swe.SIDM_ALDEBARAN_15TAU,
+	'hipparchos': swe.SIDM_HIPPARCHOS,
+	'sassanian': swe.SIDM_SASSANIAN,
+	'galcent_0sag': swe.SIDM_GALCENT_0SAG,
+	'j2000': swe.SIDM_J2000,
+	'j1900': swe.SIDM_J1900,
+	'b1950': swe.SIDM_B1950,
+	'suryasiddhanta': swe.SIDM_SURYASIDDHANTA,
+	'suryasiddhanta_msun': swe.SIDM_SURYASIDDHANTA_MSUN,
+	'aryabhata': swe.SIDM_ARYABHATA,
+	'aryabhata_msun': swe.SIDM_ARYABHATA_MSUN,
+	'ss_citra': swe.SIDM_SS_CITRA,
+	'ss_revati': swe.SIDM_SS_REVATI,
+	'true_revati': swe.SIDM_TRUE_REVATI,
+	'true_pushya': swe.SIDM_TRUE_PUSHYA,
+	'galcent_rgilbrand': swe.SIDM_GALCENT_RGILBRAND,
+	'galequ_iau1958': swe.SIDM_GALEQU_IAU1958,
+	'galequ_true': swe.SIDM_GALEQU_TRUE,
+	'user': swe.SIDM_USER,
+}

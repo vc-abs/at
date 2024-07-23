@@ -30,7 +30,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Explore True [Pushya Nakshatra Ayanamsa by PVRNR](https://astrorigin.com/pyswisseph/sphinx/ephemerides/sidereal/suryasiddhanta_and_aryabhata.html#true-pushya-paksha-ayanamsha) (swe.SIDM_TRUE_PUSHYA).
 * Think about having the start time as the default time.
 * Use planetary short forms (IE: Me, Ju, etc) as the default.
-* Try using [Pyswisseph](https://github.com/astrorigin/pyswisseph) instead of depending on sideralib, as the former has become essential for comparatively complex calculations.
+* Try using [Pyswisseph](https://github.com/astrorigin/pyswisseph) instead of depending on sideralib, as the former has become essential for comparatively complex calculations and the later has an incompatible license (GPL).
 * Replace periods with a single period config, with values with same type as frequency.
 * Check whether muhurtaYoga effects depend upon Pakshatithis.
 * Validate the presets with experts.
