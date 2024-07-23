@@ -7,6 +7,10 @@ from core.constants import (
 	objectIDs,
 	ayanamsaSWEConstants,
 )
+from core.helpers import (
+	normalizeCircularValue,
+	getSignFromLongitude,
+)
 from core.sweHelpers import (
 	dateTimeToJDT,
 )
@@ -18,18 +22,6 @@ planetPositionFlags = (
 )
 
 houseMethodAlcabitus = b'B'
-
-
-def getSignFromLongitude(longitude):
-	return int(longitude / signWidth) + 1
-
-
-def normalizeCircularValue(
-	value, circumference
-):
-	return (
-		value + circumference - 1
-	) % circumference + 1
 
 
 def getPlanetPosition(

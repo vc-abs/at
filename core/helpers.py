@@ -4,6 +4,7 @@ from os import path
 from core.constants import (
 	objects,
 	signCount,
+	signWidth,
 	degrees,
 	objectProps,
 	houseQualities,
@@ -68,6 +69,14 @@ def getHouseQuality(house):
 	return houseQualities[(house + 2) % 3]
 
 
+def normalizeCircularValue(
+	value, circumference
+):
+	return (
+		value + circumference - 1
+	) % circumference + 1
+
+
 def getDistanceInCircle(
 	p1DistanceFromStart,
 	p2DistanceFromStart,
@@ -103,3 +112,7 @@ def getSignDistance(fromSign, toSign):
 	return (
 		abs(toSign + signCount - fromSign)
 	) % signCount + 1
+
+
+def getSignFromLongitude(longitude):
+	return int(longitude / signWidth) + 1
