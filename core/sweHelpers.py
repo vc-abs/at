@@ -4,7 +4,9 @@ from datetime import (
 	timedelta,
 )
 import swisseph as swe
-from sideralib import astrodata
+from core.constants import (
+	ayanamsaSWEConstants,
+)
 
 minutesPerHor = 60
 secondsPerHour = 3600
@@ -208,6 +210,7 @@ def getRiseAndSetTimes(config):
 	}
 
 
+# #TODO: The ayanamsa computation doesn't use the ayanamsa name, rather it uses the preset ayanamsa from set_sid_mode.
 def getAyanamsaOffset(
 	eventTime, ayanamsaName
 ):
@@ -215,9 +218,7 @@ def getAyanamsaOffset(
 
 	return swe.get_ayanamsa_ex(
 		eventTimeJD,
-		astrodata.SWE_AYANAMSA[
-			ayanamsaName
-		],
+		ayanamsaSWEConstants[ayanamsaName],
 	)[1]
 
 

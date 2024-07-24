@@ -37,6 +37,8 @@ def getPlanetPosition(
 	retrograde = speed < 0
 	sign = getSignFromLongitude(longitude)
 	return {
+		'name': planet,
+		'type': 'planet',
 		'speed': speed,
 		'retrograde': retrograde,
 		'longitude': longitude,
@@ -70,7 +72,9 @@ def getPlanetaryPositions(
 		ascendantLongitude
 	)
 	positions = {
-		'ascendant': {
+		'asc': {
+			'name': 'asc',
+			'type': 'angle',
 			'longitude': ascendantLongitude,
 			'sign': ascendantSign,
 			'house': 1,
@@ -95,6 +99,7 @@ def getPlanetaryPositions(
 	)
 	positions['ketu'] = {
 		**rahu,
+		'name': 'ketu',
 		'sign': getSignFromLongitude(
 			ketuLongitude
 		),
