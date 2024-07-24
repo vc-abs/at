@@ -1,8 +1,3 @@
-from sideralib import (
-	astrochart,
-	astrodata,
-)
-
 from ashtakavarga import getAshtakavarga
 from panchang import Panchang
 from dasha import Dasha
@@ -15,6 +10,9 @@ from core.constants import (
 from core.helpers import (
 	selectObjects,
 	fold,
+)
+from core.planetaryPositions import (
+	getPlanetaryPositions,
 )
 from core.Cached import Cached
 
@@ -66,39 +64,6 @@ def addAscendant(kundli, houses):
 	)
 
 
-def getChart(config):
-	astroChart = astrodata.AstroData(
-		config['year'],
-		config['month'],
-		config['day'],
-		config['hour'],
-		config['minute'],
-		config['second'],
-		config['utcHour'],
-		config['utcMinute'],
-		config['latitude'],
-		config['longitude'],
-		ayanamsa=config['ayanamsa'],
-	)
-	planetData = (
-		astroChart.planets_rashi()
-	)
-	kundli = astrochart.Chart(
-		planetData
-	).lagnaChart()
-
-	houses = [
-		formatHouse(houseNum + 1, house)
-		for houseNum, house in enumerate(
-			kundli
-		)
-	]
-
-	addAscendant(kundli, houses)
-
-	return {'houses': houses}
-
-
 def enrichObject(object, house):
 	return {
 		**object,
@@ -126,7 +91,6 @@ class Chart(Cached):
 		super().__init__()
 		self._config = config
 		self.__cache__ = {
-			**getChart(config),
 			'config': config,
 		}
 
@@ -137,14 +101,8 @@ class Chart(Cached):
 		)
 
 	def _getObjects(self):
-		return fold(
-			[
-				object
-				for house in self.houses
-				for object in getObjectsFromHouse(
-					house
-				)
-			]
+		return getPlanetaryPositions(
+			self.config
 		)
 
 	def _getAshtakavarga(self):
