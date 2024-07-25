@@ -24,8 +24,8 @@ from core.varga import getVargaPosition
 from core.planetQuality import (
 	getPlanetQuality,
 )
-from core.sweHelpers import (
-	getAyanamsaOffset,
+from .chestaBala import (
+	calculateCheshtaBala,
 )
 
 balaDefaultMaxScore = 60
@@ -603,15 +603,6 @@ def calculateKaalaBala(
 	}
 
 
-def calculateCheshtaBala(planet):
-	# #FIX: Make this calculation precise by taking into account, the planetary speed.
-	return (
-		balaDefaultMaxScore
-		if not planet['retrograde']
-		else balaDefaultMinScore
-	)
-
-
 def calculateDrikBala(planet):
 	return 0
 
@@ -647,7 +638,7 @@ def calculateShadbala(
 			planet, chart
 		),
 		'cheshtaBala': calculateCheshtaBala(
-			planet
+			planet, kaalaBala
 		),
 		'drikBala': calculateDrikBala(
 			planet
