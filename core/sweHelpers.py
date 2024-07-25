@@ -236,8 +236,6 @@ def unsetAyanamsa():
 def getSolarCrossingTime(
 	longitude, startDate
 ):
-	# #TODO: Fix the following bug. The Ayanamsa is hardcoded, instead of being passed as a param, as the proper way to implement is not known (even to get the current value).
-	swe.set_sid_mode(swe.SIDM_RAMAN, 0, 0)
 	jdStartDate = dateTimeToJDT(startDate)
 
 	jdCross = swe.solcross(

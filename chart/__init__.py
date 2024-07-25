@@ -82,13 +82,6 @@ def getObjectsFromHouse(house):
 	]
 
 
-zeroHour = dict(
-	hour=0,
-	minute=0,
-	second=0,
-)
-
-
 class Chart(Cached):
 	def __init__(self, config):
 		super().__init__()
@@ -97,12 +90,6 @@ class Chart(Cached):
 			'config': config,
 		}
 		setAyanamsa(config['ayanamsa'])
-
-	# #TODO: Clean up, if unused.
-	def _getZeroHourChart(self):
-		return Chart(
-			{**self.config, **zeroHour}
-		)
 
 	def _getObjects(self):
 		return getPlanetaryPositions(
