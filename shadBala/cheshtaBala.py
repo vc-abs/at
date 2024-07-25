@@ -3,12 +3,12 @@ from core.constants import (
 	signWidth,
 )
 
-chestaBalaExceptions = {
+cheshtaBalaExceptions = {
 	'sun': 'ayanaBala',
 	'moon': 'pakshaBala',
 }
 
-chestaPoints = {
+cheshtaPoints = {
 	'vikala': 15,
 	'mandatara': 15,
 	'manda': 30,
@@ -37,12 +37,12 @@ def isSignChanging(planet):
 	)
 
 
-def getSpecialPlanetChestaBala(
+def getSpecialPlanetCheshtaBala(
 	planet, kaalaBala
 ):
 	return (
 		kaalaBala[
-			chestaBalaExceptions[
+			cheshtaBalaExceptions[
 				planet['name']
 			]
 		]
@@ -50,18 +50,18 @@ def getSpecialPlanetChestaBala(
 	)
 
 
-def getRetrogradeChestaBala(planet, _):
+def getRetrogradeCheshtaBala(planet, _):
 	if isSignChanging(planet):
 		speedClassification = 'vakra'
 	else:
 		speedClassification = 'anuVakra'
 
-	return chestaPoints[
+	return cheshtaPoints[
 		speedClassification
 	]
 
 
-def getGeneralChestaBala(planet, _):
+def getGeneralCheshtaBala(planet, _):
 	speedIncreasePercent = (
 		planet['speed']
 		/ objectProps[planet['name']][
@@ -82,15 +82,15 @@ def getGeneralChestaBala(planet, _):
 	else:
 		speedClassification = 'chara'
 
-	return chestaPoints[
+	return cheshtaPoints[
 		speedClassification
 	]
 
 
-chestaCalculators = {
-	'special': getSpecialPlanetChestaBala,
-	'retro': getRetrogradeChestaBala,
-	'general': getGeneralChestaBala,
+cheshtaCalculators = {
+	'special': getSpecialPlanetCheshtaBala,
+	'retro': getRetrogradeCheshtaBala,
+	'general': getGeneralCheshtaBala,
 }
 
 
@@ -98,9 +98,9 @@ def calculateCheshtaBala(
 	planet, kaalaBala
 ):
 	planetName = planet['name']
-	chestaCalculatorKey = (
+	cheshtaCalculatorKey = (
 		'special'
-		if chestaBalaExceptions.get(
+		if cheshtaBalaExceptions.get(
 			planetName
 		)
 		else (
@@ -110,6 +110,6 @@ def calculateCheshtaBala(
 		)
 	)
 
-	return chestaCalculators[
-		chestaCalculatorKey
+	return cheshtaCalculators[
+		cheshtaCalculatorKey
 	](planet, kaalaBala)

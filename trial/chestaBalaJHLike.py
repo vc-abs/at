@@ -14,12 +14,12 @@ from core.sweHelpers import (
 	dateTimeToJDT,
 )
 
-chestaAnchor = dateTimeToJDT(
+cheshtaAnchor = dateTimeToJDT(
 	datetime(1900, 1, 1)
 )
 
 
-def getPlanetChesta(
+def getPlanetCheshta(
 	planet, sunMeanLongitude, eventTime
 ):
 	planetMeanLongitude, differece = (
@@ -44,7 +44,7 @@ def getPlanetChesta(
 		else sunMeanLongitude
 	)
 
-	chestaKendra = (
+	cheshtaKendra = (
 		abs(
 			(
 				seegrachaa
@@ -58,7 +58,7 @@ def getPlanetChesta(
 		% 180
 	)
 
-	return chestaKendra / 3
+	return cheshtaKendra / 3
 
 
 innerPlanets = ['mercury', 'venus']
@@ -70,22 +70,22 @@ planetOrder = [
 	'saturn',
 ]
 
-print(chestaAnchor)
+print(cheshtaAnchor)
 
 
-def getChestaBala(eventConfig):
+def getCheshtaBala(eventConfig):
 	eventTime = eventConfig['datetime']
 	sunMeanLongitude, _ = (
 		getPlanetMeanLongitudeAndDifference(
 			'sun',
 			eventTime,
 			dateTimeToJDT(eventTime)
-			- chestaAnchor,
+			- cheshtaAnchor,
 		)
 	)
 
 	return {
-		planet: getPlanetChesta(
+		planet: getPlanetCheshta(
 			planet,
 			sunMeanLongitude,
 			eventTime,
@@ -105,7 +105,7 @@ def main():
 		'longitude': 78.816,
 	}
 
-	print(getChestaBala(eventConfig))
+	print(getCheshtaBala(eventConfig))
 
 
 if __name__ == '__main__':

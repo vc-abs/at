@@ -25,7 +25,7 @@ from core.varga import getVargaPosition
 from core.planetQuality import (
 	getPlanetQuality,
 )
-from .chestaBala import (
+from .cheshtaBala import (
 	calculateCheshtaBala,
 )
 
