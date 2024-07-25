@@ -5,6 +5,8 @@ from datetime import (
 )
 import swisseph as swe
 from core.constants import (
+	objectProps,
+	degrees,
 	ayanamsaSWEConstants,
 )
 
@@ -239,4 +241,51 @@ def getSolarCrossingTime(
 	return jdtToDateTime(
 		jdCross,
 		startDate.tzinfo or utcTimeZone,
+	)
+
+
+def getPlanetPosition(
+	planet, eventTime
+):
+	return swe.calc_ut(
+		eventTime,
+		objectProps[planet]['sweID'],
+		swe.FLG_SIDEREAL,
+	)[0][0]
+
+
+def getPlanetMeanLongitudeAndDifference(
+	planet,
+	eventTime,
+	avgSampleDays=365000,
+):
+	planetProps = objectProps[planet]
+	planetMeanSpeed = planetProps[
+		'meanSpeed'
+	]
+	eventTime = dateTimeToJDT(eventTime)
+	sampleStartTime = (
+		eventTime - avgSampleDays
+	)
+
+	eventLongitude = getPlanetPosition(
+		planet, eventTime
+	)
+	sampleStartLongitude = (
+		getPlanetPosition(
+			planet, sampleStartTime
+		)
+	)
+	meanLongitude = (
+		sampleStartLongitude
+		+ planetMeanSpeed
+		* (eventTime - sampleStartTime)
+	) % degrees
+	difference = (
+		eventLongitude - meanLongitude
+	)
+
+	return (
+		meanLongitude,
+		difference,
 	)

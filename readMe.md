@@ -66,3 +66,4 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * 2406250100 - The varga computation used here ended up to be really closer the the Custom Divisional Chart from JH.
 * 2406270340 - Got the Saptavargaja calculation right, after a long struggle due to not understanding some fundamental concepts.
 * 2406300355 - Discovered that there are some minute differences in the positions of fast moving planets between JA and siderealib, when the ayanamsa is set to BV. Raman.
+* 2407250725 - Decided not to use the Chesta Bala computation used in JH and JA as the anchor date of 01-01-1900 seems arbitrary and changing the anchor impacts the balas of fast moving planets, significantly.
