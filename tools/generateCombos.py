@@ -202,6 +202,10 @@ def splitTimestamp(df):
 	)
 
 
+def skipColumns(df, columns):
+	return df.drop(columns=columns)
+
+
 def generateCombos(config):
 	timeSeries = (
 		pd.date_range(
@@ -229,5 +233,9 @@ def generateCombos(config):
 	)
 	sortData(df, config['order'])
 	splitTimestamp(df)
+	filteredDF = df.query(config['query'])
+	modifiedDF = skipColumns(
+		filteredDF, config['skipColumns']
+	)
 
-	return df.query(config['query'])
+	return modifiedDF

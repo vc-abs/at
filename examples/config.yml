@@ -20,6 +20,8 @@ customColumns:
   muhurtaYogaEffect: "positive + negative"
   maxOfDharma:
     max: ["h1", "h5", "h9"]
+skipColumns:
+  - yogas
 order:
   dharma: descending
   muhurtaYogaEffect: descending

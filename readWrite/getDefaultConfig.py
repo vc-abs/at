@@ -17,5 +17,6 @@ def getDefaultConfig():
 		'second': now.second,
 		'query': selectAllQuery,
 		'customColumns': {},
+		'skipColumns': [],
 		'order': {},
 	}
