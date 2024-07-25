@@ -5,7 +5,6 @@ from core.constants import (
 	signWidth,
 	degrees,
 	objectIDs,
-	ayanamsaSWEConstants,
 )
 from core.helpers import (
 	normalizeCircularValue,
@@ -44,7 +43,8 @@ def getPlanetPosition(
 		'longitude': longitude,
 		'sign': sign,
 		'house': normalizeCircularValue(
-			sign - ascendantSign, signCount
+			sign - ascendantSign + 1,
+			signCount,
 		),
 	}
 
