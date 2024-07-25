@@ -1,5 +1,5 @@
 query: "biz > 150 and muhurtaYogaEffect > 0 and minH >= 28"
-columns:
+customColumns:
   biz: "h2 + h6 + h9 + h10 + h11"
   muhurtaYogaEffect: "positive + negative"
   minH:

@@ -11,11 +11,11 @@ utcMinute: 30
 # Latitude and Longitude in Decimal Degrees (as given by Google Maps).
 latitude: 23.101
 longitude: 77.461
-freq: "60min" # as supported by pandas.date_range.freq.
+frequency: "60min" # as supported by pandas.date_range.frequency.
 periods: 100
 query: "dharma > 75"
 exportTo: "./.sample.csv"
-columns:
+customColumns:
   dharma: "h1 + h5 + h9"
   muhurtaYogaEffect: "positive + negative"
   maxOfDharma:

@@ -151,7 +151,7 @@ def getColumn(df, column):
 	](df, column)
 
 
-def addColumns(df, columns):
+def addCustomColumns(df, columns):
 	keys = list(columns.keys())
 
 	for key in keys:
@@ -207,7 +207,7 @@ def generateCombos(config):
 		pd.date_range(
 			start=config['date'],
 			periods=config['periods'],
-			freq=config['freq'],
+			freq=config['frequency'],
 		)
 		.to_pydatetime()
 		.tolist()
@@ -224,7 +224,9 @@ def generateCombos(config):
 		),
 	)
 
-	addColumns(df, config['columns'])
+	addCustomColumns(
+		df, config['customColumns']
+	)
 	sortData(df, config['order'])
 	splitTimestamp(df)
 

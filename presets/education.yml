@@ -1,5 +1,5 @@
 query: "edu > 30 and muhurtaYogaEffect > 0"
-columns:
+customColumns:
   edu: "h4 + h5"
   muhurtaYogaEffect: "positive + negative"
 order:
