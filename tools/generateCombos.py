@@ -28,6 +28,12 @@ def getObjectHouses(chart):
 	)
 
 
+placeHolderPlanetPhalas = {
+	'strength': 0,
+	'ishtaPhala': 0,
+}
+
+
 def getStartingDasha(chart):
 	startingDasha = (
 		chart.dasha.startingDasha
@@ -36,14 +42,22 @@ def getStartingDasha(chart):
 	startingDashaPlanet = startingDasha[
 		'planet'
 	]
+	startingDashaPlanetPhalas = (
+		chart.shadBala.phalas.get(
+			startingDashaPlanet,
+			placeHolderPlanetPhalas,
+		)
+	)
 
 	return {
 		'sdp': startingDashaPlanet,
 		'sdr': startingDasha['remainder'],
-		'sdps': chart.shadBala.phalas.get(
-			startingDashaPlanet,
-			{'strength': 0},
-		)['strength'],
+		'sdps': startingDashaPlanetPhalas[
+			'strength'
+		],
+		'sdip': startingDashaPlanetPhalas[
+			'ishtaPhala'
+		],
 	}
 
 
