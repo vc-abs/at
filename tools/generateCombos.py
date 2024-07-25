@@ -33,13 +33,23 @@ def getStartingDasha(chart):
 		chart.dasha.startingDasha
 	)
 
+	startingDashaPlanet = startingDasha[
+		'planet'
+	]
+
 	return {
-		'startingDashaPlanet': startingDasha[
-			'planet'
-		],
-		'startingDashaRemainder': startingDasha[
-			'remainder'
-		],
+		'sdp': startingDashaPlanet,
+		'sdr': startingDasha['remainder'],
+		'sdps': chart.shadBala.phalas[
+			startingDashaPlanet
+		]['strength'],
+	}
+
+
+def getShadBalaStrength(chart):
+	return {
+		f'{planet[:2]}S': phala['strength']
+		for planet, phala in chart.shadBala.phalas.items()
 	}
 
 
@@ -48,6 +58,7 @@ fieldSets = {
 	'objectHouses': getObjectHouses,
 	'ashtakavarga': lambda chart: chart.ashtakavarga,
 	'startingDasha': getStartingDasha,
+	'shadBalaStrength': getShadBalaStrength,
 }
 
 
