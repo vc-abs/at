@@ -685,6 +685,24 @@ def calculateIshtaAndPhalas(shadBala):
 	}
 
 
+shadBalaMedianStrengths = {
+	'sun': 390,
+	'moon': 360,
+	'mars': 300,
+	'mercury': 420,
+	'jupiter': 390,
+	'venus': 330,
+	'saturn': 300,
+}
+
+
+def calculateStrength(planet, shadBala):
+	return {
+		'strength': shadBala['shadBala']
+		/ shadBalaMedianStrengths[planet]
+	}
+
+
 def buildContext(chart):
 	return {
 		'kaalaValues': {
@@ -721,12 +739,13 @@ def calculatePlanetBalas(
 		chart,
 		context,
 	)
-	ishtaAndKashtaPhalas = (
-		calculateIshtaAndPhalas(shadBala)
-	)
+
 	return {
 		**shadBala,
-		**ishtaAndKashtaPhalas,
+		**calculateStrength(
+			planet, shadBala
+		),
+		**calculateIshtaAndPhalas(shadBala),
 	}
 
 
