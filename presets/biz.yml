@@ -12,3 +12,7 @@ columns:
 order:
   biz: descending
   muhurtaYogaEffect: descending
+fieldSets:
+  - muhurtaYogaEffects
+  - objectHouses
+  - ashtakavarga
