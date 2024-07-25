@@ -52,13 +52,6 @@ def getPlanetPosition(
 def getPlanetaryPositions(
 	config,
 ):
-	swe.set_sid_mode(
-		ayanamsaSWEConstants[
-			config['ayanamsa']
-		],
-		0,
-		0,
-	)
 	jd = dateTimeToJDT(config['datetime'])
 	_, ascmc = swe.houses_ex(
 		jd,

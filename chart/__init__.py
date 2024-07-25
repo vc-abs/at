@@ -9,11 +9,11 @@ from core.constants import (
 )
 from core.helpers import (
 	selectObjects,
-	fold,
 )
 from core.planetaryPositions import (
 	getPlanetaryPositions,
 )
+from core.sweHelpers import setAyanamsa
 from core.Cached import Cached
 
 
@@ -93,6 +93,7 @@ class Chart(Cached):
 		self.__cache__ = {
 			'config': config,
 		}
+		setAyanamsa(config['ayanamsa'])
 
 	# #TODO: Clean up, if unused.
 	def _getZeroHourChart(self):

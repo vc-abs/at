@@ -686,8 +686,7 @@ def buildContext(chart):
 	return {
 		'kaalaValues': {
 			'ayanamsaOffset': getAyanamsaOffset(
-				config['datetime'],
-				config['ayanamsa'],
+				config['datetime']
 			),
 			'sunToAscDistance': (
 				getDistanceInCircle(

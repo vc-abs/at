@@ -212,16 +212,24 @@ def getRiseAndSetTimes(config):
 	}
 
 
-# #TODO: The ayanamsa computation doesn't use the ayanamsa name, rather it uses the preset ayanamsa from set_sid_mode.
-def getAyanamsaOffset(
-	eventTime, ayanamsaName
-):
+def setAyanamsa(ayanamsa):
+	swe.set_sid_mode(
+		ayanamsaSWEConstants[ayanamsa],
+		0,
+		0,
+	)
+
+
+def getAyanamsaOffset(eventTime):
 	eventTimeJD = dateTimeToJDT(eventTime)
 
 	return swe.get_ayanamsa_ex(
-		eventTimeJD,
-		ayanamsaSWEConstants[ayanamsaName],
+		eventTimeJD, 0
 	)[1]
+
+
+def unsetAyanamsa():
+	swe.close()
 
 
 # #NOTE: This function is not actively used, but was kept as it seems useful and it incurred quite a chunk of effort.
