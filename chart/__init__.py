@@ -13,7 +13,10 @@ from core.helpers import (
 from core.planetaryPositions import (
 	getPlanetaryPositions,
 )
-from core.sweHelpers import setAyanamsa
+from core.sweHelpers import (
+	setAyanamsa,
+	getAyanamsaOffset,
+)
 from core.Cached import Cached
 
 
@@ -108,6 +111,15 @@ class Chart(Cached):
 
 	def _getAshtakavarga(self):
 		return getAshtakavarga(self.objects)
+
+	def _getAyanamsa(self):
+		print(self.config['datetime'])
+		return {
+			'name': self.config['ayanamsa'],
+			'offset': getAyanamsaOffset(
+				self.config['datetime']
+			),
+		}
 
 	def _getPanchang(self):
 		return Panchang(self)

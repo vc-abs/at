@@ -682,12 +682,11 @@ def calculateIshtaPhala(shadBala):
 
 
 def buildContext(chart):
-	config = chart.config
 	return {
 		'kaalaValues': {
-			'ayanamsaOffset': getAyanamsaOffset(
-				config['datetime']
-			),
+			'ayanamsaOffset': chart.ayanamsa[
+				'offset'
+			],
 			'sunToAscDistance': (
 				getDistanceInCircle(
 					chart.objects['sun'][
