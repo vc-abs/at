@@ -1,4 +1,5 @@
 import datetime
+from math import sqrt
 from datetime import (
 	timezone,
 	timedelta,
@@ -667,9 +668,21 @@ def calculateShadbala(
 	}
 
 
-def calculateIshtaPhala(shadBala):
-	ishtaPhala = (shadBala - 1) / 2
-	return ishtaPhala
+def calculateIshtaAndPhalas(shadBala):
+	ucchaBala = shadBala['ucchaBala']
+	cheshtaBala = shadBala['cheshtaBala']
+	return {
+		'ishtaPhala': sqrt(
+			ucchaBala * cheshtaBala
+		),
+		'kashtaBala': sqrt(
+			(balaDefaultMaxScore - ucchaBala)
+			* (
+				balaDefaultMaxScore
+				- cheshtaBala
+			)
+		),
+	}
 
 
 def buildContext(chart):
@@ -700,11 +713,6 @@ def buildContext(chart):
 	}
 
 
-def calculateKashtaPhala(shadBala):
-	kashtaPhala = (shadBala + 1) / 2
-	return kashtaPhala
-
-
 def calculatePlanetBalas(
 	planet, chart, context
 ):
@@ -713,16 +721,12 @@ def calculatePlanetBalas(
 		chart,
 		context,
 	)
-	ishtaPhala = calculateIshtaPhala(
-		shadBala['shadBala']
-	)
-	kashtaPhala = calculateKashtaPhala(
-		shadBala['shadBala']
+	ishtaAndKashtaPhalas = (
+		calculateIshtaAndPhalas(shadBala)
 	)
 	return {
 		**shadBala,
-		'ishtaPhala': ishtaPhala,
-		'kashtaPhala': kashtaPhala,
+		**ishtaAndKashtaPhalas,
 	}
 
 
