@@ -100,7 +100,6 @@ class Chart(Cached):
 		return getAshtakavarga(self.objects)
 
 	def _getAyanamsa(self):
-		print(self.config['datetime'])
 		return {
 			'name': self.config['ayanamsa'],
 			'offset': getAyanamsaOffset(

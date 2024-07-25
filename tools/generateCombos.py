@@ -40,9 +40,10 @@ def getStartingDasha(chart):
 	return {
 		'sdp': startingDashaPlanet,
 		'sdr': startingDasha['remainder'],
-		'sdps': chart.shadBala.phalas[
-			startingDashaPlanet
-		]['strength'],
+		'sdps': chart.shadBala.phalas.get(
+			startingDashaPlanet,
+			{'strength': 0},
+		)['strength'],
 	}
 
 
