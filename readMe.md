@@ -26,9 +26,9 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Rise and Set calculations of polar regions could be imprecise.
 
 ## ToDo
-* Create CSV-s for storing all possible data in the constants file.
 * Explore True [Pushya Nakshatra Ayanamsa by PVRNR](https://astrorigin.com/pyswisseph/sphinx/ephemerides/sidereal/suryasiddhanta_and_aryabhata.html#true-pushya-paksha-ayanamsha) (swe.SIDM_TRUE_PUSHYA).
-* Think about having the start time as the default time.
+* Think about introduce endTime config as an option, to allow the skipping of period config.
+* Think of introducing startDate (2024-07-25), startTime (18:00:00), endDate and endTime configs.
 * Use planetary short forms (IE: Me, Ju, etc) as the default.
 * Replace periods with a single period config, with values with same type as frequency.
 * Check whether muhurtaYoga effects depend upon Pakshatithis.
@@ -43,7 +43,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Prefer numbers over strings for calculations. Have a translation layer at the tail to make things readable. This could be done as a part of performance improvements, post initial development. This could lead to moving some data dependent decisions to calculations.
 * Standardize naming conventions across languages. IE: Don't use Wednesday and Budha together.
 * Find the correct name for the muhurta yoga recorded as apaduddharaka.
-* Handle dvipushkara and tripushkara yogas appropriately.
+* Handle tripushkara and tripushkara yogas appropriately.
 * Add individual impacts of weekdays, tithis and nakshatras to muhurta effects. Refer: https://www.astrojyoti.com/naksatratithiyogainfo.htm
 * Bring in the effects of other time scales like maasa, yoga, karana, chowgadiya, hora etc. These might need a different CSV file as the format is different, as their effects are not tied to other scales.
 * When possible include personal natal charts to find muhurta fitment.
@@ -55,7 +55,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 
 ## Findings
 * Krakacha yoga is formed when tithi + vaara = 13.
-* Amritsiddhi Muhurtayoga is a subset of Sarvarthasiddhi yoga.
+* Amritasiddhi Muhurtayoga is a subset of Sarvarthasiddhi yoga.
 
 ## Glossary
 * **JH**: Jagannatha Hora.

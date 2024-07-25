@@ -1,4 +1,4 @@
-ayanamsa: ay_raman # as supported by the underlying package, siderallib.
+ayanamsa: raman # as supported by the underlying package, pyswisseph.
 year: 2020
 month: 1
 day: 4
