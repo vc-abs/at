@@ -61,17 +61,30 @@ def getStartingDasha(chart):
 	}
 
 
+phalaPlanetCount = 7
+
+
 def getShadBalaStrength(chart):
 	strengths = {
 		planet: phala['strength']
 		for planet, phala in chart.shadBala.phalas.items()
 	}
+
+	avgIshtaPhala = (
+		sum(
+			phala['ishtaPhala']
+			for phala in chart.shadBala.phalas.values()
+		)
+		/ phalaPlanetCount
+	)
+
 	return {
 		**{
 			f'{planet[:2]}S': strength
 			for planet, strength in strengths.items()
 		},
 		'totalS': sum(strengths.values()),
+		'avgIP': avgIshtaPhala,
 	}
 
 
