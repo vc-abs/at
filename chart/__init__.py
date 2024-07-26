@@ -13,6 +13,7 @@ from core.helpers import (
 from core.planetaryPositions import (
 	getPlanetaryPositions,
 )
+from core.karakas import getKarakas
 from core.sweHelpers import (
 	setAyanamsa,
 	getAyanamsaOffset,
@@ -118,6 +119,9 @@ class Chart(Cached):
 
 	def _getVarga(self):
 		return Varga(self)
+
+	def _getKarakas(self):
+		return getKarakas(self)
 
 
 __all__ = [Chart]
