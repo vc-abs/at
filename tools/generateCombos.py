@@ -88,12 +88,17 @@ def getShadBalaStrength(chart):
 	}
 
 
+def getKarakas(chart):
+	return chart.karakas
+
+
 fieldSets = {
 	'muhurtaYogaEffects': lambda chart: chart.panchang.muhurtaYogaEffects,
 	'objectHouses': getObjectHouses,
 	'ashtakavarga': lambda chart: chart.ashtakavarga,
 	'startingDasha': getStartingDasha,
 	'shadBalaStrength': getShadBalaStrength,
+	'karakas': getKarakas,
 }
 
 
