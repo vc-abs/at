@@ -17,8 +17,8 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * [JyotishyaMitra](https://github.com/VicharaVandana/jyotishyamitra/), a python package by Shyam Bhat.
 
 ## Notes
-* Some computations might be off by a few minutes.
-* The preferred ayanamsa is "ay_raman" as it's closer to the Pushya at 16Cn, suggested by PVN Rao.
+* Accuracy of the computations are affected by the chosen Ayanamsa.
+* The preferred ayanamsa is "raman" as it's closer to the Pushya at 16Cn, suggested by PVN Rao.
 * Jagannatha Hora seems to be more stable in handling higher latitudes than JyotishApp.
 * Astrology software in general seem to have at least a few minor bugs in handling sunrise and sunset times at higher latitudes.
 * Some names are in English and other in Sanskrit. This is a temporary situation for operational efficiency.
@@ -28,6 +28,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ## ToDo
 * Explore True [Pushya Nakshatra Ayanamsa by PVRNR](https://astrorigin.com/pyswisseph/sphinx/ephemerides/sidereal/suryasiddhanta_and_aryabhata.html#true-pushya-paksha-ayanamsha) (swe.SIDM_TRUE_PUSHYA).
 * Make the config, fieldSets, a dictionary to ease the selection of columns. The keys are to be the name of the filedSets, where as the values could be all, none or a list of fields to be included in the final result. Note that, this would render the config, skipColumns redundant.
+* Introduce charts to analyze trends.
 * Think about introduce endTime config as an option, to allow the skipping of period config.
 * Think of introducing startDate (2024-07-25), startTime (18:00:00), endDate and endTime configs.
 * Use planetary short forms (IE: Me, Ju, etc) as the default.

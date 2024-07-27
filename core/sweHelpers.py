@@ -46,6 +46,7 @@ def floatToHMS(floatHours):
 	minutesFraction = (
 		remainingMinutes
 	) - minutes
+	# #TODO: Fix the following bug: Floating point correction sometimes make the value exceed 59 and breaks the run.
 	seconds = int(
 		minutesFraction * secondsPerMinute
 		+ floatingPointPrecisionCorrectionSeconds
