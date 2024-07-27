@@ -7,7 +7,6 @@ latitude: 23.101
 longitude: 77.461
 # Field Sets
 fieldSets:
-  - muhurtaYogaEffects
   - objectHouses
 # Records
 frequency: 1h
