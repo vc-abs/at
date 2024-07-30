@@ -5,7 +5,7 @@ from core.constants import (
 	nakshatraWidth,
 )
 
-vimshottariDashaLength = {
+vimshottariDashaLengths = {
 	'ketu': 7,
 	'venus': 20,
 	'sun': 6,
@@ -16,6 +16,9 @@ vimshottariDashaLength = {
 	'saturn': 19,
 	'mercury': 17,
 }
+vimshottariDashaTotalLength = sum(
+	vimshottariDashaLengths.values()
+)
 vimshottariSequence = [
 	'ketu',
 	'venus',
@@ -27,9 +30,16 @@ vimshottariSequence = [
 	'saturn',
 	'mercury',
 ]
+dashaCount = len(vimshottariSequence)
 nakshatraLordCount = len(
 	vimshottariSequence
 )
+
+
+def getNakshatraIndex(chart):
+	return (
+		chart.panchang.nakshatraNumber - 1
+	)
 
 
 class Dasha(Cached):
@@ -37,16 +47,10 @@ class Dasha(Cached):
 		super().__init__()
 		self._chart = chart
 
-	def _getNakshatraIndex(self):
-		return (
-			self._chart.panchang.nakshatraNumber
-			- 1
-		)
-
 	def _getNakshatraLord(self):
 		return {
 			'nakshatraLord': vimshottariSequence[
-				self._getNakshatraIndex()
+				getNakshatraIndex(self._chart)
 				% nakshatraLordCount
 			],
 		}
@@ -63,17 +67,15 @@ class Dasha(Cached):
 		)
 
 		dashas = [startingDasha]
-		for i in range(
-			1, len(vimshottariSequence)
-		):
+		for i in range(1, dashaCount):
 			planetIndex = (
 				dashaStartIndex + i
-			) % len(vimshottariSequence)
+			) % dashaCount
 			planet = vimshottariSequence[
 				planetIndex
 			]
 			dashaPeriodYears = (
-				vimshottariDashaLength[planet]
+				vimshottariDashaLengths[planet]
 			)
 
 			endDate = startDate + timedelta(
@@ -93,14 +95,14 @@ class Dasha(Cached):
 		return dashas
 
 	def _getStartingDasha(self):
-		chartTime = self._chart.config[
+		eventTime = self._chart.config[
 			'datetime'
 		]
 		moonPosition = self._chart.objects[
 			'moon'
 		]['longitude']
-		nakshatraIndex = (
-			self._getNakshatraIndex()
+		nakshatraIndex = getNakshatraIndex(
+			self._chart
 		)
 		dashaStartIndex = (
 			nakshatraIndex
@@ -112,29 +114,32 @@ class Dasha(Cached):
 		nakshatraStartDegree = (
 			nakshatraIndex * nakshatraWidth
 		)
-		nakshatraFraction = (
+		coveredDashaPeriod = (
 			moonPosition
 			- nakshatraStartDegree
 		) / nakshatraWidth
-		remainingFraction = (
-			1 - nakshatraFraction
+		remainingDashaPeriod = (
+			1 - coveredDashaPeriod
 		)
-
-		startDate = chartTime
-		remainingDashaYears = (
-			vimshottariDashaLength[
+		dashaLength = (
+			vimshottariDashaLengths[
 				startPlanet
 			]
-			* remainingFraction
+		)
+		coveredDashaYears = (
+			dashaLength * coveredDashaPeriod
+		)
+		startDate = eventTime - timedelta(
+			days=coveredDashaYears
+			* daysPerYear
 		)
 		endDate = startDate + timedelta(
-			days=remainingDashaYears
-			* daysPerYear
+			days=dashaLength * daysPerYear
 		)
 
 		return {
 			'planet': startPlanet,
 			'startDate': startDate,
 			'endDate': endDate,
-			'remainder': remainingFraction,
+			'remainder': remainingDashaPeriod,
 		}
