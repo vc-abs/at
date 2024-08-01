@@ -34,36 +34,49 @@ placeHolderPlanetPhalas = {
 }
 
 
-def getStartingDasha(chart):
-	startingDasha = (
-		chart.dasha.startingDasha
-	)
-
-	startingDashaLord = startingDasha[
-		'lord'
-	]
-	startingDashaPlanetPhalas = (
-		chart.shadBala.phalas.get(
-			startingDashaLord,
-			placeHolderPlanetPhalas,
-		)
+def formatDashaData(
+	dasha, phalas, prefix
+):
+	dashaLordPhala = phalas.get(
+		dasha['lord'],
+		placeHolderPlanetPhalas,
 	)
 
 	return {
-		'sdLord': startingDashaLord,
-		'sdStartsAt': startingDasha[
-			'startsAt'
-		],
-		'sdEndsAt': startingDasha['endsAt'],
-		'sdRemainder': startingDasha[
-			'remainder'
-		],
-		'sdlStrength': startingDashaPlanetPhalas[
+		**{
+			f'{ prefix }{ k[0].upper() }{ k[1:] }': v
+			for k, v in dasha.items()
+		},
+		f'{ prefix }lStrength': dashaLordPhala[
 			'strength'
 		],
-		'sdlIshtaPhala': startingDashaPlanetPhalas[
+		f'{ prefix }lIshtaPhala': dashaLordPhala[
 			'ishtaPhala'
 		],
+	}
+
+
+def getStartingDasha(chart):
+	return formatDashaData(
+		chart.dasha.startingDasha,
+		chart.shadBala.phalas,
+		'sd',
+	)
+
+
+def getStartingAntarDashas(chart):
+	formattedDashas = [
+		formatDashaData(
+			antarDashaData,
+			chart.shadBala.phalas,
+			antarDashaPrefix,
+		)
+		for antarDashaPrefix, antarDashaData in chart.dasha.startingAntarDashas.items()
+	]
+	return {
+		k: v
+		for d in formattedDashas
+		for k, v in d.items()
 	}
 
 
@@ -103,6 +116,7 @@ fieldSets = {
 	'objectHouses': getObjectHouses,
 	'ashtakavarga': lambda chart: chart.ashtakavarga,
 	'startingDasha': getStartingDasha,
+	'startingAntarDashas': getStartingAntarDashas,
 	'shadBalaStrength': getShadBalaStrength,
 	'karakas': getKarakas,
 }

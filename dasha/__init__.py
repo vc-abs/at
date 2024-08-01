@@ -44,6 +44,112 @@ def getNakshatraIndex(chart):
 	)
 
 
+antarDashaPrefixes = [
+	'ad',
+	'pad',
+	'skd',
+	'prd',
+]
+antarDashaMaxDepth = len(
+	antarDashaPrefixes
+)
+
+
+def getAntarDasha(
+	startingPlanet,
+	superDashaStartsAt,
+	superDashaLength,
+	coveredFraction,
+	currentAntarDashaDepth=0,
+	requestedAntarDashaDepth=None,
+):
+	if requestedAntarDashaDepth is None:
+		requestedAntarDashaDepth = (
+			currentAntarDashaDepth
+		)
+
+	coveredLength = (
+		coveredFraction * superDashaLength
+	)
+	accumulatedLength = 0
+	currentAntarDashaLength = 0
+	dashaPlanet = None
+	sequenceStart = (
+		vimshottariSequence.index(
+			startingPlanet
+		)
+	)
+	for currentPlanet in doubleCycle[
+		sequenceStart:
+	]:
+		currentAntarDashaLength = (
+			vimshottariProportions[
+				currentPlanet
+			]
+			* superDashaLength
+		)
+
+		accumulatedLength += (
+			currentAntarDashaLength
+		)
+		dashaPlanet = currentPlanet
+		if (
+			accumulatedLength >= coveredLength
+		):
+			break
+
+	completedLength = (
+		accumulatedLength
+		- currentAntarDashaLength
+	)
+	startsAt = (
+		superDashaStartsAt
+		+ timedelta(
+			days=completedLength * daysPerYear
+		)
+	)
+	endsAt = (
+		superDashaStartsAt
+		+ timedelta(
+			days=accumulatedLength
+			* daysPerYear
+		)
+	)
+	remainingFraction = (
+		accumulatedLength - coveredLength
+	) / currentAntarDashaLength
+	antarDashaPrefix = antarDashaPrefixes[
+		requestedAntarDashaDepth
+		- currentAntarDashaDepth
+	]
+	dashaValues = {
+		antarDashaPrefix: {
+			'lord': dashaPlanet,
+			'startsAt': startsAt,
+			'endsAt': endsAt,
+			'remainder': remainingFraction,
+		}
+	}
+
+	subDashaValues = (
+		getAntarDasha(
+			dashaPlanet,
+			startsAt,
+			currentAntarDashaLength,
+			1 - remainingFraction,
+			currentAntarDashaDepth - 1,
+			requestedAntarDashaDepth,
+		)
+		if currentAntarDashaDepth
+		else {}
+	)
+
+	return {
+		**dashaValues,
+		**subDashaValues,
+	}
+
+
 class Dasha(Cached):
 	def __init__(self, chart):
 		super().__init__()
@@ -86,9 +192,9 @@ class Dasha(Cached):
 			)
 			dashas.append(
 				{
-					'planet': planet,
-					'startDate': startDate,
-					'endDate': endDate,
+					'lord': planet,
+					'startsAt': startDate,
+					'endsAt': endDate,
 					'remainder': 1,
 				}
 			)
@@ -116,22 +222,21 @@ class Dasha(Cached):
 		nakshatraStartDegree = (
 			nakshatraIndex * nakshatraWidth
 		)
-		coveredDashaPeriod = (
+		coveredFraction = (
 			moonPosition
 			- nakshatraStartDegree
 		) / nakshatraWidth
 		remainingDashaPeriod = (
-			1 - coveredDashaPeriod
+			1 - coveredFraction
 		)
 		dashaLength = vimshottariLengths[
 			startPlanet
 		]
-		coveredDashaYears = (
-			dashaLength * coveredDashaPeriod
+		coveredLength = (
+			dashaLength * coveredFraction
 		)
 		startsAt = eventTime - timedelta(
-			days=coveredDashaYears
-			* daysPerYear
+			days=coveredLength * daysPerYear
 		)
 		endsAt = startsAt + timedelta(
 			days=dashaLength * daysPerYear
@@ -143,3 +248,18 @@ class Dasha(Cached):
 			'endsAt': endsAt,
 			'remainder': remainingDashaPeriod,
 		}
+
+	def _getStartingAntarDashas(self):
+		startingDasha = self.startingDasha
+		coveredFraction = (
+			1 - startingDasha['remainder']
+		)
+		return getAntarDasha(
+			startingDasha['lord'],
+			startingDasha['startsAt'],
+			vimshottariLengths[
+				startingDasha['lord']
+			],
+			coveredFraction,
+			3,
+		)
