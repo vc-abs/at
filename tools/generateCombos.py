@@ -39,23 +39,29 @@ def getStartingDasha(chart):
 		chart.dasha.startingDasha
 	)
 
-	startingDashaPlanet = startingDasha[
-		'planet'
+	startingDashaLord = startingDasha[
+		'lord'
 	]
 	startingDashaPlanetPhalas = (
 		chart.shadBala.phalas.get(
-			startingDashaPlanet,
+			startingDashaLord,
 			placeHolderPlanetPhalas,
 		)
 	)
 
 	return {
-		'sdp': startingDashaPlanet,
-		'sdr': startingDasha['remainder'],
-		'sdps': startingDashaPlanetPhalas[
+		'sdLord': startingDashaLord,
+		'sdStartsAt': startingDasha[
+			'startsAt'
+		],
+		'sdEndsAt': startingDasha['endsAt'],
+		'sdRemainder': startingDasha[
+			'remainder'
+		],
+		'sdlStrength': startingDashaPlanetPhalas[
 			'strength'
 		],
-		'sdip': startingDashaPlanetPhalas[
+		'sdlIshtaPhala': startingDashaPlanetPhalas[
 			'ishtaPhala'
 		],
 	}

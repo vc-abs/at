@@ -5,7 +5,7 @@ from core.constants import (
 	nakshatraWidth,
 )
 
-vimshottariDashaLengths = {
+vimshottariLengths = {
 	'ketu': 7,
 	'venus': 20,
 	'sun': 6,
@@ -16,23 +16,25 @@ vimshottariDashaLengths = {
 	'saturn': 19,
 	'mercury': 17,
 }
-vimshottariDashaTotalLength = sum(
-	vimshottariDashaLengths.values()
+vimshottariLengthsTotal = sum(
+	vimshottariLengths.values()
 )
-vimshottariSequence = [
-	'ketu',
-	'venus',
-	'sun',
-	'moon',
-	'mars',
-	'rahu',
-	'jupiter',
-	'saturn',
-	'mercury',
-]
+vimshottariProportions = {
+	planet: length
+	/ vimshottariLengthsTotal
+	for planet, length in vimshottariLengths.items()
+}
+vimshottariSequence = list(
+	vimshottariLengths.keys()
+)
 dashaCount = len(vimshottariSequence)
 nakshatraLordCount = len(
 	vimshottariSequence
+)
+
+doubleCycle = (
+	vimshottariSequence
+	+ vimshottariSequence
 )
 
 
@@ -75,7 +77,7 @@ class Dasha(Cached):
 				planetIndex
 			]
 			dashaPeriodYears = (
-				vimshottariDashaLengths[planet]
+				vimshottariLengths[planet]
 			)
 
 			endDate = startDate + timedelta(
@@ -121,25 +123,23 @@ class Dasha(Cached):
 		remainingDashaPeriod = (
 			1 - coveredDashaPeriod
 		)
-		dashaLength = (
-			vimshottariDashaLengths[
-				startPlanet
-			]
-		)
+		dashaLength = vimshottariLengths[
+			startPlanet
+		]
 		coveredDashaYears = (
 			dashaLength * coveredDashaPeriod
 		)
-		startDate = eventTime - timedelta(
+		startsAt = eventTime - timedelta(
 			days=coveredDashaYears
 			* daysPerYear
 		)
-		endDate = startDate + timedelta(
+		endsAt = startsAt + timedelta(
 			days=dashaLength * daysPerYear
 		)
 
 		return {
-			'planet': startPlanet,
-			'startDate': startDate,
-			'endDate': endDate,
+			'lord': startPlanet,
+			'startsAt': startsAt,
+			'endsAt': endsAt,
 			'remainder': remainingDashaPeriod,
 		}
