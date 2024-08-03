@@ -146,7 +146,9 @@ def standardizeDate(dt):
 	}
 
 
-def getComboForTime(config, dt):
+def getTimeCombos(
+	eventName, config, dt
+):
 	chart = Chart(
 		{
 			**config,
@@ -159,8 +161,38 @@ def getComboForTime(config, dt):
 
 	return {
 		'timestamp': dt,
+		'event': eventName,
 		**fields,
 	}
+
+
+def generateEventCombos(
+	eventName, config
+):
+	config = {
+		**config,
+		**config['events'][eventName],
+	}
+	timeSeries = (
+		pd.date_range(
+			start=config['date'],
+			periods=config['periods'],
+			freq=config['frequency'],
+		)
+		.to_pydatetime()
+		.tolist()
+	)
+
+	return pd.DataFrame(
+		list(
+			map(
+				lambda dt: getTimeCombos(
+					eventName, config, dt
+				),
+				timeSeries,
+			)
+		),
+	)
 
 
 def processSummaryColumn(df, summary):
@@ -240,37 +272,36 @@ def splitTimestamp(df):
 	)
 
 
+def adjustColumns(df):
+	eventColumn = df.pop('event')
+	df.insert(0, 'event', eventColumn)
+
+
 def skipColumns(df, columns):
 	return df.drop(columns=columns)
 
 
 def generateCombos(config):
-	timeSeries = (
-		pd.date_range(
-			start=config['date'],
-			periods=config['periods'],
-			freq=config['frequency'],
-		)
-		.to_pydatetime()
-		.tolist()
-	)
+	df = pd.DataFrame()
 
-	df = pd.DataFrame(
-		list(
-			map(
-				lambda dt: getComboForTime(
-					config, dt
+	for eventName in config[
+		'events'
+	].keys():
+		df = pd.concat(
+			[
+				df,
+				generateEventCombos(
+					eventName, config
 				),
-				timeSeries,
-			)
-		),
-	)
+			],
+		)
 
 	addCustomColumns(
 		df, config['customColumns']
 	)
 	sortData(df, config['order'])
 	splitTimestamp(df)
+	adjustColumns(df)
 	filteredDF = df.query(config['query'])
 	modifiedDF = skipColumns(
 		filteredDF, config['skipColumns']

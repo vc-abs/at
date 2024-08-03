@@ -1,4 +1,4 @@
-# #ToDo: Support intra dependency between columns.
+# #TODO: Support intra dependency between columns.
 customColumns:
   dharma: "h1 + h5 + h9"
   artha: "h2 + h6 + h10"
@@ -12,3 +12,7 @@ customColumns:
       - moksha
 order:
   peak: descending
+events:
+  default: {}
+  custom:
+    month: 3
