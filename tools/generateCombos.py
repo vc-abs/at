@@ -28,18 +28,18 @@ def getObjectHouses(chart):
 	)
 
 
-placeHolderPlanetPhalas = {
+placeHolderPlanetBalas = {
 	'strength': 0,
 	'ishtaPhala': 0,
 }
 
 
 def formatDashaData(
-	dasha, phalas, prefix
+	dasha, balas, prefix
 ):
-	dashaLordPhala = phalas.get(
+	dashaLordPhala = balas.get(
 		dasha['lord'],
-		placeHolderPlanetPhalas,
+		placeHolderPlanetBalas,
 	)
 
 	return {
@@ -59,7 +59,7 @@ def formatDashaData(
 def getStartingDasha(chart):
 	return formatDashaData(
 		chart.dasha.startingDasha,
-		chart.shadBala.phalas,
+		chart.shadBala.balas,
 		'sd',
 	)
 
@@ -68,7 +68,7 @@ def getStartingAntarDashas(chart):
 	formattedDashas = [
 		formatDashaData(
 			antarDashaData,
-			chart.shadBala.phalas,
+			chart.shadBala.balas,
 			antarDashaPrefix,
 		)
 		for antarDashaPrefix, antarDashaData in chart.dasha.startingAntarDashas.items()
@@ -86,13 +86,13 @@ phalaPlanetCount = 7
 def getShadBalaStrength(chart):
 	strengths = {
 		planet: phala['strength']
-		for planet, phala in chart.shadBala.phalas.items()
+		for planet, phala in chart.shadBala.balas.items()
 	}
 
 	avgIshtaPhala = (
 		sum(
 			phala['ishtaPhala']
-			for phala in chart.shadBala.phalas.values()
+			for phala in chart.shadBala.balas.values()
 		)
 		/ phalaPlanetCount
 	)

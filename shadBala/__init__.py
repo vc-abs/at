@@ -668,14 +668,14 @@ def calculateShadbala(
 	}
 
 
-def calculateIshtaAndPhalas(shadBala):
+def calculatePhalas(shadBala):
 	ucchaBala = shadBala['ucchaBala']
 	cheshtaBala = shadBala['cheshtaBala']
 	return {
 		'ishtaPhala': sqrt(
 			ucchaBala * cheshtaBala
 		),
-		'kashtaBala': sqrt(
+		'kashtaPhala': sqrt(
 			(balaDefaultMaxScore - ucchaBala)
 			* (
 				balaDefaultMaxScore
@@ -745,7 +745,7 @@ def calculatePlanetBalas(
 		**calculateStrength(
 			planet, shadBala
 		),
-		**calculateIshtaAndPhalas(shadBala),
+		**calculatePhalas(shadBala),
 	}
 
 
@@ -754,7 +754,7 @@ class ShadBala(Cached):
 		super().__init__()
 		self._chart = chart
 
-	def _getPhalas(self):
+	def _getBalas(self):
 		context = buildContext(self._chart)
 		return {
 			planet: calculatePlanetBalas(
