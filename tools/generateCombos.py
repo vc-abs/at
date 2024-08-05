@@ -121,16 +121,30 @@ fieldSets = {
 	'karakas': getKarakas,
 }
 
+def includeColumns(chart, key, value):
+	allColumns = fieldSets[key](chart)
+	return {key: allColumns[key] for key in value.split(',')}
+
+def getColumnsToInclude(chart, fieldSet):
+		key = fieldSet[0]
+		value =  fieldSet[1]
+		if(value == "all"):
+			return fieldSets[key](chart)
+		elif(value == "none"):
+			return {}
+		else:
+			return includeColumns(chart, key, value)
+
 
 def getFields(config, chart):
 	return reduce(
 		lambda acc, fieldSet: (
 			{
 				**acc,
-				**fieldSets[fieldSet](chart),
+				**getColumnsToInclude(chart, fieldSet),
 			}
 		),
-		[{}] + config['fieldSets'],
+		config['fieldSets'].items(), {}
 	)
 
 

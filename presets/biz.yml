@@ -13,6 +13,6 @@ order:
   biz: descending
   muhurtaYogaEffect: descending
 fieldSets:
-  - muhurtaYogaEffects
-  - objectHouses
-  - ashtakavarga
+  muhurtaYogaEffects: all
+  objectHouses: all
+  ashtakavarga: all

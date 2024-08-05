@@ -1,9 +1,9 @@
 # Field Sets
 fieldSets:
-  - muhurtaYogaEffects
-  - objectHouses
-  - ashtakavarga
-  - startingDasha
-  - startingAntarDashas
-  - shadBalaStrength
-  - karakas
+  muhurtaYogaEffects: all
+  objectHouses: all
+  ashtakavarga: all
+  startingDasha: all
+  startingAntarDashas: all
+  shadBalaStrength: all
+  karakas: all
