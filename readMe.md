@@ -2,6 +2,10 @@
 
 	A simple tool to find auspicious times for various occasions and endeavors.
 
+# Stack
+* Python 3.11.6
+* VS Code.
+
 # Usage
 ```console
 $ # Setup.
