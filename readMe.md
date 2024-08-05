@@ -4,6 +4,9 @@
 
 # Usage
 ```console
+$ # Setup.
+$ sh ./setup.sh
+
 $ # Simple run.
 $ python3 main.py ./examples/config.yml
 
