@@ -112,36 +112,42 @@ def getKarakas(chart):
 
 
 fieldSets = {
-	'muhurtaYogaEffects': lambda chart: chart.panchang.muhurtaYogaEffects,
-	'objectHouses': getObjectHouses,
-	'ashtakavarga': lambda chart: chart.ashtakavarga,
-	'startingDasha': getStartingDasha,
-	'startingAntarDashas': getStartingAntarDashas,
-	'shadBalaStrength': getShadBalaStrength,
-	'karakas': getKarakas,
+	'muhurtaYogaEffects': {
+  	'fn': lambda chart: chart.panchang.muhurtaYogaEffects,
+  	'columns': ['positive', 'negative', 'yogas']
+	},
+	'objectHouses': {
+		'fn': getObjectHouses,
+		'columns': ['asS','suH', 'moH', 'maH', 'meH', 'juH', 'veH', 'saH', 'raH', 'keH']
+	},
+	'ashtakavarga': {
+  	'fn': lambda chart: chart.ashtakavarga,
+		'columns': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12']
+	},
+	'startingDasha': {
+		'fn': getStartingDasha,
+		'columns': ['sdLord', 'sdStartsAt', 'sdEndsAt', 'sdRemainder', 'sdlStrength', 'sdlIshtaPhala']
+	},
+	'startingAntarDashas': {
+  	'fn': getStartingAntarDashas,
+		'columns': ['adLord', 'adStartsAt', 'adEndsAt', 'adRemainder', 'adlStrength', 'adlIshtaPhala', 'padLord', 'padStartsAt', 'padEndsAt', 'padRemainder', 'padlStrength', 'padlIshtaPhala', 'skdLord', 'skdStartsAt', 'skdEndsAt', 'skdRemainder', 'skdlStrength', 'skdlIshtaPhala','prdLord', 'prdStartsAt', 'prdEndsAt', 'prdRemainder', 'prdlStrength', 'prdlIshtaPhala']
+	},
+	'shadBalaStrength': {
+  	'fn': getShadBalaStrength,
+  	'columns': ['suS', 'moS', 'maS', 'maS', 'meS', 'juS', 'veS', 'saS', 'totalS', 'avgIP']
+	},
+	'karakas': {
+  	'fn': getKarakas,
+  	'columns': ['ak', 'amk', 'bk', 'mk', 'pk', 'gk', 'dk']
+	}
 }
-
-def includeColumns(chart, key, value):
-	allColumns = fieldSets[key](chart)
-	return {key: allColumns[key] for key in value.split(',')}
-
-def getColumnsToInclude(chart, fieldSet):
-		key = fieldSet[0]
-		value =  fieldSet[1]
-		if(value == "all"):
-			return fieldSets[key](chart)
-		elif(value == "none"):
-			return {}
-		else:
-			return includeColumns(chart, key, value)
-
 
 def getFields(config, chart):
 	return reduce(
 		lambda acc, fieldSet: (
 			{
 				**acc,
-				**getColumnsToInclude(chart, fieldSet),
+				**fieldSets[fieldSet[0]]['fn'](chart),
 			}
 		),
 		config['fieldSets'].items(), {}
