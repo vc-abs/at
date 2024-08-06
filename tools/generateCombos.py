@@ -139,6 +139,10 @@ fieldSets = {
 	'karakas': {
   	'fn': getKarakas,
   	'columns': ['ak', 'amk', 'bk', 'mk', 'pk', 'gk', 'dk']
+	},
+	'event': {
+		'fn': lambda chart: {},
+		'columns': ['event', 'date', 'time']
 	}
 }
 
@@ -301,10 +305,8 @@ selectionTypes = {
 	'some': lambda key, columns : columns
 }
 
-defaultColumns = ['event', 'date', 'time']
-
 def addColumns(df, configFieldSets):
-	columnsToInclude = defaultColumns
+	columnsToInclude = []
 	for fieldSet in configFieldSets.items():
 		key, value = fieldSet
 		selectorType = value if type(value).__name__ == 'str' else 'some'
