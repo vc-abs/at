@@ -291,15 +291,25 @@ def splitTimestamp(df):
 		columns=['timestamp'], inplace=True
 	)
 
-
 def adjustColumns(df):
 	eventColumn = df.pop('event')
 	df.insert(0, 'event', eventColumn)
 
+selectionTypes = {
+	'all': lambda key, columns : fieldSets[key]['columns'],
+	'none': lambda key, columns : [],
+	'some': lambda key, columns : columns
+}
 
-def skipColumns(df, columns):
-	return df.drop(columns=columns)
+defaultColumns = ['event', 'date', 'time']
 
+def addColumns(df, configFieldSets):
+	columnsToInclude = defaultColumns
+	for fieldSet in configFieldSets.items():
+		key, value = fieldSet
+		selectorType = value if type(value).__name__ == 'str' else 'some'
+		columnsToInclude = columnsToInclude + selectionTypes[selectorType](key, value)
+	return df[columnsToInclude]
 
 def generateCombos(config):
 	df = pd.DataFrame()
@@ -323,8 +333,8 @@ def generateCombos(config):
 	splitTimestamp(df)
 	adjustColumns(df)
 	filteredDF = df.query(config['query'])
-	modifiedDF = skipColumns(
-		filteredDF, config['skipColumns']
+	modifiedDF = addColumns(
+		filteredDF, config['fieldSets']
 	)
 
 	return modifiedDF
