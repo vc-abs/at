@@ -1,4 +1,4 @@
-HiYaPyCo==0.6.0
+deepmerge==1.1.1
 Jinja2==3.1.4
 MarkupSafe==2.1.5
 np==1.0.2

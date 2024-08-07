@@ -1,4 +1,5 @@
-import hiyapyco
+import yaml
+from deepmerge import Merger
 from datetime import (
 	datetime,
 	timezone,
@@ -70,19 +71,31 @@ def buildEvents(config):
 		for k, event in extendedEventConfigs.items()
 	}
 
+merger = Merger(
+    [
+        (dict, ["merge"])
+    ],
+    ["override"],
+    ["override"]
+)
+
+def mergeFiles(filePaths):
+    data = [yaml.safe_load(open(file, 'r')) for file in filePaths]
+    mergedData = data[0]
+    for d in data[1:]:
+        mergedData = merger.merge(mergedData, d)
+    return mergedData
 
 def readConfig(filePaths):
-	yamlConfig = hiyapyco.load(
-		[
+	yamlFiles = [
 			projectRoot
 			+ '/data/defaultConfig.yml'
-		]
-		+ filePaths,
-		method=hiyapyco.METHOD_MERGE,
-	)
+		] + filePaths
+	mergedYML = mergeFiles(yamlFiles)
+
 	config = {
 		**getDefaultConfig(),
-		**yamlConfig,
+		**mergedYML,
 	}
 
 	return {
