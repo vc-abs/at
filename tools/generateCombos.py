@@ -110,6 +110,12 @@ def getShadBalaStrength(chart):
 def getKarakas(chart):
 	return chart.karakas
 
+def getPanchang(chart):
+	return {
+		'tithi': chart.panchang.tithi,
+		'nakshatra': chart.panchang.nakshatra,
+		'vaara': chart.panchang.vaara
+	}
 
 fieldSets = {
 	'muhurtaYogaEffects': {
@@ -143,6 +149,10 @@ fieldSets = {
 	'event': {
 		'fn': lambda chart: {},
 		'columns': ['event', 'date', 'time']
+	},
+	'panchang': {
+		'fn': getPanchang,
+		'columns': ['tithi', 'nakshatra', 'vaara']
 	}
 }
 
