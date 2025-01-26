@@ -242,6 +242,8 @@ def processSummaryColumn(df, summary):
 columnProcessors = {
 	'str': lambda df, exp: df.eval(exp),
 	'OrderedDict': processSummaryColumn,
+	# #TODO: Remove this hacky fix. This fix is applied to evade some unknown issue with YAML processing. Earlier, dictionaries were processed as OrderedDict-s, which changed for some unknown reason.
+	'dict': processSummaryColumn,
 }
 
 

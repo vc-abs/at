@@ -33,6 +33,8 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Rise and Set calculations of polar regions could be imprecise.
 
 ## ToDo
+* Make setup.sh work well with Python 3.11.
+* Remove hacky fixes.
 * Explore True [Pushya Nakshatra Ayanamsa by PVRNR](https://astrorigin.com/pyswisseph/sphinx/ephemerides/sidereal/suryasiddhanta_and_aryabhata.html#true-pushya-paksha-ayanamsha) (swe.SIDM_TRUE_PUSHYA).
 * Make the config, fieldSets, a dictionary to ease the selection of columns. The keys are to be the name of the filedSets, where as the values could be all, none or a list of fields to be included in the final result. Note that, this would render the config, skipColumns redundant.
 * Thinks of moving the computations to Julian Dates, for ease.
