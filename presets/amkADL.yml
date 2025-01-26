@@ -1,0 +1,20 @@
+# Amatyakaraka and Antardasha Lord
+frequency: 15min
+periods: 35040
+fieldSets:
+  event:
+    - date
+    - time
+  muhurtaYogaEffects: all
+  objectHouses: all
+  ashtakavarga: all
+  startingAntarDashas:
+    - adLord
+    - adRemainder
+    - adlStrength
+    - adlIshtaPhala
+  shadBalaStrength:
+    - totalS
+    - avgIP
+  karakas:
+    - amk
