@@ -61,6 +61,8 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * When possible include personal natal charts to find muhurta fitment.
 * Fine tune the analysis with input from: https://astrologerjolly.tripod.com/muhurtha.htm
 * Understand the impact of altitude on charts, as the sunrise time would be different.
+* Introduce panchang values like Abhijit Muhurta, Rahu Kaala, etc.
+* Make panchang.vaara return vedic vaara.
 
 ## References
 * [ShadBala Calculations by Dr Mahesh Joshi](https://www.youtube.com/watch?v=d7GX4Jm39Is)

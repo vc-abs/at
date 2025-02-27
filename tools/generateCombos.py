@@ -111,23 +111,29 @@ def getKarakas(chart):
 	return chart.karakas
 
 def getPanchang(chart):
+	riseAndSet = chart.panchang.riseAndSet
+	sunrise = riseAndSet['sunrise'].strftime("%H:%M:%S")
+	sunset = riseAndSet['sunset'].strftime("%H:%M:%S")
+
 	return {
 		'tithi': chart.panchang.tithi,
 		'nakshatra': chart.panchang.nakshatra,
-		'vaara': chart.panchang.vaara
-	}
+		'vaara': chart.panchang.vaara,
+		'sunrise': sunrise,
+		'sunset': sunset,
+  } 
 
 fieldSets = {
 	'muhurtaYogaEffects': {
-  	'fn': lambda chart: chart.panchang.muhurtaYogaEffects,
-  	'columns': ['positive', 'negative', 'yogas']
+		'fn': lambda chart: chart.panchang.muhurtaYogaEffects,
+		'columns': ['positive', 'negative', 'yogas']
 	},
 	'objectHouses': {
 		'fn': getObjectHouses,
 		'columns': ['asS','suH', 'moH', 'maH', 'meH', 'juH', 'veH', 'saH', 'raH', 'keH']
 	},
 	'ashtakavarga': {
-  	'fn': lambda chart: chart.ashtakavarga,
+		'fn': lambda chart: chart.ashtakavarga,
 		'columns': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12']
 	},
 	'startingDasha': {
@@ -135,16 +141,16 @@ fieldSets = {
 		'columns': ['sdLord', 'sdStartsAt', 'sdEndsAt', 'sdRemainder', 'sdlStrength', 'sdlIshtaPhala']
 	},
 	'startingAntarDashas': {
-  	'fn': getStartingAntarDashas,
+		'fn': getStartingAntarDashas,
 		'columns': ['adLord', 'adStartsAt', 'adEndsAt', 'adRemainder', 'adlStrength', 'adlIshtaPhala', 'padLord', 'padStartsAt', 'padEndsAt', 'padRemainder', 'padlStrength', 'padlIshtaPhala', 'skdLord', 'skdStartsAt', 'skdEndsAt', 'skdRemainder', 'skdlStrength', 'skdlIshtaPhala','prdLord', 'prdStartsAt', 'prdEndsAt', 'prdRemainder', 'prdlStrength', 'prdlIshtaPhala']
 	},
 	'shadBalaStrength': {
-  	'fn': getShadBalaStrength,
-  	'columns': ['suS', 'moS', 'maS', 'maS', 'meS', 'juS', 'veS', 'saS', 'totalS', 'avgIP']
+		'fn': getShadBalaStrength,
+		'columns': ['suS', 'moS', 'maS', 'maS', 'meS', 'juS', 'veS', 'saS', 'totalS', 'avgIP']
 	},
 	'karakas': {
-  	'fn': getKarakas,
-  	'columns': ['ak', 'amk', 'bk', 'mk', 'pk', 'gk', 'dk']
+		'fn': getKarakas,
+		'columns': ['ak', 'amk', 'bk', 'mk', 'pk', 'gk', 'dk']
 	},
 	'event': {
 		'fn': lambda chart: {},
@@ -152,7 +158,7 @@ fieldSets = {
 	},
 	'panchang': {
 		'fn': getPanchang,
-		'columns': ['tithi', 'nakshatra', 'vaara']
+		'columns': ['tithi', 'nakshatra', 'vaara', 'sunrise', 'sunset']
 	}
 }
 
