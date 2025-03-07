@@ -209,9 +209,10 @@ def getTimeCombos(
 def generateEventCombos(
 	eventName, config
 ):
+	eventConfig = config['events'][eventName]
 	config = {
 		**config,
-		**config['events'][eventName],
+		**eventConfig,
 	}
 	timeSeries = (
 		pd.date_range(
@@ -227,7 +228,7 @@ def generateEventCombos(
 		list(
 			map(
 				lambda dt: getTimeCombos(
-					eventName, config, dt
+					eventConfig.get('name', eventName), config, dt
 				),
 				timeSeries,
 			)

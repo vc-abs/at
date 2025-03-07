@@ -63,6 +63,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Understand the impact of altitude on charts, as the sunrise time would be different.
 * Introduce panchang values like Abhijit Muhurta, Rahu Kaala, etc.
 * Make panchang.vaara return vedic vaara.
+* Write a proper example for events (Refer: panchang.yml).
 
 ## References
 * [ShadBala Calculations by Dr Mahesh Joshi](https://www.youtube.com/watch?v=d7GX4Jm39Is)

@@ -1,12 +1,13 @@
 day: 14
-month: 4
 hour: 12
 minute: 0
 second: 0
 frequency: 1d
 periods: 365
 fieldSets:
-  event:
-    - date
-    - time
+  event: all
   panchang: all
+events:
+  panchang:
+    name: "panchang"
+    month: 4
