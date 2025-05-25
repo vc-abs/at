@@ -7,6 +7,8 @@
 * VS Code.
 
 # Usage
+*Activate the VENV before running setup and other commands.*
+
 ```console
 $ # Setup.
 $ sh ./setup.sh
