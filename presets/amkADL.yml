@@ -5,6 +5,10 @@ fieldSets:
   event:
     - date
     - time
+  panchang:
+    - tithi
+    - vaara
+    - nakshatra
   muhurtaYogaEffects: all
   objectHouses: all
   ashtakavarga: all
