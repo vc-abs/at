@@ -1,6 +1,7 @@
 from functools import reduce
 import pandas as pd
 from chart import Chart
+import math
 
 orderMap = {
 	'ascending': True,
@@ -121,7 +122,9 @@ def getPanchang(chart):
 		'vaara': chart.panchang.vaara,
 		'sunrise': sunrise,
 		'sunset': sunset,
-  } 
+	  }
+
+from tools.experimental import getExperimental
 
 fieldSets = {
 	'muhurtaYogaEffects': {
@@ -159,6 +162,15 @@ fieldSets = {
 	'panchang': {
 		'fn': getPanchang,
 		'columns': ['tithi', 'nakshatra', 'vaara', 'sunrise', 'sunset']
+	},
+	# Experimental custom columns defined by Excel formulas
+	'experimental': {
+		'fn': getExperimental,
+		'columns': [
+			'specialPlanetPosScore', 'balaProduct', 'shortTermBalaProduct',
+			'muhurtaEffect', 'apaduddharaka', 'gyana', 'samaj', 'arthaSutra',
+			'health', 'BvS', 'Satvik', 'GuidedS'
+		]
 	}
 }
 
