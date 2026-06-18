@@ -1,9 +1,9 @@
 #!/bin/bash
-# DVC pre-commit hook — managed by seed dvc
+# DVC post-checkout hook — managed by seed dvc
 # Hook logic lives in the shared store. Update by: seed deploy dvc
 _DVC_STORE="${SHARED_STORE:-/shared/store}/dvc"
 if [ -d "$_DVC_STORE/hooks" ]; then
-	exec "$_DVC_STORE/hooks/pre-commit.sh" "$@"
+	exec "$_DVC_STORE/hooks/post-checkout.sh" "$@"
 else
 	echo "[dvc-hook] /shared/store/dvc not available — run 'seed deploy dvc' on the host"
 	exit 0

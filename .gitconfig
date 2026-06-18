@@ -1,0 +1,6 @@
+[commit]
+  template = .gitmessage
+
+[merge]
+  # Skip commit message template for automatic merge commits
+  ff = only

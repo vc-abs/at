@@ -1,0 +1,30 @@
+{
+	"version": "0.2",
+	"language": "en",
+	"dictionaries": [
+		"node",
+		"en-gb"
+	],
+	"files": [
+		"**"
+	],
+	"ignorePaths": [
+		"dist"
+	],
+	"minWordLength": 2,
+	"words": [],
+	"patterns": [
+		{
+			"name": "acronyms",
+			"pattern": "/[A-Z_]+(?![a-z])/"
+		},
+		{
+			"name": "shorthands",
+			"pattern": "/[a-z]{1,3}/"
+		}
+	],
+	"ignoreRegExpList": [
+		"acronyms",
+		"shorthands"
+	]
+}

@@ -1,17 +1,84 @@
 # Ignores
 ## General
 .*
-*.tgz
-
-## Stack
-*.pyc
-
-# Excludes
-## General
-!.git*
+*.bak
 
 ## Dev
-!.editorconfig
-!.eslint*
 !.vscode
-dist
+.vscode/*.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+!.editorconfig
+!cspell.json
+!.dockerignore
+
+# Excludes
+# Add exclusions here.
+
+## General
+!.git*
+!.gitattributes
+!.dvcignore
+!.ai
+!.github
+!.devcontainer
+!.devcontainer/devcontainer-config.json
+.devcontainer/devcontainer-config.local.json
+
+## GenAI Asset System
+.env
+!.env.example
+.secrets/
+!.dvc
+.dvc/tmp
+.dvc/config.local
+.dvc/cache
+.dvc/.gitignore
+logs/
+!.agents
+!.agents/**
+
+## Stack
+# Node.js
+!.nvmrc
+
+# Python
+!.python-version
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp.*
+.yarn-integrity
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Testing & Temporary
+temp/

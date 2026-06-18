@@ -1,0 +1,26 @@
+// Dual-context config: works on the host and inside the devcontainer.
+// Mirrors .vscode/mcp.json — both use the same script path.
+//
+// ${workspaceFolder}/scripts/run-mcp-server.sh is placed here by: seed init devcontainer
+// In the devcontainer ${workspaceFolder} = /workspace; on the host it is the repo root.
+//
+// The script detects context via $WORKSPACEROOT and dispatches accordingly.
+// API keys are loaded from /root/.secrets/env via sudo (devcontainer) or from the environment (host).
+{
+	"mcpServers": {
+		"gemini": {
+			"type": "local",
+			"command": "${workspaceFolder}/scripts/run-mcp-server.sh",
+			"args": [
+				"gemini-mcp-server"
+			]
+		},
+		"vercel-ai": {
+			"type": "local",
+			"command": "${workspaceFolder}/scripts/run-mcp-server.sh",
+			"args": [
+				"vercel-ai-mcp-server"
+			]
+		}
+	}
+}

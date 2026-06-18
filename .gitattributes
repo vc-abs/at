@@ -1,2 +1,5 @@
-# turn off auto-crlf
-* -text
+# All text files get LF on checkin; git's heuristic decides text vs binary.
+* text=auto eol=lf
+
+# Override: binaries that git's heuristic sometimes misclassifies as text
+*.lockb  binary

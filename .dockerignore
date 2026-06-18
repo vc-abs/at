@@ -1,0 +1,77 @@
+# Git
+.git/
+.gitignore
+.gitattributes
+.gitconfig
+.gitmessage
+
+# VS Code (will be configured by devcontainer)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# DVC
+.dvc/cache/
+.dvc/tmp/
+
+# Build artifacts
+build/
+dist/
+*.so
+*.dylib
+*.dll
+
+# Logs
+logs/
+*.log
+
+# Test results
+coverage/
+
+# Temporary files
+.temp/
+.work/
+temp/
+*.tmp
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+
+# IDE
+.idea/
+.continue/
+*.swp
+*.swo
+
+# Environment files (handled securely)
+.env
+.env.*
+!.env.example
+
+# Large media files (DVC-tracked)
+content/images/*.png
+content/images/*.jpg
+content/images/*.jpeg
+content/images/*.gif
+content/images/*.mp4
+content/images/*.webp
+
+# Keep DVC pointer files and metadata
+!content/images/*.dvc
+!content/images/*.yaml

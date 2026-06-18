@@ -1,0 +1,8 @@
+[cache]
+    type = "hardlink,symlink"
+    dir = /shared/dvc-cache
+    shared = group
+[core]
+    remote = dvc-storage
+['remote "dvc-storage"']
+    url = s3://gd-math/dvc-remote/

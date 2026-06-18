@@ -1,0 +1,8 @@
+<type>(<scope>): <subject>
+
+# Commit message guidelines (see .github/prompts/commit.md for details):
+# - Use single-line subject only (no multi-line body unless explicitly requested)
+# - Format: <type>(<scope>): <subject>
+# - Types: feat, fix, docs, style, refactor, perf, test, chore
+# - Subject: imperative mood, lowercase, no period, max 72 chars
+# - Derive message strictly from the diff
