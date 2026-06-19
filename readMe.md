@@ -49,6 +49,12 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Validate the presets with experts.
 * Get popular reference locations cross regions, from experts.
 * Try adding more muhurta yoga combinations.
+* Introduce `planetaryYogas` as a fieldSet with a single string output field listing active planetary yogas.
+* Score active yogas on Dharma, Artha, Kama and Moksha dimensions, and expose cumulative yoga scores.
+* Add positive/negative yoga balance fields like positiveYogaCount, negativeYogaCount and yogaNetScore.
+* Add event-fit yoga scores like bizYogaScore, educationYogaScore, marriageYogaScore, travelYogaScore and spiritualYogaScore.
+* Add explainability fields like yogaHighlights and yogaTopContributors alongside `planetaryYogas`.
+* Introduce a yoga definition registry (YAML/CSV + Python handlers where needed) with metadata, dimensions, polarity and rule definitions.
 * Introduce proper package management.
 * Make the configuration a bit more human readable.
 * Support DMS notation for latitudes and longitudes.
