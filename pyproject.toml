@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "at"
 version = "0.1.0"
 description = "Auspicious Times - Vedic muhurta analysis tool"
-readme = "readMe.md"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "deepmerge==2.0",
