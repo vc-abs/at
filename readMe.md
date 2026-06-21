@@ -38,12 +38,10 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Make setup.sh work well with Python 3.11.
 * Remove hacky fixes.
 * Explore True [Pushya Nakshatra Ayanamsa by PVRNR](https://astrorigin.com/pyswisseph/sphinx/ephemerides/sidereal/suryasiddhanta_and_aryabhata.html#true-pushya-paksha-ayanamsha) (swe.SIDM_TRUE_PUSHYA).
-* Make the config, fieldSets, a dictionary to ease the selection of columns. The keys are to be the name of the filedSets, where as the values could be all, none or a list of fields to be included in the final result. Note that, this would render the config, skipColumns redundant.
 * Thinks of moving the computations to Julian Dates, for ease.
 * Introduce charts to analyze trends.
 * Think about introduce endTime config as an option, to allow the skipping of period config.
 * Think of introducing startDate (2024-07-25), startTime (18:00:00), endDate and endTime configs.
-* Use planetary short forms (IE: Me, Ju, etc) as the default.
 * Replace periods with a single period config, with values with same type as frequency.
 * Check whether muhurtaYoga effects depend upon Pakshatithis.
 * Validate the presets with experts.
@@ -55,11 +53,15 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * Add event-fit yoga scores like bizYogaScore, educationYogaScore, marriageYogaScore, travelYogaScore and spiritualYogaScore.
 * Add explainability fields like yogaHighlights and yogaTopContributors alongside `planetaryYogas`.
 * Introduce a yoga definition registry (YAML/CSV + Python handlers where needed) with metadata, dimensions, polarity and rule definitions.
+* Choose a testing framework and write tests for core modules and workflows.
 * Introduce proper package management.
 * Make the configuration a bit more human readable.
 * Support DMS notation for latitudes and longitudes.
 * Improve the accuracy of Tithi Calculations.
+* Make Rahu/Ketu exaltation handling configurable by tradition/school.
 * Try to depend on chart objects, rather than python datetime for weekday calculations.
+* Profile runtime hotspots (Swiss ephemeris calls, chart loops, pandas ops) and prioritize optimizations from measured bottlenecks.
+* Evaluate extending a pandas/vectorized implementation for bulk runs, and switch hotspot modules to a faster language (e.g., Rust/C++) if profiling shows Python limits.
 * Prefer numbers over strings for calculations. Have a translation layer at the tail to make things readable. This could be done as a part of performance improvements, post initial development. This could lead to moving some data dependent decisions to calculations.
 * Standardize naming conventions across languages. IE: Don't use Wednesday and Budha together.
 * Find the correct name for the muhurta yoga recorded as apaduddharaka.
