@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "at"
+version = "0.1.0"
+description = "Auspicious Times - Vedic muhurta analysis tool"
+readme = "readMe.md"
+requires-python = ">=3.11"
+dependencies = [
+  "deepmerge==2.0",
+  "jinja2==3.1.6",
+  "np==1.0.2",
+  "numpy==1.24.4",
+  "pandas==2.0.3",
+  "pyswisseph==2.10.3.2",
+  "pytest==8.3.5",
+  "python-dateutil==2.9.0.post0",
+  "pytz==2025.2",
+  "PyYAML==6.0.2",
+  "tzdata==2025.2",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+at = "at.main:cli"
