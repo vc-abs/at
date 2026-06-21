@@ -3,6 +3,7 @@ import pandas as pd
 from at.chart import Chart
 from at.core.constants import (
 	planets,
+	nodes,
 	combustionOrbs,
 )
 from at.core.helpers import getShortestDistanceInCircle
@@ -35,10 +36,21 @@ def getObjectHouses(chart):
 
 def getPlanetaryDegrees(chart):
 	return {
-		f'{planet[:2]}D': chart.objects[planet][
+		'asD': chart.objects['asc'][
 			'longitude'
-		]
-		for planet in planets
+		],
+		**{
+			f'{planet[:2]}D': chart.objects[planet][
+				'longitude'
+			]
+			for planet in planets
+		},
+		**{
+			f'{node[:2]}D': chart.objects[node][
+				'longitude'
+			]
+			for node in nodes
+		},
 	}
 
 
@@ -178,7 +190,7 @@ fieldSets = {
 	},
 	'planetaryDegrees': {
 		'fn': getPlanetaryDegrees,
-		'columns': ['suD', 'moD', 'maD', 'meD', 'juD', 'veD', 'saD']
+		'columns': ['asD', 'suD', 'moD', 'maD', 'meD', 'juD', 'veD', 'saD', 'raD', 'keD']
 	},
 	'ashtakavarga': {
 		'fn': lambda chart: chart.ashtakavarga,

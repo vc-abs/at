@@ -46,8 +46,8 @@ combustionOrbs = {
 }
 
 nodes = [
-	'ketu',
 	'rahu',
+	'ketu',
 ]
 
 angles = ['asc']
