@@ -3,8 +3,10 @@ fieldSets:
   panchang: all
   muhurtaYogaEffects: all
   objectHouses: all
+  planetaryDegrees: all
   ashtakavarga: all
   karakas: all
   mahaDasha: all
   antarDashas: all
+  planetFlags: all
   shadBalaStrength: all

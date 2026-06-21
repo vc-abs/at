@@ -1,6 +1,11 @@
 from functools import reduce
 import pandas as pd
 from chart import Chart
+from core.constants import (
+	planets,
+	combustionOrbs,
+)
+from core.helpers import getShortestDistanceInCircle
 
 orderMap = {
 	'ascending': True,
@@ -26,6 +31,15 @@ def getObjectHouses(chart):
 			if objectKey != 'asc'
 		},
 	)
+
+
+def getPlanetaryDegrees(chart):
+	return {
+		f'{planet[:2]}D': chart.objects[planet][
+			'longitude'
+		]
+		for planet in planets
+	}
 
 
 placeHolderPlanetBalas = {
@@ -77,6 +91,36 @@ def getAntarDashas(chart):
 		k: v
 		for d in formattedDashas
 		for k, v in d.items()
+	}
+
+
+def getPlanetFlagsByPlanet(chart, planet):
+	sunLongitude = chart.objects['sun']['longitude']
+	planetData = chart.objects[planet]
+	flags = []
+
+	if planetData.get('retrograde'):
+		flags.append('R')
+
+	combustionOrb = combustionOrbs.get(planet)
+	if combustionOrb and (
+		getShortestDistanceInCircle(
+			planetData['longitude'],
+			sunLongitude,
+		)
+		<= combustionOrb
+	):
+		flags.append('C')
+
+	return '|'.join(sorted(flags))
+
+
+def getPlanetFlags(chart):
+	return {
+		f'{planet[:2]}F': getPlanetFlagsByPlanet(
+			chart, planet
+		)
+		for planet in planets
 	}
 
 
@@ -132,6 +176,10 @@ fieldSets = {
 		'fn': getObjectHouses,
 		'columns': ['asS','suH', 'moH', 'maH', 'meH', 'juH', 'veH', 'saH', 'raH', 'keH']
 	},
+	'planetaryDegrees': {
+		'fn': getPlanetaryDegrees,
+		'columns': ['suD', 'moD', 'maD', 'meD', 'juD', 'veD', 'saD']
+	},
 	'ashtakavarga': {
 		'fn': lambda chart: chart.ashtakavarga,
 		'columns': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12']
@@ -143,6 +191,10 @@ fieldSets = {
 	'antarDashas': {
 		'fn': getAntarDashas,
 		'columns': ['adLord', 'adStartsAt', 'adEndsAt', 'adRemainder', 'adlStrength', 'adlIshtaPhala', 'padLord', 'padStartsAt', 'padEndsAt', 'padRemainder', 'padlStrength', 'padlIshtaPhala', 'skdLord', 'skdStartsAt', 'skdEndsAt', 'skdRemainder', 'skdlStrength', 'skdlIshtaPhala','prdLord', 'prdStartsAt', 'prdEndsAt', 'prdRemainder', 'prdlStrength', 'prdlIshtaPhala']
+	},
+	'planetFlags': {
+		'fn': getPlanetFlags,
+		'columns': ['suF', 'moF', 'maF', 'meF', 'juF', 'veF', 'saF']
 	},
 	'shadBalaStrength': {
 		'fn': getShadBalaStrength,

@@ -36,6 +36,15 @@ planets = [
 	'saturn',
 ]
 
+combustionOrbs = {
+	'moon': 12,
+	'mars': 17,
+	'mercury': 14,
+	'jupiter': 11,
+	'venus': 10,
+	'saturn': 15,
+}
+
 nodes = [
 	'ketu',
 	'rahu',
