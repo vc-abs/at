@@ -36,20 +36,24 @@ utcTimeZone = timezone(
 )
 
 
-def floatToHMS(floatHours):
-	hours = int(floatHours)
-	remainingHours = floatHours - hours
-	remainingMinutes = (
-		remainingHours * minutesPerHor
-	)
-	minutes = int(remainingMinutes)
-	minutesFraction = (
-		remainingMinutes
-	) - minutes
-	# #TODO: Fix the following bug: Floating point correction sometimes make the value exceed 59 and breaks the run.
-	seconds = int(
-		minutesFraction * secondsPerMinute
+def getRoundedSeconds(floatHours):
+	return int(
+		floatHours * secondsPerHour
 		+ floatingPointPrecisionCorrectionSeconds
+	)
+
+
+def floatToHMS(floatHours):
+	totalSeconds = getRoundedSeconds(
+		floatHours
+	)
+	hours, remSeconds = divmod(
+		totalSeconds,
+		secondsPerHour,
+	)
+	minutes, seconds = divmod(
+		remSeconds,
+		secondsPerMinute,
 	)
 
 	return hours, minutes, seconds
@@ -62,16 +66,18 @@ def jdtToDateTime(
 		swe.revjul(fromTret, gregflag)
 	)
 
-	hour, min, sec = floatToHMS(floatHour)
-
-	return datetime(
-		year,
-		month,
-		day,
-		hour,
-		min,
-		sec,
-		tzinfo=utcTimeZone,
+	return (
+		datetime(
+			year,
+			month,
+			day,
+			tzinfo=utcTimeZone,
+		)
+		+ timedelta(
+			seconds=getRoundedSeconds(
+				floatHour
+			)
+		)
 	).astimezone(fromTZInfo)
 
 

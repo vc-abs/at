@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from functools import reduce
 import pandas as pd
 from at.chart import Chart
@@ -310,22 +311,14 @@ def processSummaryColumn(df, summary):
 	)(axis=1)
 
 
-columnProcessors = {
-	'str': lambda df, exp: df.eval(exp),
-	'OrderedDict': processSummaryColumn,
-	# #TODO: Remove this hacky fix. This fix is applied to evade some unknown issue with YAML processing. Earlier, dictionaries were processed as OrderedDict-s, which changed for some unknown reason.
-	'dict': processSummaryColumn,
-}
-
-
-def getType(value):
-	return type(value).__name__
-
-
 def getColumn(df, column):
-	return columnProcessors[
-		getType(column)
-	](df, column)
+	if isinstance(column, str):
+		return df.eval(column)
+
+	if isinstance(column, Mapping):
+		return processSummaryColumn(df, column)
+
+	return column
 
 
 def addCustomColumns(df, columns):

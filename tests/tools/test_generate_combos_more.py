@@ -34,10 +34,21 @@ def test_get_column_supports_str_expression_and_dict_summary():
 	assert getColumn(df, {'sum': ['a', 'b']}).iloc[0] == 3
 
 
+def test_get_column_returns_unsupported_values_unchanged():
+	df = pd.DataFrame([{'a': 1}])
+	value = ['a']
+	assert getColumn(df, value) is value
+
+
 def test_process_summary_column_directly():
-	df = pd.DataFrame([{'x': 2, 'y': 3}])
+	df = pd.DataFrame(
+		[
+			{'x': 2, 'y': 3},
+			{'x': 4, 'y': 5},
+		]
+	)
 	res = processSummaryColumn(df, {'sum': ['x', 'y']})
-	assert res.iloc[0] == 5
+	assert list(res) == [5, 9]
 
 
 def test_add_custom_columns_adds_each_declared_column():
