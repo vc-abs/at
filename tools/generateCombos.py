@@ -56,22 +56,22 @@ def formatDashaData(
 	}
 
 
-def getStartingDasha(chart):
+def getMahaDasha(chart):
 	return formatDashaData(
-		chart.dasha.startingDasha,
+		chart.dasha.mahaDasha,
 		chart.shadBala.balas,
-		'sd',
+		'md',
 	)
 
 
-def getStartingAntarDashas(chart):
+def getAntarDashas(chart):
 	formattedDashas = [
 		formatDashaData(
 			antarDashaData,
 			chart.shadBala.balas,
 			antarDashaPrefix,
 		)
-		for antarDashaPrefix, antarDashaData in chart.dasha.startingAntarDashas.items()
+		for antarDashaPrefix, antarDashaData in chart.dasha.antarDashas.items()
 	]
 	return {
 		k: v
@@ -121,7 +121,7 @@ def getPanchang(chart):
 		'vaara': chart.panchang.vaara,
 		'sunrise': sunrise,
 		'sunset': sunset,
-  } 
+  }
 
 fieldSets = {
 	'muhurtaYogaEffects': {
@@ -136,17 +136,17 @@ fieldSets = {
 		'fn': lambda chart: chart.ashtakavarga,
 		'columns': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12']
 	},
-	'startingDasha': {
-		'fn': getStartingDasha,
-		'columns': ['sdLord', 'sdStartsAt', 'sdEndsAt', 'sdRemainder', 'sdlStrength', 'sdlIshtaPhala']
+	'mahaDasha': {
+		'fn': getMahaDasha,
+		'columns': ['mdLord', 'mdStartsAt', 'mdEndsAt', 'mdRemainder', 'mdlStrength', 'mdlIshtaPhala']
 	},
-	'startingAntarDashas': {
-		'fn': getStartingAntarDashas,
+	'antarDashas': {
+		'fn': getAntarDashas,
 		'columns': ['adLord', 'adStartsAt', 'adEndsAt', 'adRemainder', 'adlStrength', 'adlIshtaPhala', 'padLord', 'padStartsAt', 'padEndsAt', 'padRemainder', 'padlStrength', 'padlIshtaPhala', 'skdLord', 'skdStartsAt', 'skdEndsAt', 'skdRemainder', 'skdlStrength', 'skdlIshtaPhala','prdLord', 'prdStartsAt', 'prdEndsAt', 'prdRemainder', 'prdlStrength', 'prdlIshtaPhala']
 	},
 	'shadBalaStrength': {
 		'fn': getShadBalaStrength,
-		'columns': ['suS', 'moS', 'maS', 'maS', 'meS', 'juS', 'veS', 'saS', 'totalS', 'avgIP']
+		'columns': ['suS', 'moS', 'maS', 'meS', 'juS', 'veS', 'saS', 'totalS', 'avgIP']
 	},
 	'karakas': {
 		'fn': getKarakas,

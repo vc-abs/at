@@ -164,17 +164,17 @@ class Dasha(Cached):
 		}
 
 	def _getDashas(self):
-		startingDasha = (
-			self._getStartingDasha()
+		mahaDasha = (
+			self._getMahaDasha()
 		)
-		startDate = startingDasha['endDate']
+		startDate = mahaDasha['endsAt']
 		dashaStartIndex = (
 			vimshottariSequence.index(
-				startingDasha['planet']
+				mahaDasha['lord']
 			)
 		)
 
-		dashas = [startingDasha]
+		dashas = [mahaDasha]
 		for i in range(1, dashaCount):
 			planetIndex = (
 				dashaStartIndex + i
@@ -202,7 +202,7 @@ class Dasha(Cached):
 			startDate = endDate
 		return dashas
 
-	def _getStartingDasha(self):
+	def _getMahaDasha(self):
 		eventTime = self._chart.config[
 			'datetime'
 		]
@@ -249,16 +249,16 @@ class Dasha(Cached):
 			'remainder': remainingDashaPeriod,
 		}
 
-	def _getStartingAntarDashas(self):
-		startingDasha = self.startingDasha
+	def _getAntarDashas(self):
+		mahaDasha = self.mahaDasha
 		coveredFraction = (
-			1 - startingDasha['remainder']
+			1 - mahaDasha['remainder']
 		)
 		return getAntarDasha(
-			startingDasha['lord'],
-			startingDasha['startsAt'],
+			mahaDasha['lord'],
+			mahaDasha['startsAt'],
 			vimshottariLengths[
-				startingDasha['lord']
+				mahaDasha['lord']
 			],
 			coveredFraction,
 			3,

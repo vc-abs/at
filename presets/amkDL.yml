@@ -12,11 +12,11 @@ fieldSets:
   muhurtaYogaEffects: all
   objectHouses: all
   ashtakavarga: all
-  startingDasha:
-    - sdLord
-    - sdRemainder
-    - sdlStrength
-    - sdlIshtaPhala
+  mahaDasha:
+    - mdLord
+    - mdRemainder
+    - mdlStrength
+    - mdlIshtaPhala
   shadBalaStrength:
     - totalS
     - avgIP

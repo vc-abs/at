@@ -1,10 +1,10 @@
 # Field Sets
 fieldSets:
+  panchang: all
   muhurtaYogaEffects: all
   objectHouses: all
   ashtakavarga: all
-  startingDasha: all
-  startingAntarDashas: all
-  shadBalaStrength: all
   karakas: all
-  panchang: all
+  mahaDasha: all
+  antarDashas: all
+  shadBalaStrength: all

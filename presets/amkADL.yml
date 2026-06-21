@@ -12,7 +12,7 @@ fieldSets:
   muhurtaYogaEffects: all
   objectHouses: all
   ashtakavarga: all
-  startingAntarDashas:
+  antarDashas:
     - adLord
     - adRemainder
     - adlStrength
