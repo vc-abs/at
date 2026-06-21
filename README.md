@@ -40,47 +40,8 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 * AbdaBala and MaasaBala calculations doesn't seem to be precise, as the length of an year (based Jupiter's movement across signs) is considered to be 360 days, instead of ~361.08333 days. The same anchors are used for computing MaasaBala too. This might render the values incorrect. This might need some new calculation methods by analyzing Astro Data Banks.
 * Rise and Set calculations of polar regions could be imprecise.
 
-## ToDo
-* Make setup.sh work well with Python 3.11.
-* Remove hacky fixes.
-* Increase automated test coverage toward high-confidence levels (70%+ to start).
-* Explore True [Pushya Nakshatra Ayanamsa by PVRNR](https://astrorigin.com/pyswisseph/sphinx/ephemerides/sidereal/suryasiddhanta_and_aryabhata.html#true-pushya-paksha-ayanamsha) (swe.SIDM_TRUE_PUSHYA).
-* Thinks of moving the computations to Julian Dates, for ease.
-* Introduce charts to analyze trends.
-* Think about introduce endTime config as an option, to allow the skipping of period config.
-* Think of introducing startDate (2024-07-25), startTime (18:00:00), endDate and endTime configs.
-* Replace periods with a single period config, with values with same type as frequency.
-* Check whether muhurtaYoga effects depend upon Pakshatithis.
-* Validate the presets with experts.
-* Get popular reference locations cross regions, from experts.
-* Try adding more muhurta yoga combinations.
-* Introduce `planetaryYogas` as a fieldSet with a single string output field listing active planetary yogas.
-* Score active yogas on Dharma, Artha, Kama and Moksha dimensions, and expose cumulative yoga scores.
-* Add positive/negative yoga balance fields like positiveYogaCount, negativeYogaCount and yogaNetScore.
-* Add event-fit yoga scores like bizYogaScore, educationYogaScore, marriageYogaScore, travelYogaScore and spiritualYogaScore.
-* Add explainability fields like yogaHighlights and yogaTopContributors alongside `planetaryYogas`.
-* Introduce a yoga definition registry (YAML/CSV + Python handlers where needed) with metadata, dimensions, polarity and rule definitions.
-* Choose a testing framework and write tests for core modules and workflows.
-* Introduce proper package management.
-* Make the configuration a bit more human readable.
-* Support DMS notation for latitudes and longitudes.
-* Improve the accuracy of Tithi Calculations.
-* Make Rahu/Ketu exaltation handling configurable by tradition/school.
-* Try to depend on chart objects, rather than python datetime for weekday calculations.
-* Profile runtime hotspots (Swiss ephemeris calls, chart loops, pandas ops) and prioritize optimizations from measured bottlenecks.
-* Evaluate extending a pandas/vectorized implementation for bulk runs, and switch hotspot modules to a faster language (e.g., Rust/C++) if profiling shows Python limits.
-* Prefer numbers over strings for calculations. Have a translation layer at the tail to make things readable. This could be done as a part of performance improvements, post initial development. This could lead to moving some data dependent decisions to calculations.
-* Standardize naming conventions across languages. IE: Don't use Wednesday and Budha together.
-* Find the correct name for the muhurta yoga recorded as apaduddharaka.
-* Handle tripushkara and tripushkara yogas appropriately.
-* Add individual impacts of weekdays, tithis and nakshatras to muhurta effects. Refer: https://www.astrojyoti.com/naksatratithiyogainfo.htm
-* Bring in the effects of other time scales like maasa, yoga, karana, chowgadiya, hora etc. These might need a different CSV file as the format is different, as their effects are not tied to other scales.
-* When possible include personal natal charts to find muhurta fitment.
-* Fine tune the analysis with input from: https://astrologerjolly.tripod.com/muhurtha.htm
-* Understand the impact of altitude on charts, as the sunrise time would be different.
-* Introduce panchang values like Abhijit Muhurta, Rahu Kaala, etc.
-* Make panchang.vaara return vedic vaara.
-* Write a proper example for events (Refer: panchang.yml).
+## Backlog
+- ToDo items were migrated to [`backlog.md`](./backlog.md) as part of deliberate-dev initialization.
 
 ## References
 * [ShadBala Calculations by Dr Mahesh Joshi](https://www.youtube.com/watch?v=d7GX4Jm39Is)
