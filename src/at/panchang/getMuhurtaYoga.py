@@ -22,12 +22,18 @@ def getMuhurtaYogas(panchang):
 		panchang.tithi % pakshaTithiCount
 	)
 	nakshatra = panchang.nakshatra
+	queryLocals = {
+		'vaara': vaara,
+		'pakshaTithi': pakshaTithi,
+		'nakshatra': nakshatra,
+	}
 
 	return muhurtaYogaDF.query(
 		'(tithi == @pakshaTithi and vaara == @vaara and nakshatra.isna()) or '
 		+ '(tithi == @pakshaTithi and vaara.isna() and nakshatra == @nakshatra) or '
 		+ '(tithi.isna() and vaara == @vaara and nakshatra == @nakshatra) or '
-		+ '(tithi == @pakshaTithi and vaara == @vaara and nakshatra == @nakshatra)'
+		+ '(tithi == @pakshaTithi and vaara == @vaara and nakshatra == @nakshatra)',
+		local_dict=queryLocals,
 	)[['name', 'effect']]
 
 

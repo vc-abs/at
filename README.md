@@ -16,6 +16,12 @@ $ sh ./setup.sh
 $ # Simple run.
 $ python3 main.py ./examples/config.yml
 
+$ # Validate code: lint (src only) + tests with coverage.
+$ ./scripts/validate.sh
+
+$ # Open readable HTML coverage report.
+$ xdg-open ./temp/coverage/index.html
+
 $ # Using presets. Configs to the right have more priority.
 $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ```
@@ -37,6 +43,7 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ## ToDo
 * Make setup.sh work well with Python 3.11.
 * Remove hacky fixes.
+* Increase automated test coverage toward high-confidence levels (70%+ to start).
 * Explore True [Pushya Nakshatra Ayanamsa by PVRNR](https://astrorigin.com/pyswisseph/sphinx/ephemerides/sidereal/suryasiddhanta_and_aryabhata.html#true-pushya-paksha-ayanamsha) (swe.SIDM_TRUE_PUSHYA).
 * Thinks of moving the computations to Julian Dates, for ease.
 * Introduce charts to analyze trends.

@@ -42,7 +42,6 @@ logs/
 coverage/
 
 # Temporary files
-.temp/
 .work/
 temp/
 *.tmp

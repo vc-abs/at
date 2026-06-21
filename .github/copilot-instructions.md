@@ -164,9 +164,8 @@ When user requests are unclear, ambiguous, or lack sufficient details to proceed
 
 ## Directory Structure
 - `.agents/skills/` — Project-level agent skills (gitignored except skill configurations)
-- `.temp/` — Temporary files for testing and experimentation (auto-ignored by `.*` pattern, preserves `.gitkeep`)
 - `.work/` — Work-in-progress files and drafts (auto-ignored by `.*` pattern)
-- `temp/` — Plan files and interactive agent operation files (gitignored)
+- `temp/` — Temporary files for testing, plans, interactive operation files, and coverage outputs (gitignored)
 - `.mcp-servers/` — Local MCP server implementations (auto-ignored by `.*` pattern)
 - `.vscode/mcp.json` — MCP configuration for VS Code (workspace-specific)
 - `.github/copilot-mcp.json` — MCP configuration for Copilot CLI (project-specific)
