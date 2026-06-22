@@ -57,6 +57,32 @@
 
 - Refine ShadBala further against manual comparison evidence while keeping BPHS as rule authority, especially around Drik/Drig Bala, Mercury Paksha Bala branch behavior, and remaining component-level divergences.
 - Introduce a yoga definition registry (YAML/CSV + Python handlers where needed) with metadata, dimensions, polarity, and rule definitions.
+- Reconcile Amritadi/Anandadi yoga provenance and runtime scope using trusted scanned sources, and determine whether the current implementation mixes Siddha-yoga, Anandadi, and incompletely sourced Amritadi-style rules.
+  - Confirm which named systems are actually present in trustworthy sources: Siddha Yoga, Amrita Siddha, Anandadi, any separately attested Amritadi/Amritadhi family, and the Tamil-style 3-type weekday–nakshatra system.
+  - Model the Tamil-style 3 yoga types as a **separate rule family**, rather than folding them into Anandadi or generic Siddha-yoga data.
+  - Define the Tamil 3-type family explicitly in backlog terminology and later implementation surfaces, including its canonical names, aliases/transliterations, polarity, and how it should be exposed at runtime independently of other yoga families.
+  - Build a classification matrix for all relevant runtime rows: `repo yoga name -> claimed/traditional system -> source(s) -> confidence -> keep/rename/remove/defer`.
+  - Verify whether `siddha` and `siddhi` are truly distinct in source material or are being conflated in the current implementation.
+  - Verify whether `mrityu`, `kana`, `subha`, `amrita`, `utpata`, and related rows align with the Anandadi sequence found in *Muhurta Chintamani*.
+  - Separately verify which currently implemented rows, if any, actually belong to the Tamil 3-type system (for example an `amrita` / `siddha` / `marana|mrityu` style grouping) and should be split away from Anandadi handling.
+  - Determine whether `nasa`, `subhaMadhyam`, `sri`, and `suta` belong to a trustworthy source-backed system or should be marked provisional / unsupported.
+  - Compare the runtime combinations and names in `src/at/panchang/muhurtaYogaEffects.csv` against trusted scan sources before changing weights or severities.
+  - Record exact citations, source snippets, and page/scan references for each accepted mapping in `data/muhurtaYogaProvenance.csv`.
+  - Decide remediation per row/family:
+    - keep as-is with stronger provenance,
+    - rename rows and/or add aliases,
+    - split mixed systems into separate rule families/registries,
+    - introduce a dedicated Tamil 3-type family with separate runtime naming/output where warranted,
+    - remove or defer unsupported rows from runtime scoring.
+  - After reconciliation, update all impacted surfaces together:
+    - `src/at/panchang/muhurtaYogaEffects.csv`
+    - `data/muhurtaYogaProvenance.csv`
+    - `data/yogaWeightPolicy.yml`
+    - related tests and source-authority docs.
+  - Preferred sources for this audit:
+    - *Muhurta Chintamani of Daivagya Ramacharya – Mahidhar Sharma*: https://archive.org/details/muhurta-chintamani-of-daivagya-ramacharya-mahidhar-sharma
+    - *Shri Muhurta Martanda*: https://archive.org/details/in.ernet.dli.2015.312516
+    - existing retained English support texts already tracked in the repository for Siddha / Amita Siddha and operational comparisons.
 - Complete `data/muhurtaYogaProvenance.csv` from evidence-candidate status to citation-complete status:
   - Current file now includes row-specific provenance fields for weight review:
     - `primarySourceText`
