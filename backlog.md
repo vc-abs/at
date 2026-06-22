@@ -20,6 +20,7 @@
 - Increase automated test coverage toward high-confidence levels (70%+ to start).
 - Add more integration/smoke coverage for real runtime paths, especially Chart/ShadBala preset-driven execution.
 - Standardize naming conventions across languages (for example, avoid mixing Wednesday and Budha).
+- Normalize file naming conventions across docs/data/references to snake_case (tests already follow snake_case), and update any recently introduced non-snake-case paths.
 
 ## Architecture and Refactoring
 
@@ -56,9 +57,65 @@
 
 - Refine ShadBala further against manual comparison evidence while keeping BPHS as rule authority, especially around Drik/Drig Bala, Mercury Paksha Bala branch behavior, and remaining component-level divergences.
 - Introduce a yoga definition registry (YAML/CSV + Python handlers where needed) with metadata, dimensions, polarity, and rule definitions.
+- Complete `data/muhurtaYogaProvenance.csv` from evidence-candidate status to citation-complete status:
+  - Current file now includes row-specific provenance fields for weight review:
+    - `primarySourceText`
+    - `corroboratingSources`
+    - `weightSupportStatus` (`unsupportedEnglish`, `singleEnglishSource`, `corroboratedEnglish`)
+    - `weightAssessmentNotes`
+    - `evidenceSnippet`
+  - `verse` is intentionally reserved for confirmed verse citations and should remain empty until actually verified.
+  - `evidenceSnippet` currently stores English-source support text from active sources; do not treat it as a verse citation.
+  - `sourceText` currently lists the active English source pool, but `primarySourceText` and `corroboratingSources` are the row-level fields to trust when reviewing a specific yoga.
+  - Fill chapter/verse/pageRef with confirmed citations for all tracked yogas.
+  - Promote reviewStatus from `unverified` to `reviewed` and `text-verified` only after source checks.
+  - When resuming, inspect these active files first:
+    - `data/muhurtaYogaProvenance.csv`
+    - `references/texts/muhurta/manifest.json`
+    - `references/texts/muhurta/text/muhurthaOrElectionalAstrologyRamanDli2015128092.archiveDjvu.txt`
+    - `references/texts/muhurta/text/vedicAstroTextbookSupport.txt`
+    - `references/texts/muhurta/text/muhurtaJyotisVedicAstrology.txt`
+  - Current English-support picture to continue from:
+    - `corroboratedEnglish`: `amritSiddhi`, `amrita`, `generalRestrictions`, `mrityu`, `siddha`
+    - `singleEnglishSource`: `asubha`, `guruPushya`, `raviPushya`, `visha`, `yamaghanta`, `subha`
+    - many remaining yogas are still `unsupportedEnglish`
+  - The immediate follow-up question is not “is the yoga present?” but “does the current weight have enough support?”
+    Use `weightSupportStatus` + `evidenceSnippet` + `pageRef` to drive that review.
+- Keep active source footprint minimal: retain only immediately used text artifacts and remove inactive local binaries.
+- Keep future-reference links and retained reference PDFs synchronized:
+  - Retained (DVC): `references/texts/muhurta/futureReferences/bphs1RSanthanam.pdf`
+  - Retained (DVC): `references/texts/muhurta/futureReferences/jyotishVidyaSageParasara.pdf`
+  - BPHS source path: `/home/vc/Downloads/BPHS - 1 RSanthanam.pdf`
+  - Jyotish Vidya source path: `/home/vc/Downloads/Jyotish-vidya-sage-Parasara.pdf`
+  - Muhurta Chintamani (1907 Nirnay Sagar): https://archive.org/details/muhurta-chintamani-1907-nirnay-sagar-press-from-residence-of-ashok-ji-kashmir
+  - Muhurta Chintamani (DLI scan): https://archive.org/details/in.ernet.dli.2015.487104
+  - Shri Muhurta Martanda (DLI scan): https://archive.org/details/in.ernet.dli.2015.312516
+  - Kalaprakashika: https://archive.org/details/Kalaprakashika
+  - Additional English candidates to evaluate:
+    - Muhurta Jyotis Vedic Astrology: https://archive.org/details/MuhurtaJyotisVedicAstrology (promoted to active text support)
+    - Muhurtha or Electional Astrology (B. V. Raman, alternate item): https://archive.org/details/bwb_P9-EAH-659
+    - Electional Astrology (Vivian Robson): https://archive.org/details/in.ernet.dli.2015.128090 (tested, no useful current coverage)
+    - Robson, Vivian, Electional Astrology: https://archive.org/details/robson-vivian-electional-astrology
 - Validate presets with domain experts.
 - Get popular reference locations across regions from experts.
 - Fine tune analysis with input from https://astrologerjolly.tripod.com/muhurtha.htm.
+- Keep active English source set documented and reproducible:
+  - Raman OCR text
+    - Source (Archive item): https://archive.org/details/in.ernet.dli.2015.128092
+    - Source OCR text: https://archive.org/download/in.ernet.dli.2015.128092/2015.128092.Muhurtha-Or-Electional-Astrology_djvu.txt
+    - Local text target: `references/texts/muhurta/text/muhurthaOrElectionalAstrologyRamanDli2015128092.archiveDjvu.txt`
+  - Vedic Astrology Textbook support text
+    - Local source PDF path: `/home/vc/Downloads/vedic-astro-textbook.pdf`
+    - Local text target: `references/texts/muhurta/text/vedicAstroTextbookSupport.txt`
+  - Muhurta Jyotis Vedic Astrology support text
+    - Source (Archive item): https://archive.org/details/MuhurtaJyotisVedicAstrology
+    - Source OCR text: https://archive.org/download/MuhurtaJyotisVedicAstrology/Muhurta%20JyotisVedic%20Astrology_djvu.txt
+    - Local text target: `references/texts/muhurta/text/muhurtaJyotisVedicAstrology.txt`
+- Defer full Sanskrit OCR/model conversion for primary audit texts pending pipeline readiness and budget sign-off:
+  - Muhurta Chintamani (1907 Nirnay Sagar): https://archive.org/details/muhurta-chintamani-1907-nirnay-sagar-press-from-residence-of-ashok-ji-kashmir
+  - Muhurta Chintamani (DLI scan): https://archive.org/details/in.ernet.dli.2015.487104
+  - Shri Muhurta Martanda (DLI scan): https://archive.org/details/in.ernet.dli.2015.312516
+  - Reason: large scans + Devanagari OCR uncertainty; requires model-assisted extraction with confidence gates and manual citation review.
 - Understand the impact of altitude on charts (sunrise shifts).
 
 ## Performance and Scalability

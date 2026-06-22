@@ -22,6 +22,12 @@ $ ./scripts/validate.sh
 $ # Open readable HTML coverage report.
 $ xdg-open ./temp/coverage/index.html
 
+$ # Pre-commit blocks direct `.pdf` commits.
+$ # Prefer keeping only immediately used text artifacts in repo.
+$ # If a PDF must be retained locally, track it with DVC:
+$ ./scripts/addPdfToDvc.sh ./references/texts/muhurta/<book>.pdf
+$ dvc push
+
 $ # Using presets. Configs to the right have more priority.
 $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ```

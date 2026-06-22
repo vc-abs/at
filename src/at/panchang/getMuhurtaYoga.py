@@ -44,10 +44,10 @@ def getMuhurtaYogaEffects(panchang):
 
 	return {
 		'positive': muhurtaYogas.query(
-			'effect > 1'
+			'effect > 0'
 		)['effect'].sum(),
 		'negative': muhurtaYogas.query(
-			'effect < 1'
+			'effect < 0'
 		)['effect'].sum(),
 		'yogas': ' '.join(
 			muhurtaYogas['name']

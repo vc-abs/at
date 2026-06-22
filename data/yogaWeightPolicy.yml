@@ -1,0 +1,108 @@
+version: 2026-06-22
+status: draft
+notes:
+  - First-pass explicit weight policy extracted from current muhurtaYogaEffects.csv behavior.
+  - Textual citations are tracked in data/muhurtaYogaProvenance.csv.
+  - This policy is intended for auditability and test coverage, not as a final textual authority.
+
+classWeights:
+  excellent: 2
+  good: 2
+  mild: 1
+  inauspicious: -2
+  severeInauspicious: -3
+  extremeInauspicious: -4
+  mixedAuspicious: null
+  mixedInauspicious: null
+
+yogaPolicies:
+  amritSiddhi:
+    severityBand: excellent
+    allowedWeightedEffects: [2]
+  amrita:
+    severityBand: excellent
+    allowedWeightedEffects: [2]
+  amritaTithi:
+    severityBand: excellent
+    allowedWeightedEffects: [2]
+  apaduddharaka:
+    severityBand: good
+    allowedWeightedEffects: [2]
+  asubha:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  dagdha:
+    severityBand: mixedInauspicious
+    allowedWeightedEffects: [-2, -1]
+  dasaMasya:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  dvipushkara:
+    severityBand: good
+    allowedWeightedEffects: [2]
+  generalRestrictions:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  guruPushya:
+    severityBand: excellent
+    allowedWeightedEffects: [2]
+  hutasana:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  kana:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  krakacha:
+    severityBand: extremeInauspicious
+    allowedWeightedEffects: [-4]
+  mrityu:
+    severityBand: severeInauspicious
+    allowedWeightedEffects: [-3]
+  nasa:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  raviPushya:
+    severityBand: excellent
+    allowedWeightedEffects: [2]
+  samvartaka:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  sarvarthaSiddhi:
+    severityBand: good
+    allowedWeightedEffects: [2]
+  shobhana:
+    severityBand: good
+    allowedWeightedEffects: [2]
+  siddha:
+    severityBand: mixedAuspicious
+    allowedWeightedEffects: [1, 2]
+  siddhaTithi:
+    severityBand: good
+    allowedWeightedEffects: [2]
+  sri:
+    severityBand: mild
+    allowedWeightedEffects: [1]
+  subha:
+    severityBand: good
+    allowedWeightedEffects: [2]
+  subhaMadhyam:
+    severityBand: mild
+    allowedWeightedEffects: [1]
+  suta:
+    severityBand: good
+    allowedWeightedEffects: [2]
+  tripushkara:
+    severityBand: good
+    allowedWeightedEffects: [2]
+  utpata:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  vinasa:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  visha:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]
+  yamaghanta:
+    severityBand: inauspicious
+    allowedWeightedEffects: [-2]

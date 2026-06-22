@@ -1,0 +1,58 @@
+[
+  {
+    "id": "raman-electional-ocr-text",
+    "title": "Muhurtha Or Electional Astrology (B. V. Raman) - OCR text",
+    "kind": "extractedText",
+    "status": "active",
+    "localFile": "text/muhurthaOrElectionalAstrologyRamanDli2015128092.archiveDjvu.txt",
+    "sourceArchiveItem": "https://archive.org/details/in.ernet.dli.2015.128092",
+    "sourceTextUrl": "https://archive.org/download/in.ernet.dli.2015.128092/2015.128092.Muhurtha-Or-Electional-Astrology_djvu.txt",
+    "notes": "Primary implementation reference for current provenance extraction passes."
+  },
+  {
+    "id": "vedic-astro-textbook-support-text",
+    "title": "Vedic Astrology Textbook (support) - local extracted text",
+    "kind": "extractedText",
+    "status": "active",
+    "localFile": "text/vedicAstroTextbookSupport.txt",
+    "sourcePath": "/home/vc/Downloads/vedic-astro-textbook.pdf",
+    "notes": "Support source extracted locally via pdftotext for candidate evidence matching."
+  },
+  {
+    "id": "muhurta-jyotis-vedic-astrology-text",
+    "title": "Muhurta Jyotis Vedic Astrology - OCR text",
+    "kind": "extractedText",
+    "status": "active",
+    "localFile": "text/muhurtaJyotisVedicAstrology.txt",
+    "sourceArchiveItem": "https://archive.org/details/MuhurtaJyotisVedicAstrology",
+    "sourceTextUrl": "https://archive.org/download/MuhurtaJyotisVedicAstrology/Muhurta%20JyotisVedic%20Astrology_djvu.txt",
+    "notes": "Additional English support source with useful muhurta-yoga coverage (e.g. guruPushya, raviPushya, visha)."
+  },
+  {
+    "id": "vedic-astro-textbook-support-pdf",
+    "title": "Vedic Astrology Textbook (support) - local PDF",
+    "kind": "sourcePdf",
+    "status": "retainedForReference",
+    "localFile": "vedicAstroTextbookSupport.pdf",
+    "dvcPointer": "vedicAstroTextbookSupport.pdf.dvc",
+    "sourcePath": "/home/vc/Downloads/vedic-astro-textbook.pdf"
+  },
+  {
+    "id": "bphs-rsanthanam-pdf",
+    "title": "BPHS - R Santhanam",
+    "kind": "sourcePdf",
+    "status": "futureReference",
+    "localFile": "futureReferences/bphs1RSanthanam.pdf",
+    "dvcPointer": "futureReferences/bphs1RSanthanam.pdf.dvc",
+    "sourcePath": "/home/vc/Downloads/BPHS - 1 RSanthanam.pdf"
+  },
+  {
+    "id": "jyotish-vidya-parasara-pdf",
+    "title": "Jyotish Vidya - Sage Parasara",
+    "kind": "sourcePdf",
+    "status": "futureReference",
+    "localFile": "futureReferences/jyotishVidyaSageParasara.pdf",
+    "dvcPointer": "futureReferences/jyotishVidyaSageParasara.pdf.dvc",
+    "sourcePath": "/home/vc/Downloads/Jyotish-vidya-sage-Parasara.pdf"
+  }
+]

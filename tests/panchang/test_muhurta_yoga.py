@@ -37,3 +37,32 @@ def test_get_muhurta_yoga_effects_shape():
 		'yogas',
 	}
 	assert isinstance(effects['yogas'], str)
+
+
+def test_get_muhurta_yoga_effects_counts_mild_positive_scores():
+	p = _Panchang(
+		tithi=2,
+		vaara='sunday',
+		nakshatra='krittika',
+	)
+	effects = getMuhurtaYogaEffects(p)
+
+	assert effects['positive'] == 3
+	assert effects['negative'] == 0
+	assert 'subhaMadhyam' in effects['yogas']
+	assert 'tripushkara' in effects['yogas']
+
+
+def test_get_muhurta_yoga_effects_uses_strict_negative_filter():
+	p = _Panchang(
+		tithi=4,
+		vaara='sunday',
+		nakshatra='magha',
+	)
+	effects = getMuhurtaYogaEffects(p)
+
+	assert effects['positive'] == 0
+	assert effects['negative'] == -6
+	assert 'visha' in effects['yogas']
+	assert 'yamaghanta' in effects['yogas']
+	assert 'nasa' in effects['yogas']

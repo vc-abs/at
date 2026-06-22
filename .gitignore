@@ -2,6 +2,7 @@
 ## General
 .*
 *.bak
+*.pdf
 
 ## Dev
 !.vscode
