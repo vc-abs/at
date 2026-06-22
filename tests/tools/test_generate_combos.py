@@ -7,6 +7,7 @@ from at.tools.generateCombos import (
 	addCustomColumns,
 	formatDashaData,
 	getColumn,
+	getGowriFlags,
 	getPanchang,
 	getPlanetaryDegrees,
 	getPlanetFlagsByPlanet,
@@ -41,6 +42,32 @@ class _DummyPanchang:
 				0,
 				tzinfo=timezone.utc,
 			),
+		}
+		self.gowri = {
+			'gowri': 'laabam',
+			'gowriScore': 1,
+			'gowriM': 'gain',
+			'gowriS': 1,
+			'gowriT': 'day',
+			'gowriStart': datetime(
+				2025,
+				1,
+				1,
+				6,
+				0,
+				0,
+				tzinfo=timezone.utc,
+			),
+			'gowriEnd': datetime(
+				2025,
+				1,
+				1,
+				7,
+				30,
+				0,
+				tzinfo=timezone.utc,
+			),
+			'gowriF': 'day|laabam',
 		}
 
 
@@ -87,6 +114,32 @@ class _PanchangObj:
 		self.tithi = 1
 		self.nakshatra = 'asvini'
 		self.vaara = 'sunday'
+		self.gowri = {
+			'gowri': 'laabam',
+			'gowriScore': 1,
+			'gowriM': 'gain',
+			'gowriS': 1,
+			'gowriT': 'day',
+			'gowriStart': datetime(
+				2025,
+				1,
+				1,
+				6,
+				0,
+				0,
+				tzinfo=timezone.utc,
+			),
+			'gowriEnd': datetime(
+				2025,
+				1,
+				1,
+				7,
+				30,
+				0,
+				tzinfo=timezone.utc,
+			),
+			'gowriF': 'day|laabam',
+		}
 
 
 class _PanchangChart:
@@ -287,6 +340,19 @@ def test_get_panchang_formats_time_strings():
 	assert result['sunrise'] == '06:00:00'
 	assert result['sunset'] == '18:00:00'
 	assert result['tithi'] == 1
+	assert result['gowri'] == 'laabam'
+	assert result['gowriStart'] == '06:00:00'
+	assert result['gowriScore'] == 1
+
+
+
+def test_get_gowri_flags_formats_compact_fields():
+	result = getGowriFlags(_PanchangChart())
+	assert result['gowri'] == 'laabam'
+	assert result['gowriScore'] == 1
+	assert result['gowriStart'] == '06:00:00'
+	assert result['gowriEnd'] == '07:30:00'
+	assert result['gowriF'] == 'day|laabam'
 
 
 
@@ -303,6 +369,9 @@ def test_add_columns_supports_all_none_and_some_selectors():
 				'suF': 'R',
 				'suQ': 'malefic',
 				'timeF': 'RK',
+				'gowri': 'laabam',
+				'gowriScore': 1,
+				'gowriF': 'day|laabam',
 				'avgIP': 30.0,
 			}
 		]
@@ -316,6 +385,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 			'planetFlags': 'none',
 			'planetQualities': ['suQ'],
 			'timeFlags': ['timeF'],
+			'gowriFlags': ['gowri', 'gowriScore', 'gowriF'],
 			'shadBalaStrength': ['avgIP'],
 		},
 	)
@@ -328,6 +398,9 @@ def test_add_columns_supports_all_none_and_some_selectors():
 		'suD',
 		'suQ',
 		'timeF',
+		'gowri',
+		'gowriScore',
+		'gowriF',
 		'avgIP',
 	]
 

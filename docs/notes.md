@@ -23,3 +23,6 @@
 - Added and iteratively calibrated a first-pass marketing preset with YAML-first weighted scoring, bounded dasha awareness, house-score scaling, and reduced-column TSV exports for review.
 - During the broader ShadBala comparison pass, JA evidence suggested a narrower or conjunction-dominant Mercury classification rule for Paksha Bala than the current BPHS-oriented implementation uses.
 - Remaining ShadBala alignment gaps were deferred to backlog for a future refinement cycle rather than addressed through speculative rule changes.
+- Added first-pass Gowri Panchangam runtime support using sunrise/sunset-derived 8-part day/night segmentation, an algorithmic weekday-cycle model, and queryable combo-output fields.
+- Kept provenance/verification concerns out of runtime artefacts and deferred them to backlog follow-up.
+- Finalized the Gowri first-pass cycle with point-in-time-first lookup, numeric `gowriScore`, shared constants, and documented query/runtime conventions.

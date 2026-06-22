@@ -49,7 +49,8 @@
 - Improve the accuracy of Tithi calculations.
 - Add individual impacts of weekdays, tithis, and nakshatras to muhurta effects.
 - Bring in effects of additional time scales: maasa, yoga, karana, chowgadiya, hora, etc.
-- Introduce panchang values like Abhijit Muhurta, Rahu Kaala, etc.
+- Introduce panchang values like Abhijit Muhurta, Rahu Kaala, Gowri Panchangam, etc.
+- Add lower-priority Choghadiya support as a separate/duplicate field set only if we later confirm the repo should expose it distinctly from Gowri rather than treating it as a naming-layer concern.
 - Make `panchang.vaara` return Vedic vaara.
 - When possible, include personal natal charts to find muhurta fitment.
 
@@ -125,6 +126,10 @@
 - Validate presets with domain experts.
 - Get popular reference locations across regions from experts.
 - Fine tune analysis with input from https://astrologerjolly.tripod.com/muhurtha.htm.
+- Verify Gowri/Choghadiya relationship and provenance later as a lower-priority follow-up:
+  - determine whether Choghadiya should be exposed as a separate field set or just as an alternate label layer over the same segment logic,
+  - verify whether Gowri and Choghadiya differ only by labels or also by weekday schedule semantics,
+  - if needed later, add provenance/verification material during that verification cycle rather than carrying it in runtime data.
 - Keep active English source set documented and reproducible:
   - Raman OCR text
     - Source (Archive item): https://archive.org/details/in.ernet.dli.2015.128092

@@ -206,6 +206,21 @@ def getTimeFlags(chart):
 	}
 
 
+
+def getGowriFlags(chart):
+	gowri = chart.panchang.gowri
+	return {
+		'gowri': gowri['gowri'],
+		'gowriScore': gowri['gowriScore'],
+		'gowriM': gowri['gowriM'],
+		'gowriS': gowri['gowriS'],
+		'gowriT': gowri['gowriT'],
+		'gowriStart': gowri['gowriStart'].strftime("%H:%M:%S"),
+		'gowriEnd': gowri['gowriEnd'].strftime("%H:%M:%S"),
+		'gowriF': gowri['gowriF'],
+	}
+
+
 phalaPlanetCount = 7
 
 
@@ -241,12 +256,21 @@ def getPanchang(chart):
 	sunrise = riseAndSet['sunrise'].strftime("%H:%M:%S")
 	sunset = riseAndSet['sunset'].strftime("%H:%M:%S")
 
+	gowri = chart.panchang.gowri
+
 	return {
 		'tithi': chart.panchang.tithi,
 		'nakshatra': chart.panchang.nakshatra,
 		'vaara': chart.panchang.vaara,
 		'sunrise': sunrise,
 		'sunset': sunset,
+		'gowri': gowri['gowri'],
+		'gowriScore': gowri['gowriScore'],
+		'gowriM': gowri['gowriM'],
+		'gowriS': gowri['gowriS'],
+		'gowriT': gowri['gowriT'],
+		'gowriStart': gowri['gowriStart'].strftime("%H:%M:%S"),
+		'gowriEnd': gowri['gowriEnd'].strftime("%H:%M:%S"),
   }
 
 fieldSets = {
@@ -286,6 +310,10 @@ fieldSets = {
 		'fn': getTimeFlags,
 		'columns': ['timeF']
 	},
+	'gowriFlags': {
+		'fn': getGowriFlags,
+		'columns': ['gowri', 'gowriScore', 'gowriM', 'gowriS', 'gowriT', 'gowriStart', 'gowriEnd', 'gowriF']
+	},
 	'shadBalaStrength': {
 		'fn': getShadBalaStrength,
 		'columns': ['suS', 'moS', 'maS', 'meS', 'juS', 'veS', 'saS', 'totalS', 'avgIP']
@@ -300,7 +328,7 @@ fieldSets = {
 	},
 	'panchang': {
 		'fn': getPanchang,
-		'columns': ['tithi', 'nakshatra', 'vaara', 'sunrise', 'sunset']
+		'columns': ['tithi', 'nakshatra', 'vaara', 'sunrise', 'sunset', 'gowri', 'gowriScore', 'gowriM', 'gowriS', 'gowriT', 'gowriStart', 'gowriEnd']
 	}
 }
 

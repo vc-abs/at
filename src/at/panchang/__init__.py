@@ -23,6 +23,11 @@ from at.panchang.getMuhurtaYoga import (
 	getMuhurtaYogas,
 	getMuhurtaYogaEffects,
 )
+from at.panchang.gowri import (
+	getGowriSchedule,
+	getCurrentGowriSegment,
+	getGowriWindowFlags,
+)
 
 
 def getObjectDistance(
@@ -165,3 +170,12 @@ class Panchang(Cached):
 
 	def _getMuhurtaYogaEffects(self):
 		return getMuhurtaYogaEffects(self)
+
+	def _getGowriSchedule(self):
+		return getGowriSchedule(self)
+
+	def _getGowriSegment(self):
+		return getCurrentGowriSegment(self)
+
+	def _getGowri(self):
+		return getGowriWindowFlags(self)

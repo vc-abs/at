@@ -12,6 +12,21 @@
 - Ready for finalization: no.
 
 ## Most Recent Finalized Cycle
+- Topic: Gowri Panchangam first pass with algorithmic weekday-cycle lookup and queryable output fields.
+- Outcome: completed and finalized as a bounded delivery, including point-in-time-first Gowri runtime support, numeric scoring, shared constants, tests, and synchronized docs/context.
+- Validation evidence:
+  - `./.venv/bin/pytest -q` passed (`94 passed`)
+  - `./scripts/validate.sh` passed
+- Delivered changes:
+  - added runtime Gowri point-in-time and schedule lookup in `src/at/panchang/gowri.py`,
+  - exposed current Gowri fields in `Panchang`, the `panchang` field set, and the `gowriFlags` field set,
+  - switched from polarity labels to numeric `gowriScore` and corrected the label to `amirdham`,
+  - centralized reusable Gowri constants in `src/at/core/constants.py`,
+  - aligned new source naming with the repository's current camelCase convention while keeping snake_case filenames,
+  - documented the repo-wide point-in-time execution model and query patterns for Gowri,
+  - deferred provenance/verification and any separate Choghadiya exposure to backlog follow-up.
+
+## Most Recent Finalized Cycle
 
 - Topic: marketing preset first pass with compact time flags and weighted YAML scoring.
 - Outcome: completed and finalized as a bounded delivery, including new combo-output surfaces plus a reviewable marketing preset and TSV exports.

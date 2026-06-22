@@ -26,6 +26,13 @@
 - Prefer YAML/config-first solutions over runtime/code expansion when the requested behavior can be expressed clearly and maintainably in the existing preset/query/custom-column surface.
 - When YAML expressions become long or compound, prefer multi-line YAML string forms for readability where supported, including escaped continuation where needed to preserve query semantics.
 - Prefer dictionary/data-driven dispatch over long `if`/`elif` chains or switch-style branching when selecting behavior by key/category, unless branching is genuinely clearer for a small bounded case.
+- The system generally operates on point-in-time records; prefer computing the value for the current point in time directly and deriving a full schedule/range view only when a caller actually needs it.
+- Prefer compact algorithmic weekday-cycle rules over persisted runtime tables when the domain pattern is stable and clearly expressible in code.
+- When a sequence value can be derived by index arithmetic, prefer moving the index over materializing rotated collections unless the rotated form is clearly easier to read or reuse.
+- Domain constants that may be useful for future third-party consumption should live in the shared constants surface when practical, rather than being buried inside a feature-local module.
+- Do not introduce broader caching layers (for example DataFrame-backed caches) without a measured reuse pattern or benchmark evidence that they improve the dominant point-in-time execution path.
+- When relative strength matters, prefer numeric values over coarse positive/negative labels so stronger favorable states can be modeled explicitly.
+- Maintain repository naming consistency with existing source conventions: current Python modules and functions in this repo predominantly use camelCase, while filenames and test filenames remain snake_case.
 - Maintain a one-to-one mapping between implementation modules and test modules.
 - Use snake_case for Python filenames, including test modules (for example `test_muhurta_yoga_rules.py`).
 - Add new assertions for a module in that module's existing test file; do not create `*_more` or catch-all follow-up test files for the same source module.

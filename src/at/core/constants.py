@@ -79,6 +79,52 @@ horaLordSequence = [
 	'mars',
 ]
 
+gowriSegmentNameCycle = [
+	'uthi',
+	'amirdham',
+	'rogam',
+	'laabam',
+	'dhanam',
+	'sugam',
+	'soram',
+]
+
+gowriSegmentMeanings = {
+	'amirdham': 'best',
+	'uthi': 'good',
+	'laabam': 'gain',
+	'dhanam': 'wealth',
+	'sugam': 'good',
+	'rogam': 'evil',
+	'soram': 'bad',
+	'visham': 'bad',
+}
+
+gowriSegmentScores = {
+	'amirdham': 2,
+	'uthi': 1,
+	'laabam': 1,
+	'dhanam': 1,
+	'sugam': 1,
+	'rogam': -1,
+	'soram': -1,
+	'visham': -1,
+}
+
+gowriRahuSegmentByVaara = {
+	'sunday': 8,
+	'monday': 2,
+	'tuesday': 7,
+	'wednesday': 5,
+	'thursday': 6,
+	'friday': 4,
+	'saturday': 3,
+}
+
+gowriNightWeekdayOffset = 4
+
+gowriSegmentCount = 8
+
 objectProps = {
 	'sun': {
 		'exaltation': 10,

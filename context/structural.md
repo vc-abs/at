@@ -18,15 +18,21 @@
 - Main implementation files currently visible:
   - `src/at/main.py`
   - `src/at/__init__.py`
+- Panchang implementation now also includes:
+  - Gowri schedule runtime in `src/at/panchang/gowri.py`,
+  - shared Gowri constants in `src/at/core/constants.py`,
+  - `Panchang` accessors for Gowri schedule/current segment/current flags.
 - Combo-generation implementation now also exposes:
   - compact `timeFlags`/`timeF` output from `src/at/tools/generateCombos.py`,
   - dedicated `planetQualities`/`*Q` output from `src/at/tools/generateCombos.py`,
+  - dedicated Gowri fields/flags (`gowri`, `gowriScore`, `gowriM`, `gowriS`, `gowriT`, `gowriStart`, `gowriEnd`, `gowriF`) from `src/at/tools/generateCombos.py`,
   - marketing preset configuration in `presets/marketing.yml` with weighted scoring built on existing output fields.
 
 ## Validation Surface
 
 - Test suite present under `tests/` with multiple domain-focused modules.
 - `tests/core/test_planet_quality.py` now covers BPHS aspect metadata, Mercury influence evaluation paths, and Moon tithi-based quality behavior.
-- `tests/tools/test_generate_combos.py` now covers compact time-flag output, planet-quality output, and field-set selection behavior for combo generation.
+- `tests/panchang/test_gowri.py` covers first-pass Gowri schedule lookup and day/night segment selection behavior.
+- `tests/tools/test_generate_combos.py` now covers compact time-flag output, planet-quality output, Gowri output fields, and field-set selection behavior for combo generation.
 - `tests/shadbala/test_shadbala.py` now covers Dig Bala reference-longitude and linear falloff behavior.
 - Coverage + lint workflow referenced in README via `./scripts/validate.sh`.
