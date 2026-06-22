@@ -10,6 +10,7 @@ from at.core.constants import (
 	objectProps,
 	degrees,
 	kendradiBala,
+	signCount,
 	signWidth,
 	maxPossibleDistance,
 )
@@ -205,22 +206,27 @@ def calculateSthanaBala(planet, chart):
 	}
 
 
-# #TODO: The results are fairly close to that of JA. There's some difference due to minor differences in the positions of fast moving planets.
-def calculateDigBala(planet, chart):
+# #NOTE: BPHS-oriented Dig Bala is treated here as a linear falloff from the
+# directional-strength house longitude to the opposite point. JA comparisons
+# remain manual reference checks outside this implementation.
+def getDigBalaReferenceLongitude(planet, chart):
 	fullDigBalaHouse = objectProps[
 		planet['name']
 	]['digBalaHouse']
 
-	fullDigBalaLongitude = (
+	return (
 		chart.objects['asc']['longitude']
 		+ (fullDigBalaHouse - 1) * signWidth
 	) % degrees
 
-	distance = (
-		getShortestDistanceInCircle(
-			planet['longitude'],
-			fullDigBalaLongitude,
-		)
+
+
+def calculateDigBala(planet, chart):
+	distance = getShortestDistanceInCircle(
+		planet['longitude'],
+		getDigBalaReferenceLongitude(
+			planet, chart
+		),
 	)
 
 	return (
@@ -331,11 +337,19 @@ tribaghaPlanetOrder = [
 ]
 
 
+tribaghaBalaPointsByPlanet = {
+	'jupiter': balaDefaultMaxScore,
+}
+
+
 def calculateTribaghaBala(
 	planet, kaalaValues
 ):
-	if planet['name'] == 'jupiter':
-		return balaDefaultMaxScore
+	planetName = planet['name']
+	if planetName in tribaghaBalaPointsByPlanet:
+		return tribaghaBalaPointsByPlanet[
+			planetName
+		]
 
 	tribaghaIndex = int(
 		kaalaValues['sunToAscDistance']
@@ -347,7 +361,7 @@ def calculateTribaghaBala(
 		if tribaghaPlanetOrder[
 			tribaghaIndex
 		]
-		== planet['name']
+		== planetName
 		else balaDefaultMinScore
 	)
 
@@ -396,13 +410,20 @@ bvrAbdaYearLengthInDays = 360
 maxAbdaBalaPoints = 15
 
 
-def calculateAbdaBala(
-	planet, kaalaValues
-):
-	abdaLordIndex = (
+def getAbdaLordIndex(kaalaValues):
+	return (
 		kaalaValues['aharganaDays']
 		// bvrAbdaYearLengthInDays
 	) % abdaLordCount
+
+
+
+def calculateAbdaBala(
+	planet, kaalaValues
+):
+	abdaLordIndex = getAbdaLordIndex(
+		kaalaValues
+	)
 
 	return (
 		balaDefaultMinScore
@@ -427,13 +448,20 @@ bvrMaasaLengthInDays = (
 maxMaasaBalaPoints = 30
 
 
-def calculateMaasaBala(
-	planet, kaalaValues
-):
-	maasaLordIndex = (
+def getMaasaLordIndex(kaalaValues):
+	return (
 		kaalaValues['aharganaDays']
 		// bvrMaasaLengthInDays
 	) % abdaLordCount
+
+
+
+def calculateMaasaBala(
+	planet, kaalaValues
+):
+	maasaLordIndex = getMaasaLordIndex(
+		kaalaValues
+	)
 
 	return (
 		balaDefaultMinScore
@@ -473,7 +501,9 @@ def calculateHoraBala(
 	)
 
 
-# #NOTE: The the given ayana bala computation is somewhat understood, the results seems to be  approximately close to the results from JA for a couple of charts. These may be due to the differences in planetary longitudes, as seen with the impact on Dig Bala calculations. Or some minor issues with computations.
+# #NOTE: Ayana Bala follows a BPHS-oriented kranti-based formula here,
+# using signed declination from sayana longitude and the standard planet
+# groupings reflected in the companion `src/at/shadBala/.ayana.py` sketch.
 declinationsInDegrees = [
 	0,
 	362 / 60.0,
@@ -484,9 +514,6 @@ declinationsInDegrees = [
 	1440 / 60.0,
 ]
 declinationHouseWidth = 15
-maxDeclination = declinationsInDegrees[
-	-1
-]
 equinoxPoint = 180
 halfEquinoxPoint = equinoxPoint / 2
 
@@ -503,6 +530,9 @@ def calcDeclination(sayanaLongitude):
 	remainder = (
 		bhuja % declinationHouseWidth
 	)
+	if dividend >= len(declinationsInDegrees) - 1:
+		return declinationsInDegrees[-1]
+
 	remainingDeclination = (
 		declinationsInDegrees[dividend + 1]
 		- declinationsInDegrees[dividend]
@@ -516,6 +546,38 @@ def calcDeclination(sayanaLongitude):
 	)
 
 
+def calculateKranti(sayanaLongitude):
+	declination = calcDeclination(
+		sayanaLongitude
+	)
+	return (
+		declination
+		if 0 <= (sayanaLongitude % 360) < equinoxPoint
+		else -declination
+	)
+
+
+ayanaBalaKrantiAdjustments = {
+	'sun': lambda kranti: 24 + kranti,
+	'venus': lambda kranti: 24 + kranti,
+	'mars': lambda kranti: 24 + kranti,
+	'jupiter': lambda kranti: 24 + kranti,
+	'moon': lambda kranti: 24 - kranti,
+	'saturn': lambda kranti: 24 - kranti,
+	'mercury': lambda kranti: 24 + abs(kranti),
+}
+
+ayanaBalaMultipliers = {
+	'sun': 2,
+	'moon': 1,
+	'mars': 1,
+	'mercury': 1,
+	'jupiter': 1,
+	'venus': 1,
+	'saturn': 1,
+}
+
+
 def calculateAyanaBala(
 	planet, kaalaValues
 ):
@@ -525,47 +587,140 @@ def calculateAyanaBala(
 	sayanaLongitude = (
 		planet['longitude'] + ayanamsaOffset
 	)
-	declination = calcDeclination(
+	kranti = calculateKranti(
 		sayanaLongitude
 	)
+	planetName = planet['name']
+	baseBala = (
+		ayanaBalaKrantiAdjustments[planetName](
+			kranti
+		)
+		* 60
+	) / 48
 
-	planetAyana = (
-		'north'
-		if 0 <= sayanaLongitude < 180
-		else 'south'
+	return (
+		baseBala
+		* ayanaBalaMultipliers[planetName]
 	)
-	beneficialAyanaForPlanet = (
-		objectProps[planet['name']]['ayana']
-	)
-	balaImpactDirection = (
-		1
+
+
+planetDiscDiameters = {
+	'mars': 9.4,
+	'mercury': 6.6,
+	'jupiter': 190.4,
+	'venus': 16.6,
+	'saturn': 158.0,
+}
+
+yuddhaBalaRelevantKaalaKeys = {
+	'natonnataBala',
+	'pakshaBala',
+	'tribaghaBala',
+	'horaBala',
+}
+
+
+def getYuddhaBalaCandidates(chart):
+	candidates = [
+		chart.objects[planet]
+		for planet in planets
 		if (
-			beneficialAyanaForPlanet == 'both'
-			or beneficialAyanaForPlanet
-			== planetAyana
+			planet not in {'sun', 'moon'}
+			and planet in chart.objects
 		)
-		else -1
-	)
-	balaMultiplier = (
-		2 if planet['name'] == 'sun' else 1
-	)
+	]
+	closestPair = None
+	closestDistance = None
 
-	bala = (
-		balaDefaultMidScore
-		* (
-			1
-			+ balaImpactDirection
-			* declination
-			/ maxDeclination
+	for index, left in enumerate(candidates):
+		for right in candidates[index + 1 :]:
+			distance = getShortestDistanceInCircle(
+				left['longitude'],
+				right['longitude'],
+				degrees,
+			)
+			if closestDistance is None or distance < closestDistance:
+				closestDistance = distance
+				closestPair = (left, right)
+
+	return closestPair, closestDistance
+
+
+
+def getYuddhaBalaBaseTotals(chart, context, planetsInWar):
+	baseTotals = {}
+	for planet in planetsInWar:
+		kaalaBala = {
+			'natonnataBala': calculateNatonnataBala(
+				planet, context['kaalaValues']
+			),
+			'pakshaBala': calculatePakshaBala(
+				planet, chart
+			),
+			'tribaghaBala': calculateTribaghaBala(
+				planet, context['kaalaValues']
+			),
+			'horaBala': calculateHoraBala(
+				planet, context['kaalaValues']
+			),
+		}
+		baseTotals[planet['name']] = (
+			sum(
+				calculateSthanaBala(
+					planet, chart
+				).values()
+			)
+			+ calculateDigBala(
+				planet, chart
+			)
+			+ sum(
+				kaalaBala[key]
+				for key in yuddhaBalaRelevantKaalaKeys
+			)
 		)
-	) * balaMultiplier
-
-	return bala
+	return baseTotals
 
 
-# #NOTE: Yuddha Bala calculation is postponed due to the following reasons. JH doesn't seem to have it. JA has the values from -1 to 1, thus with almost no impact. The information available elsewhere doesn't seem to help much in figuring out the method of calculation.
-def calculateYuddhaBala(planet):
-	return 0
+
+def calculateYuddhaBala(planet, chart, context):
+	planetsInWar, closestDistance = getYuddhaBalaCandidates(
+		chart
+	)
+	if (
+		planetsInWar is None
+		or planet['name'] not in {
+			planetsInWar[0]['name'],
+			planetsInWar[1]['name'],
+		}
+	):
+		return 0
+
+	baseTotals = getYuddhaBalaBaseTotals(
+		chart,
+		context,
+		planetsInWar,
+	)
+	left, right = planetsInWar
+	baseDifference = abs(
+		baseTotals[left['name']]
+		- baseTotals[right['name']]
+	)
+	diameterDifference = abs(
+		planetDiscDiameters[left['name']]
+		- planetDiscDiameters[right['name']]
+	)
+	yuddhaBala = (
+		0
+		if diameterDifference == 0
+		else round(
+			baseDifference / diameterDifference,
+			2,
+		)
+	)
+
+	if planet['name'] == left['name']:
+		return yuddhaBala
+	return -yuddhaBala
 
 
 def calculateKaalaBala(
@@ -599,13 +754,97 @@ def calculateKaalaBala(
 			planet, kaalaValues
 		),
 		'yuddhaBala': calculateYuddhaBala(
-			planet
+			planet,
+			chart,
+			context,
 		),
 	}
 
 
-def calculateDrikBala(planet):
-	return 0
+drikBalaBenefics = {'moon', 'mercury', 'jupiter', 'venus'}
+drikBalaMalefics = {'sun', 'mars', 'saturn'}
+
+
+def calculateDrikAspectStrength(aspectingPlanet, targetPlanet):
+	distance = getDistanceInCircle(
+		aspectingPlanet['longitude'],
+		targetPlanet['longitude'],
+		degrees,
+	)
+	planetName = aspectingPlanet['name']
+	strength = 0.0
+
+	if 30.01 <= distance <= 60.0:
+		strength = 0.5 * (distance - 30.0)
+	elif 60.01 <= distance <= 90.0:
+		strength = (distance - 60.0) + 15
+		if planetName == 'saturn':
+			strength += 45
+	elif 90.01 <= distance <= 120.0:
+		strength = 0.5 * (120.0 - distance) + 30
+		if planetName == 'mars':
+			strength += 15
+	elif 120.01 <= distance <= 150.0:
+		strength = 150.0 - distance
+		if planetName == 'jupiter':
+			strength += 30
+	elif 150.01 <= distance <= 180.0:
+		strength = 2.0 * (distance - 150.0)
+	elif 180.01 <= distance <= 300.0:
+		strength = 0.5 * (300.0 - distance)
+		if planetName == 'mars' and 210.01 < distance < 240.01:
+			strength += 15
+		if planetName == 'jupiter' and 240.01 < distance < 270.01:
+			strength += 30
+		if planetName == 'saturn' and 270.01 < distance < 300.01:
+			strength += 45
+
+	return round(strength * 0.25, 2)
+
+
+
+def getDrikBalaAspectContributions(planet, chart):
+	contributions = []
+	for source in chart.objects.values():
+		if (
+			source == planet
+			or source.get('type') != 'planet'
+			or source['name'] not in planets
+		):
+			continue
+
+		aspectHouses = objectProps[
+			source['name']
+		].get('aspects', [])
+		if getDistanceInCircle(
+			source['house'],
+			planet['house'],
+			signCount,
+		) not in aspectHouses:
+			continue
+
+		strength = calculateDrikAspectStrength(
+			source,
+			planet,
+		)
+		if source['name'] in drikBalaBenefics:
+			contributions.append(strength)
+		elif source['name'] in drikBalaMalefics:
+			contributions.append(-strength)
+
+	return contributions
+
+
+
+def calculateDrikBala(planet, chart):
+	return round(
+		sum(
+			getDrikBalaAspectContributions(
+				planet, chart
+			)
+		) / 4,
+		2,
+	)
 
 
 naisargikaBalaPoints = {
@@ -642,7 +881,7 @@ def calculateShadbala(
 			planet, kaalaBala
 		),
 		'drikBala': calculateDrikBala(
-			planet
+			planet, chart
 		),
 		'naisargikaBala': calculateNaisargikaBala(
 			planet
@@ -686,7 +925,7 @@ def calculatePhalas(shadBala):
 
 
 shadBalaMedianStrengths = {
-	'sun': 390,
+	'sun': 300,
 	'moon': 360,
 	'mars': 300,
 	'mercury': 420,
