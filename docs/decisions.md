@@ -9,6 +9,8 @@
 - [2026-06-22: Treat JA Mercury Paksha Bala divergence as comparison evidence only](#2026-06-22-treat-ja-mercury-paksha-bala-divergence-as-comparison-evidence-only)
 - [2026-06-22: Prefer dedicated `*Q` columns for planet quality exposure](#2026-06-22-prefer-dedicated-q-columns-for-planet-quality-exposure)
 - [2026-06-22: Model marketing/launch Gowri and Shadbala as additive score adjustments](#2026-06-22-model-marketinglaunch-gowri-and-shadbala-as-additive-score-adjustments)
+- [2026-06-22: Use root config constants with author-facing `constants.foo` syntax](#2026-06-22-use-root-config-constants-with-author-facing-constantsfoo-syntax)
+- [2026-06-22: Keep preset `qualityScore` limited to dynamically varying planet qualities](#2026-06-22-keep-preset-qualityscore-limited-to-dynamically-varying-planet-qualities)
 
 ## 2026-06-22: Adopt deliberate-dev lifecycle artefacts
 
@@ -57,3 +59,15 @@
 - **Decision**: Treat Gowri and the selected special planets' Shadbala strengths as simple additive score adjustments on top of each preset's base score, and use the same adjustment structure in both marketing and launch.
 - **Rationale**: The presets need Gowri and strength awareness, but those signals should remain transparent, reviewable, and easy to calibrate from observed ranges. A direct additive multiplier model is simpler than the earlier bounded-percentage mapping while preserving clear separation between the base rubric and the adjustment signals.
 - **Consequences**: `presets/marketing.yml` now derives `baseMarketingScore`, `presets/launch.yml` now derives `baseLaunchScore`, and both add simple Gowri/Shadbala adjustment terms on top of their distinct base rubrics. Hourly verification TSVs in `temp/` now support side-by-side review of the resulting candidate sets.
+
+## 2026-06-22: Use root config constants with author-facing `constants.foo` syntax
+
+- **Decision**: Add a root-level `constants` mapping to merged config and expose it to config-authored expressions through author-facing `constants.foo` syntax, with rewriting to pandas-native external-variable access only at evaluation boundaries.
+- **Rationale**: Presets need reusable shared lists, thresholds, and maps to stay readable, but those values are config-scoped runtime data rather than row-scoped DataFrame columns. Author-facing `constants.foo` keeps YAML readable while avoiding fragile string interpolation or hidden temporary columns.
+- **Consequences**: `config['constants']` is now always available, `query` and string-valued `customColumns` can reference constants through `constants.foo`, summary/list-style custom columns can resolve references such as `constants.marketingMinHouses`, and presets can centralize repeated values without exporting those constants as output columns.
+
+## 2026-06-22: Keep preset `qualityScore` limited to dynamically varying planet qualities
+
+- **Decision**: Restrict `qualityScore` in the marketing and launch presets to dynamically varying quality labels only (`Mercury`, `Moon`) and do not score fixed-nature planets through `Q` branches.
+- **Rationale**: In the current implementation, `Venus` and `Jupiter` are always benefic by `Q`, while `Sun` and `Mars` are always malefic; scoring them through preset `qualityScore` created constant or impossible branches that looked meaningful but did not discriminate real candidates.
+- **Consequences**: Both presets now avoid impossible/always-on `qualityScore` cases, launch no longer depends on a hard `moQ != 'malefic'` gate to produce candidates, and preset thresholds/rubrics now reflect actual dynamic quality variation more faithfully.

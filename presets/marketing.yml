@@ -1,11 +1,62 @@
+constants:
+  tabooTimeFlagsRegex: 'RK|YG|GK'
+  marketingWeekdayWeights:
+    wednesday: 30
+    friday: 24
+    thursday: 22
+    sunday: 18
+  marketingNakshatras:
+    - asvini
+    - rohini
+    - mrigashira
+    - punarvasu
+    - pushya
+    - hasta
+    - chitra
+    - svati
+    - anuradha
+    - shravana
+    - dhanishta
+    - revati
+  marketingPreferredTithis:
+    - 2
+    - 3
+    - 5
+    - 7
+    - 10
+    - 11
+    - 13
+  marketingDiscouragedTithis:
+    - 4
+    - 8
+    - 9
+  marketingWaningRiktaTithis:
+    - 19
+    - 24
+    - 29
+  marketingWaningPoornaTithis:
+    - 20
+    - 25
+  marketingMinHouses:
+    - h3
+    - h5
+    - h7
+    - h10
+    - h11
+  marketingCorePlanets:
+    - mercury
+    - venus
+    - jupiter
+    - moon
+    - sun
 query: >-
-  timeF.str.contains('RK|YG|GK', na=False) == False and
-  vaara.isin(['wednesday', 'friday', 'thursday', 'sunday']) and
+  timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
   tithi != 0 and
   tithi != 14 and
   meQ != 'malefic' and
   muhurtaYogaEffect >= 0 and
   marketingMin >= 24 and
+  weekdayScore > 0 and
   marketingScore >= 300
 customColumns:
   # House policy:
@@ -19,40 +70,37 @@ customColumns:
   muhurtaYogaEffect: >-
     positive + negative
   marketingMin:
-    min:
-      - h3
-      - h5
-      - h7
-      - h10
-      - h11
+    min: constants.marketingMinHouses
   weekdayScore: >-
-    (vaara == 'wednesday') * 30 + (vaara == 'friday') * 24 +
-    (vaara == 'thursday') * 22 + (vaara == 'sunday') * 18
+    vaara.map(constants.marketingWeekdayWeights).fillna(0)
   nakshatraScore: >-
-    nakshatra.isin(['asvini', 'rohini', 'mrigashira', 'punarvasu',
-    'pushya', 'hasta', 'chitra', 'svati', 'anuradha', 'shravana',
-    'dhanishta', 'revati']) * 36
+    nakshatra.isin(constants.marketingNakshatras) * 36
   # Tithi policy:
   # - keep strong bonuses for the explicitly preferred tithis from marketing.md
   # - give a small bonus to 15 (full-moon side)
-  # - penalize 4/8/9 as discouraged launch tithis
+  # - penalize 4/8/9 as discouraged marketing/commercial tithis
   # - grade waning-half penalties by closeness to Amavasya
   # - add a small extra penalty for waning Rikta tithis (19/24/29)
   # - add a slight recovery for waning Poorna tithis (20/25)
   tithiScore: >-
-    tithi.isin([2, 3, 5, 7, 10, 11, 13]) * 28 +
+    tithi.isin(constants.marketingPreferredTithis) * 28 +
     (tithi == 15) * 10 -
-    tithi.isin([4, 8, 9]) * 18 -
+    tithi.isin(constants.marketingDiscouragedTithis) * 18 -
     ((tithi >= 16) & (tithi <= 20)) * 8 -
     ((tithi >= 21) & (tithi <= 25)) * 14 -
     ((tithi >= 26) & (tithi <= 29)) * 22 -
-    tithi.isin([19, 24, 29]) * 6 +
-    tithi.isin([20, 25]) * 4
+    tithi.isin(constants.marketingWaningRiktaTithis) * 6 +
+    tithi.isin(constants.marketingWaningPoornaTithis) * 4
+  # Quality policy:
+  # - score only planets whose `Q` can vary in the current implementation
+  # - Mercury can be benefic / neutral / malefic
+  # - Moon can be benefic / malefic
+  # - fixed-nature planets are handled through other rubric parts rather than
+  #   through constant or impossible quality branches here
   qualityScore: >-
-    (meQ == 'benefic') * 20 + (meQ == 'neutral') * 10 +
-    (moQ == 'benefic') * 18 + (veQ == 'benefic') * 14 +
-    (juQ == 'benefic') * 14 + (suQ == 'benefic') * 10 +
-    (maQ == 'benefic') * 6
+    (meQ == 'benefic') * 20 +
+    (meQ == 'neutral') * 10 +
+    (moQ == 'benefic') * 18
   # Dasha policy:
   # - reward marketing-supportive lords (Mercury, Venus, Jupiter, Moon, Sun)
   # - give MD the highest weight, then AD, then PAD
@@ -60,13 +108,13 @@ customColumns:
   # - use the deeper AD/PAD phase strengths and remainders internally for scoring,
   #   while keeping the exported table compact with only the visible dasha lords
   mdPhaseScore: >-
-    mdLord.isin(['mercury', 'venus', 'jupiter', 'moon', 'sun']) *
+    mdLord.isin(constants.marketingCorePlanets) *
     (6 + mdlStrength * 4 + mdRemainder * 6)
   adPhaseScore: >-
-    adLord.isin(['mercury', 'venus', 'jupiter', 'moon', 'sun']) *
+    adLord.isin(constants.marketingCorePlanets) *
     (5 + adlStrength * 3 + adRemainder * 4)
   padPhaseScore: >-
-    padLord.isin(['mercury', 'venus', 'jupiter', 'moon', 'sun']) *
+    padLord.isin(constants.marketingCorePlanets) *
     (3 + padlStrength * 2 + padRemainder * 3)
   dashaScore: >-
     mdPhaseScore + adPhaseScore + padPhaseScore

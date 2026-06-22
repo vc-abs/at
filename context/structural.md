@@ -27,6 +27,11 @@
   - dedicated `planetQualities`/`*Q` output from `src/at/tools/generateCombos.py`,
   - dedicated ShadBala strength fields (`suS`, `moS`, `maS`, `meS`, `juS`, `veS`, `saS`, `totalS`, `avgIP`) selectable from `src/at/tools/generateCombos.py`,
   - dedicated Gowri fields/flags (`gowri`, `gowriScore`, `gowriM`, `gowriS`, `gowriT`, `gowriStart`, `gowriEnd`, `gowriF`) from `src/at/tools/generateCombos.py`,
+  - root-level config `constants` support in `src/at/readWrite/getDefaultConfig.py` and merged runtime config loading,
+  - combo-generation constant helpers in `src/at/tools/generateCombos.py` for:
+    - wrapping constants in a shared attribute-access namespace,
+    - rewriting author-facing `constants.foo` expressions to pandas-native external-variable access at evaluation time,
+    - resolving constant-backed summary/list references before DataFrame summary operations,
   - marketing preset configuration in `presets/marketing.yml` with a `baseMarketingScore` plus simple additive Gowri/Shadbala adjustments built on existing output fields,
   - separate launch preset configuration in `presets/launch.yml` with its own `baseLaunchScore`, the same additive Gowri/Shadbala adjustment pattern, and companion launch review configs under `temp/`,
   - hourly review/verification artefacts under `temp/`, including `review-week-hourly.yml`, `marketing-review-week-export.yml`, `launch-review-week-export.yml`, and their generated TSV outputs.
@@ -36,6 +41,6 @@
 - Test suite present under `tests/` with multiple domain-focused modules.
 - `tests/core/test_planet_quality.py` now covers BPHS aspect metadata, Mercury influence evaluation paths, and Moon tithi-based quality behavior.
 - `tests/panchang/test_gowri.py` covers first-pass Gowri schedule lookup and day/night segment selection behavior.
-- `tests/tools/test_generate_combos.py` now covers compact time-flag output, planet-quality output, Gowri output fields, and field-set selection behavior for combo generation.
+- `tests/tools/test_generate_combos.py` now covers compact time-flag output, planet-quality output, Gowri output fields, field-set selection behavior, and constant-backed query/custom-column behavior for combo generation.
 - `tests/shadbala/test_shadbala.py` now covers Dig Bala reference-longitude and linear falloff behavior.
 - Coverage + lint workflow referenced in README via `./scripts/validate.sh`.

@@ -28,3 +28,13 @@
 - Finalized the Gowri first-pass cycle with point-in-time-first lookup, numeric `gowriScore`, shared constants, and documented query/runtime conventions.
 - Refreshed the marketing preset to derive its final score from a base score plus simple additive Gowri and special-planet Shadbala adjustments calibrated from observed review ranges.
 - Updated the `launch` preset to use the same additive Gowri/Shadbala adjustment structure on top of its own base score, and added hourly review/verification TSV artefacts under `temp/`.
+- Finalized root-level config constants support for presets and config-driven expressions.
+- Added author-facing `constants.foo` access for `query` and string-valued `customColumns`, with evaluation-boundary rewriting to pandas-native external-variable access.
+- Added constant-backed summary/list reference support for custom columns such as `min: constants.marketingMinHouses`.
+- Refactored `presets/marketing.yml` to centralize repeated lists/filters under a root `constants` section.
+- Further refined the preset pattern so weekday preferences can be expressed as reusable weight maps (for example `marketingWeekdayWeights`) and consumed through `vaara.map(constants.<weights>).fillna(0)`.
+- Renamed the marketing dasha allow-list to `marketingCorePlanets` and aligned `presets/launch.yml` to the same constants-driven structure with `launchWeekdayWeights`, `launchCorePlanets`, and related shared lists.
+- Documented config constants usage in `README.md` and `docs/guide.md`, including the weighted-weekday pattern.
+- Simplified `qualityScore` in both presets so it only scores dynamically varying `Q` values (`Mercury`, `Moon`) and no longer includes constant or impossible branches for fixed-nature planets.
+- Rebalanced launch filtering after that cleanup by removing the hard `moQ != 'malefic'` gate and recalibrating the score threshold, so launch still yields review candidates without relying on impossible/constant quality branches.
+- Validated the cycle with targeted tests, full `./scripts/validate.sh`, and CLI smoke runs of the constant-backed marketing and launch presets.

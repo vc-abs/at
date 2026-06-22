@@ -7,6 +7,7 @@ from at.tools.generateCombos import (
 	addCustomColumns,
 	formatDashaData,
 	getColumn,
+	getExpressionLocals,
 	getGowriFlags,
 	getPanchang,
 	getPlanetaryDegrees,
@@ -14,6 +15,8 @@ from at.tools.generateCombos import (
 	getPlanetQualities,
 	getTimeFlags,
 	processSummaryColumn,
+	resolveConstantReference,
+	rewriteConstantsExpression,
 	sortData,
 	splitTimestamp,
 )
@@ -259,15 +262,16 @@ def test_format_dasha_data_uses_placeholder_when_bala_missing():
 
 def test_get_column_supports_str_expression_and_dict_summary():
 	df = pd.DataFrame([{'a': 1, 'b': 2}])
-	assert getColumn(df, 'a + b').iloc[0] == 3
-	assert getColumn(df, {'sum': ['a', 'b']}).iloc[0] == 3
+	config = {'constants': {}}
+	assert getColumn(df, 'a + b', config).iloc[0] == 3
+	assert getColumn(df, {'sum': ['a', 'b']}, config).iloc[0] == 3
 
 
 
 def test_get_column_returns_unsupported_values_unchanged():
 	df = pd.DataFrame([{'a': 1}])
 	value = ['a']
-	assert getColumn(df, value) is value
+	assert getColumn(df, value, {'constants': {}}) is value
 
 
 
@@ -278,7 +282,11 @@ def test_process_summary_column_directly():
 			{'x': 4, 'y': 5},
 		]
 	)
-	res = processSummaryColumn(df, {'sum': ['x', 'y']})
+	res = processSummaryColumn(
+		df,
+		{'sum': ['x', 'y']},
+		{'constants': {}},
+	)
 	assert list(res) == [5, 9]
 
 
@@ -291,10 +299,176 @@ def test_add_custom_columns_adds_each_declared_column():
 			'c': 'a + b',
 			'd': {'sum': ['a', 'b']},
 		},
+		{'constants': {}},
 	)
 	assert list(df.columns) == ['a', 'b', 'c', 'd']
 	assert df['c'].iloc[0] == 3
 	assert df['d'].iloc[0] == 3
+
+
+
+def test_rewrite_constants_expression_marks_namespace_for_pandas():
+	assert rewriteConstantsExpression(
+		'vaara.isin(constants.marketingWeekdays)'
+	) == 'vaara.isin(@constants.marketingWeekdays)'
+	assert rewriteConstantsExpression(
+		'constants.thresholds.score >= 300'
+	) == '@constants.thresholds.score >= 300'
+	assert rewriteConstantsExpression(
+		'vaara.isin(@constants.marketingWeekdays)'
+	) == 'vaara.isin(@constants.marketingWeekdays)'
+
+
+
+def test_get_expression_locals_exposes_constants_namespace():
+	locals_ = getExpressionLocals(
+		{
+			'constants': {
+				'marketingWeekdays': ['wednesday', 'friday'],
+				'thresholds': {'score': 300},
+			},
+		}
+	)
+	constants = locals_['constants']
+	assert constants.marketingWeekdays == ['wednesday', 'friday']
+	assert constants.thresholds.score == 300
+
+
+
+def test_get_expression_locals_exposes_mapping_constants_for_map_usage():
+	locals_ = getExpressionLocals(
+		{
+			'constants': {
+				'marketingWeekdayWeights': {
+					'wednesday': 30,
+					'friday': 24,
+				},
+			},
+		}
+	)
+	constants = locals_['constants']
+	assert constants.marketingWeekdayWeights['wednesday'] == 30
+	assert constants.marketingWeekdayWeights.friday == 24
+
+
+
+def test_get_column_supports_constants_namespace_expression():
+	df = pd.DataFrame([{'a': 1, 'b': 2}])
+	config = {'constants': {'weights': {'a': 10, 'b': 100}}}
+	result = getColumn(
+		df,
+		'a * constants.weights.a + b * constants.weights.b',
+		config,
+	)
+	assert result.iloc[0] == 210
+
+
+
+def test_process_summary_column_resolves_constant_reference_list():
+	df = pd.DataFrame(
+		[
+			{'h3': 22, 'h5': 25, 'h7': 24},
+			{'h3': 29, 'h5': 27, 'h7': 26},
+		]
+	)
+	config = {
+		'constants': {
+			'marketingMinHouses': ['h3', 'h5', 'h7'],
+		}
+	}
+	res = processSummaryColumn(
+		df,
+		{'min': 'constants.marketingMinHouses'},
+		config,
+	)
+	assert list(res) == [22, 26]
+
+
+
+def test_resolve_constant_reference_returns_non_constant_strings_unchanged():
+	config = {'constants': {'x': ['a']}}
+	assert resolveConstantReference(['h1'], config) == ['h1']
+	assert resolveConstantReference('h1', config) == 'h1'
+
+
+
+def test_add_custom_columns_supports_constants_and_does_not_export_them():
+	df = pd.DataFrame(
+		[
+			{'vaara': 'wednesday', 'h3': 22, 'h5': 25, 'h7': 24},
+		]
+	)
+	config = {
+		'constants': {
+			'marketingWeekdays': ['wednesday', 'friday'],
+			'marketingMinHouses': ['h3', 'h5', 'h7'],
+		}
+	}
+	addCustomColumns(
+		df,
+		{
+			'isMarketingWeekday': 'vaara.isin(constants.marketingWeekdays)',
+			'marketingMin': {
+				'min': 'constants.marketingMinHouses',
+			},
+		},
+		config,
+	)
+	assert list(df.columns) == [
+		'vaara',
+		'h3',
+		'h5',
+		'h7',
+		'isMarketingWeekday',
+		'marketingMin',
+	]
+	assert bool(df['isMarketingWeekday'].iloc[0]) is True
+	assert df['marketingMin'].iloc[0] == 22
+	assert 'constants' not in df.columns
+
+
+
+def test_add_custom_columns_supports_mapping_constants_with_series_map():
+	df = pd.DataFrame(
+		[
+			{'vaara': 'wednesday'},
+			{'vaara': 'friday'},
+			{'vaara': 'monday'},
+		]
+	)
+	config = {
+		'constants': {
+			'marketingWeekdayWeights': {
+				'wednesday': 30,
+				'friday': 24,
+				'thursday': 22,
+				'sunday': 18,
+			},
+		}
+	}
+	addCustomColumns(
+		df,
+		{
+			'weekdayScore': (
+				'vaara.map(constants.marketingWeekdayWeights).fillna(0)'
+			),
+		},
+		config,
+	)
+	assert list(df['weekdayScore']) == [30.0, 24.0, 0.0]
+
+
+
+def test_launch_preset_uses_constants_pattern_consistently():
+	with open('presets/launch.yml', 'r') as f:
+		text = f.read()
+
+	assert 'constants:' in text
+	assert 'launchWeekdayWeights:' in text
+	assert 'launchCorePlanets:' in text
+	assert 'vaara.map(constants.launchWeekdayWeights).fillna(0)' in text
+	assert 'mdLord.isin(constants.launchCorePlanets)' in text
+	assert 'min: constants.launchMinHouses' in text
 
 
 

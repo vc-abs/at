@@ -406,9 +406,116 @@ def generateEventCombos(
 	)
 
 
-def processSummaryColumn(df, summary):
+class ConstantNamespace(Mapping):
+	def __init__(self, data):
+		self._data = data
+
+	def __getattr__(self, key):
+		try:
+			value = self._data[key]
+		except KeyError as exc:
+			raise AttributeError(key) from exc
+		return wrapConstants(value)
+
+	def __getitem__(self, key):
+		value = self._data[key]
+		return wrapConstants(value)
+
+	def __iter__(self):
+		return iter(self._data)
+
+	def __len__(self):
+		return len(self._data)
+
+	def __contains__(self, key):
+		return key in self._data
+
+	@property
+	def ndim(self):
+		return 0
+
+	def __repr__(self):
+		return repr(self._data)
+
+
+def wrapConstants(value):
+	if isinstance(value, ConstantNamespace):
+		return value
+	if isinstance(value, Mapping):
+		return ConstantNamespace(value)
+	return value
+
+
+def getConstantNamespace(config):
+	return wrapConstants(config.get('constants', {}))
+
+
+def rewriteConstantsExpression(expression):
+	parts = []
+	i = 0
+	inSingleQuote = False
+	inDoubleQuote = False
+
+	while i < len(expression):
+		char = expression[i]
+		previousChar = expression[i - 1] if i > 0 else ''
+
+		if char == "'" and not inDoubleQuote and previousChar != '\\':
+			inSingleQuote = not inSingleQuote
+			parts.append(char)
+			i += 1
+			continue
+
+		if char == '"' and not inSingleQuote and previousChar != '\\':
+			inDoubleQuote = not inDoubleQuote
+			parts.append(char)
+			i += 1
+			continue
+
+		isBoundary = i == 0 or (
+			previousChar not in '@._'
+			and not previousChar.isalnum()
+		)
+		isRootConstantsReference = (
+			not inSingleQuote
+			and not inDoubleQuote
+			and expression.startswith('constants.', i)
+			and isBoundary
+		)
+		if isRootConstantsReference:
+			parts.append('@')
+
+		parts.append(char)
+		i += 1
+
+	return ''.join(parts)
+
+
+def getExpressionLocals(config):
+	return {
+		'constants': getConstantNamespace(config),
+	}
+
+
+def resolveConstantReference(value, config):
+	if not (
+		isinstance(value, str)
+		and value.startswith('constants.')
+	):
+		return value
+
+	resolved = config.get('constants', {})
+	for key in value.split('.')[1:]:
+		resolved = resolved[key]
+	return resolved
+
+
+def processSummaryColumn(df, summary, config):
 	summaryFn, summaryColumns = next(
 		iter(summary.items())
+	)
+	summaryColumns = resolveConstantReference(
+		summaryColumns, config
 	)
 
 	return getattr(
@@ -416,22 +523,30 @@ def processSummaryColumn(df, summary):
 	)(axis=1)
 
 
-def getColumn(df, column):
+def getColumn(df, column, config):
 	if isinstance(column, str):
-		return df.eval(column)
+		rewrittenColumn = rewriteConstantsExpression(
+			column
+		)
+		return df.eval(
+			rewrittenColumn,
+			local_dict=getExpressionLocals(config),
+		)
 
 	if isinstance(column, Mapping):
-		return processSummaryColumn(df, column)
+		return processSummaryColumn(
+			df, column, config
+		)
 
 	return column
 
 
-def addCustomColumns(df, columns):
+def addCustomColumns(df, columns, config):
 	keys = list(columns.keys())
 
 	for key in keys:
 		df[key] = getColumn(
-			df, columns[key]
+			df, columns[key], config
 		)
 
 
@@ -510,12 +625,17 @@ def generateCombos(config):
 		)
 
 	addCustomColumns(
-		df, config['customColumns']
+		df, config['customColumns'], config
 	)
 	sortData(df, config['order'])
 	splitTimestamp(df)
 	adjustColumns(df)
-	filteredDF = df.query(config['query'])
+	filteredDF = df.query(
+		rewriteConstantsExpression(
+			config['query']
+		),
+		local_dict=getExpressionLocals(config),
+	)
 	modifiedDF = addColumns(
 		filteredDF, config['fieldSets']
 	)

@@ -67,6 +67,37 @@ def test_merge_files_merges_dicts(tmp_path: Path):
 	assert merged['obj'] == {'x': 1, 'y': 2}
 
 
+def test_merge_files_merges_constants_nested_dicts(tmp_path: Path):
+	f1 = tmp_path / 'a.yml'
+	f2 = tmp_path / 'b.yml'
+	f1.write_text(
+		'constants:\n'
+		'  marketing:\n'
+		'    weekdays:\n'
+		'      - wednesday\n'
+		'    thresholds:\n'
+		'      score: 250\n'
+	)
+	f2.write_text(
+		'constants:\n'
+		'  marketing:\n'
+		'    thresholds:\n'
+		'      score: 300\n'
+		'      floor: 24\n'
+	)
+
+	merged = mergeFiles([str(f1), str(f2)])
+	assert merged['constants'] == {
+		'marketing': {
+			'weekdays': ['wednesday'],
+			'thresholds': {
+				'score': 300,
+				'floor': 24,
+			},
+		}
+	}
+
+
 def test_read_config_loads_default_and_user_files(tmp_path: Path):
 	cfg = tmp_path / 'cfg.yml'
 	cfg.write_text(
@@ -79,6 +110,7 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 
 	result = readConfig([str(cfg)])
 	assert result['utcHour'] == 5
+	assert result['constants'] == {}
 	assert 'events' in result
 	assert 'default' in result['events']
 	assert 'date' in result['events']['default']

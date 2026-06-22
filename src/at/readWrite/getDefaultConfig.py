@@ -16,6 +16,7 @@ def getDefaultConfig():
 		'minute': now.minute,
 		'second': now.second,
 		'query': selectAllQuery,
+		'constants': {},
 		'fieldSets': {},
 		'customColumns': {},
 		'skipColumns': [],

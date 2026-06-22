@@ -8,6 +8,7 @@ def test_get_default_config_shape_and_defaults():
 	cfg = getDefaultConfig()
 
 	assert cfg['query'] == selectAllQuery
+	assert cfg['constants'] == {}
 	assert cfg['fieldSets'] == {}
 	assert cfg['customColumns'] == {}
 	assert cfg['skipColumns'] == []

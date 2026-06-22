@@ -32,6 +32,42 @@ $ # Using presets. Configs to the right have more priority.
 $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 ```
 
+## Config Constants
+
+You can define reusable root-level config constants and reference them from `query` and string-valued `customColumns` expressions.
+
+```yml
+constants:
+  marketingWeekdayWeights:
+    wednesday: 30
+    friday: 24
+    thursday: 22
+    sunday: 18
+  marketingMinHouses:
+    - h3
+    - h5
+    - h7
+    - h10
+    - h11
+
+query: >-
+  weekdayScore > 0 and
+  marketingMin >= 24
+
+customColumns:
+  weekdayScore: >-
+    vaara.map(constants.marketingWeekdayWeights).fillna(0)
+  marketingMin:
+    min: constants.marketingMinHouses
+```
+
+Notes:
+- author-facing config syntax uses `constants.foo`
+- constants can hold reusable lists, thresholds, and mapping/weight dictionaries
+- internally, expression evaluation rewrites that to pandas-compatible external-variable access only at the evaluation boundary
+- constants remain available on merged runtime config as `config['constants']`
+- constants are not exported as output columns unless you explicitly derive a custom output column from them
+
 ## Thanks To
 * [Jagannatha Hora](https://www.vedicastrologer.org/jh/), a vedic astrology software by P. V. R. Narasimmha Rao.
 * [JyotishApp](https://play.google.com/store/apps/details?id=com.vishdroid.jyotisha), an android app by Vishnuvardhana SV.

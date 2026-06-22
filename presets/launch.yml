@@ -1,13 +1,62 @@
+constants:
+  tabooTimeFlagsRegex: 'RK|YG|GK'
+  launchWeekdayWeights:
+    wednesday: 28
+    friday: 24
+    thursday: 22
+    sunday: 20
+  launchNakshatras:
+    - asvini
+    - rohini
+    - mrigashira
+    - punarvasu
+    - pushya
+    - hasta
+    - svati
+    - anuradha
+    - shravana
+    - dhanishta
+    - revati
+  launchPreferredTithis:
+    - 2
+    - 3
+    - 5
+    - 7
+    - 10
+    - 11
+    - 13
+  launchDiscouragedTithis:
+    - 4
+    - 8
+    - 9
+  launchWaningRiktaTithis:
+    - 19
+    - 24
+    - 29
+  launchWaningPoornaTithis:
+    - 20
+    - 25
+  launchMinHouses:
+    - h1
+    - h2
+    - h7
+    - h10
+    - h11
+  launchCorePlanets:
+    - mercury
+    - venus
+    - jupiter
+    - moon
+    - sun
 query: >-
-  timeF.str.contains('RK|YG|GK', na=False) == False and
-  vaara.isin(['wednesday', 'friday', 'thursday', 'sunday']) and
+  timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
   tithi != 0 and
   tithi != 14 and
   meQ != 'malefic' and
-  moQ != 'malefic' and
   muhurtaYogaEffect >= 0 and
   launchMin >= 23 and
-  launchScore >= 300
+  weekdayScore > 0 and
+  launchScore >= 285
 customColumns:
   # House policy:
   # - prioritize commencement and transactability houses more than campaign houses
@@ -20,47 +69,44 @@ customColumns:
   muhurtaYogaEffect: >-
     positive + negative
   launchMin:
-    min:
-      - h1
-      - h2
-      - h7
-      - h10
-      - h11
+    min: constants.launchMinHouses
   weekdayScore: >-
-    (vaara == 'wednesday') * 28 + (vaara == 'friday') * 24 +
-    (vaara == 'thursday') * 22 + (vaara == 'sunday') * 20
+    vaara.map(constants.launchWeekdayWeights).fillna(0)
   nakshatraScore: >-
-    nakshatra.isin(['asvini', 'rohini', 'mrigashira', 'punarvasu',
-    'pushya', 'hasta', 'svati', 'anuradha', 'shravana',
-    'dhanishta', 'revati']) * 34
+    nakshatra.isin(constants.launchNakshatras) * 34
   # Tithi policy:
   # - reuse the same broadly favorable launch/commercial tithis as marketing,
   #   but keep the bonuses slightly lower than the campaign-oriented preset
   tithiScore: >-
-    tithi.isin([2, 3, 5, 7, 10, 11, 13]) * 26 +
+    tithi.isin(constants.launchPreferredTithis) * 26 +
     (tithi == 15) * 8 -
-    tithi.isin([4, 8, 9]) * 18 -
+    tithi.isin(constants.launchDiscouragedTithis) * 18 -
     ((tithi >= 16) & (tithi <= 20)) * 6 -
     ((tithi >= 21) & (tithi <= 25)) * 12 -
     ((tithi >= 26) & (tithi <= 29)) * 20 -
-    tithi.isin([19, 24, 29]) * 4 +
-    tithi.isin([20, 25]) * 4
+    tithi.isin(constants.launchWaningRiktaTithis) * 4 +
+    tithi.isin(constants.launchWaningPoornaTithis) * 4
+  # Quality policy:
+  # - score only planets whose `Q` can vary in the current implementation
+  # - Mercury can be benefic / neutral / malefic
+  # - Moon can be benefic / malefic under the current tithi-based rule
+  # - fixed-nature planets are handled through other rubric parts rather than
+  #   through constant or impossible quality branches here
   qualityScore: >-
-    (meQ == 'benefic') * 20 + (meQ == 'neutral') * 10 +
-    (moQ == 'benefic') * 18 + (moQ == 'neutral') * 8 +
-    (veQ == 'benefic') * 16 + (juQ == 'benefic') * 16 +
-    (suQ == 'benefic') * 12 + (maQ == 'benefic') * 4
+    (meQ == 'benefic') * 20 +
+    (meQ == 'neutral') * 10 +
+    (moQ == 'benefic') * 18
   # Dasha policy:
   # - reward launch-supportive lords (Mercury, Venus, Jupiter, Moon, Sun)
   # - keep the same bounded MD/AD/PAD weighting pattern for the first pass
   mdPhaseScore: >-
-    mdLord.isin(['mercury', 'venus', 'jupiter', 'moon', 'sun']) *
+    mdLord.isin(constants.launchCorePlanets) *
     (6 + mdlStrength * 4 + mdRemainder * 6)
   adPhaseScore: >-
-    adLord.isin(['mercury', 'venus', 'jupiter', 'moon', 'sun']) *
+    adLord.isin(constants.launchCorePlanets) *
     (5 + adlStrength * 3 + adRemainder * 4)
   padPhaseScore: >-
-    padLord.isin(['mercury', 'venus', 'jupiter', 'moon', 'sun']) *
+    padLord.isin(constants.launchCorePlanets) *
     (3 + padlStrength * 2 + padRemainder * 3)
   dashaScore: >-
     mdPhaseScore + adPhaseScore + padPhaseScore
