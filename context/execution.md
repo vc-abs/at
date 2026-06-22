@@ -18,25 +18,37 @@ This document stores active implementation-cycle state for the current execution
 
 Latest finalized-cycle validation evidence:
 
+- `./.venv/bin/python main.py ./presets/staffOnboarding.yml ./presets/archive/.quick.yml ./presets/.private/vc.yml | head -n 5` ✅
+  - result: staff onboarding preset produced candidate rows on the retained VC chart
+- `./.venv/bin/python main.py ./presets/studentOnboarding.yml ./presets/archive/.quick.yml ./presets/.private/vc.yml | head -n 5` ✅
+  - result: student onboarding preset produced candidate rows on the retained VC chart
+- `./.venv/bin/python main.py ./temp/staff-onboarding-review-week-export.yml ./presets/staffOnboarding.yml ./presets/.private/vc.yml` ✅
+  - result: staff onboarding weekly review TSV generated successfully
+- `./.venv/bin/python main.py ./temp/student-onboarding-review-week-export.yml ./presets/studentOnboarding.yml ./presets/.private/vc.yml` ✅
+  - result: student onboarding weekly review TSV generated successfully
+- `./.venv/bin/python main.py ./temp/staff-onboarding-review-month-export.yml ./presets/staffOnboarding.yml` ✅
+  - result: staff onboarding monthly review TSV generated successfully in `temp/`
+- `./.venv/bin/python main.py ./temp/student-onboarding-review-month-export.yml ./presets/studentOnboarding.yml` ✅
+  - result: student onboarding monthly review TSV generated successfully in `temp/`
+- `./.venv/bin/python -m pytest tests/tools/test_generate_combos.py -q` ✅
+  - result: preset-structure and combo-generation checks passed
+- `./.venv/bin/python -m pytest tests/shadbala/test_shadbala_integration.py -q` ✅
+  - result: archived VC fixture integration checks passed
 - `./scripts/validate.sh` ✅
-  - result: `104 passed`
-- `./.venv/bin/python main.py ./presets/marketing.yml ./presets/.quick.yml ./presets/.vc.yml | head -n 5` ✅
-  - result: constant-backed marketing preset produced a filtered candidate row
-- `./.venv/bin/python main.py ./presets/launch.yml ./presets/.quick.yml ./presets/.vc.yml | head -n 5` ✅
-  - result: launch preset produced filtered review candidates after the quality-score cleanup
+  - result: `106 passed`
 
 ## Completion State
 
-- Most recent finalized cycle: **Preset-level constants support and preset quality-score cleanup**.
+- Most recent finalized cycle: **Staff and student onboarding presets**.
 - Finalization state: **complete**.
 - Plan synchronization state: **clean** (`plan.md` has no active plan items).
 
 Finalization summary:
 
-- root config now always exposes `constants`
-- `generateCombos` supports author-facing `constants.foo` syntax in `query` and string `customColumns`
-- summary/list-style custom columns can resolve constant-backed references such as `constants.marketingMinHouses`
-- marketing and launch presets now use shared constants for repeated lists, filters, and weekday-weight mappings
-- both presets limit `qualityScore` to dynamically varying `Q` values (`Mercury`, `Moon`)
-- launch no longer hard-rejects `moQ == 'malefic'`; it now relies on the broader weighted rubric with a recalibrated threshold
-- guide, notes, decisions, and functional context were synchronized with the delivered behavior
+- added `presets/staffOnboarding.yml`
+- added `presets/studentOnboarding.yml`
+- kept `presets/education.yml` unchanged as the minimal legacy education preset
+- added weekly and monthly review export configs/TSVs under `temp/` for both onboarding presets
+- added preset-structure assertions for both onboarding presets in `tests/tools/test_generate_combos.py`
+- updated `tests/shadbala/test_shadbala_integration.py` to use `presets/archive/.vc.yml`, matching the retained repository fixture layout
+- synchronized `docs/guide.md`, `docs/notes.md`, `context/functional.md`, and `context/structural.md` with the delivered onboarding preset behavior

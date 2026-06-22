@@ -472,6 +472,32 @@ def test_launch_preset_uses_constants_pattern_consistently():
 
 
 
+def test_staff_onboarding_preset_uses_constants_pattern_consistently():
+	with open('presets/staffOnboarding.yml', 'r') as f:
+		text = f.read()
+
+	assert 'constants:' in text
+	assert 'staffOnboardingWeekdayWeights:' in text
+	assert 'staffOnboardingCorePlanets:' in text
+	assert 'vaara.map(constants.staffOnboardingWeekdayWeights).fillna(0)' in text
+	assert 'mdLord.isin(constants.staffOnboardingCorePlanets)' in text
+	assert 'min: constants.staffOnboardingMinHouses' in text
+
+
+
+def test_student_onboarding_preset_uses_constants_pattern_consistently():
+	with open('presets/studentOnboarding.yml', 'r') as f:
+		text = f.read()
+
+	assert 'constants:' in text
+	assert 'studentOnboardingWeekdayWeights:' in text
+	assert 'studentOnboardingCorePlanets:' in text
+	assert 'vaara.map(constants.studentOnboardingWeekdayWeights).fillna(0)' in text
+	assert 'mdLord.isin(constants.studentOnboardingCorePlanets)' in text
+	assert 'min: constants.studentOnboardingMinHouses' in text
+
+
+
 def test_sort_data_and_split_timestamp_mutate_dataframe():
 	df = pd.DataFrame(
 		[

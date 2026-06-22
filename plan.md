@@ -2,4 +2,8 @@
 
 ## Table of Contents
 
-- _No plan items yet._
+- [Next Implementation Cycle](#next-implementation-cycle)
+
+## Next Implementation Cycle
+
+No items are currently planned.

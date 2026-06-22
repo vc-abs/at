@@ -1,0 +1,153 @@
+constants:
+  tabooTimeFlagsRegex: 'RK|YG|GK'
+  staffOnboardingWeekdayWeights:
+    wednesday: 30
+    thursday: 26
+    sunday: 18
+    monday: 14
+    saturday: 10
+    friday: 8
+  staffOnboardingNakshatras:
+    - asvini
+    - rohini
+    - punarvasu
+    - pushya
+    - hasta
+    - anuradha
+    - shravana
+    - dhanishta
+    - revati
+  staffOnboardingPreferredTithis:
+    - 2
+    - 3
+    - 5
+    - 7
+    - 10
+    - 11
+    - 13
+  staffOnboardingDiscouragedTithis:
+    - 4
+    - 8
+    - 9
+  staffOnboardingWaningRiktaTithis:
+    - 19
+    - 24
+    - 29
+  staffOnboardingWaningPoornaTithis:
+    - 20
+    - 25
+  staffOnboardingMinHouses:
+    - h1
+    - h2
+    - h6
+    - h10
+    - h11
+  staffOnboardingCorePlanets:
+    - mercury
+    - sun
+    - jupiter
+    - moon
+    - saturn
+query: >-
+  timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
+  tithi != 0 and
+  tithi != 14 and
+  meQ != 'malefic' and
+  muhurtaYogaEffect >= 0 and
+  staffOnboardingMin >= 22 and
+  weekdayScore > 0 and
+  staffOnboardingScore >= 275
+customColumns:
+  # House policy:
+  # - prioritize profession, institutional fit, and support from the existing system
+  # - keep 10th and 11th as the main anchors, with 1st supporting the beginning itself
+  # - treat 2nd and 6th as practical salary/service supports, while 7th/9th stay secondary
+  staffOnboardingHouseScore: >-
+    (h10 * 1.6 + h11 * 1.6 + h1 * 1.3 + h2 * 1.1 + h6 * 1.0 +
+    h7 * 0.8 + h9 * 0.9) * 0.38
+  muhurtaYogaEffect: >-
+    positive + negative
+  staffOnboardingMin:
+    min: constants.staffOnboardingMinHouses
+  weekdayScore: >-
+    vaara.map(constants.staffOnboardingWeekdayWeights).fillna(0)
+  nakshatraScore: >-
+    nakshatra.isin(constants.staffOnboardingNakshatras) * 32
+  # Tithi policy:
+  # - keep the same broadly auspicious commercial/commencement tithis as a baseline
+  # - allow a small full-side bonus, but keep the waning-half penalties visible
+  tithiScore: >-
+    tithi.isin(constants.staffOnboardingPreferredTithis) * 24 +
+    (tithi == 15) * 6 -
+    tithi.isin(constants.staffOnboardingDiscouragedTithis) * 16 -
+    ((tithi >= 16) & (tithi <= 20)) * 6 -
+    ((tithi >= 21) & (tithi <= 25)) * 12 -
+    ((tithi >= 26) & (tithi <= 29)) * 20 -
+    tithi.isin(constants.staffOnboardingWaningRiktaTithis) * 4 +
+    tithi.isin(constants.staffOnboardingWaningPoornaTithis) * 3
+  # Quality policy:
+  # - score only the dynamic `Q` labels available in the current implementation
+  qualityScore: >-
+    (meQ == 'benefic') * 20 +
+    (meQ == 'neutral') * 10 +
+    (moQ == 'benefic') * 16
+  # Dasha policy:
+  # - reward institutional-supportive lords, including Saturn as a bounded structure signal
+  mdPhaseScore: >-
+    mdLord.isin(constants.staffOnboardingCorePlanets) *
+    (6 + mdlStrength * 4 + mdRemainder * 6)
+  adPhaseScore: >-
+    adLord.isin(constants.staffOnboardingCorePlanets) *
+    (5 + adlStrength * 3 + adRemainder * 4)
+  padPhaseScore: >-
+    padLord.isin(constants.staffOnboardingCorePlanets) *
+    (3 + padlStrength * 2 + padRemainder * 3)
+  dashaScore: >-
+    mdPhaseScore + adPhaseScore + padPhaseScore
+  baseStaffOnboardingScore: >-
+    staffOnboardingHouseScore + muhurtaYogaEffect * 12 + weekdayScore +
+    nakshatraScore + tithiScore + qualityScore + dashaScore
+  # Gowri policy:
+  # - keep Gowri supportive but bounded relative to the base rubric
+  gowriStaffOnboardingAdj: >-
+    gowriScore * 16.5
+  # Special-planet Shadbala policy:
+  # - use Mercury, Sun, Jupiter, Moon, and Saturn for role clarity, authority,
+  #   support, receptivity, and institutional structure
+  staffOnboardingSpecialStrength: >-
+    (meS + suS + juS + moS + saS) / 5
+  staffOnboardingShadbalaAdj: >-
+    (staffOnboardingSpecialStrength - 1.22) * 110
+  staffOnboardingScore: >-
+    baseStaffOnboardingScore + gowriStaffOnboardingAdj +
+    staffOnboardingShadbalaAdj
+order:
+  staffOnboardingScore: descending
+  baseStaffOnboardingScore: descending
+  muhurtaYogaEffect: descending
+fieldSets:
+  event:
+    - date
+    - time
+  panchang:
+    - tithi
+    - nakshatra
+    - vaara
+    - staffOnboardingScore
+  planetQualities:
+    - meQ
+    - moQ
+  timeFlags:
+    - timeF
+  muhurtaYogaEffects:
+    - positive
+    - negative
+    - yogas
+  mahaDasha:
+    - mdLord
+  antarDashas:
+    - adLord
+    - padLord
+  shadBalaStrength: none
+  objectHouses: all
+  ashtakavarga: all

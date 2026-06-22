@@ -37,4 +37,9 @@
 - Documented config constants usage in `README.md` and `docs/guide.md`, including the weighted-weekday pattern.
 - Simplified `qualityScore` in both presets so it only scores dynamically varying `Q` values (`Mercury`, `Moon`) and no longer includes constant or impossible branches for fixed-nature planets.
 - Rebalanced launch filtering after that cleanup by removing the hard `moQ != 'malefic'` gate and recalibrating the score threshold, so launch still yields review candidates without relying on impossible/constant quality branches.
-- Validated the cycle with targeted tests, full `./scripts/validate.sh`, and CLI smoke runs of the constant-backed marketing and launch presets.
+- Added `presets/staffOnboarding.yml` as a distinct institutional-joining preset using the same constants-driven YAML scoring pattern as marketing/launch, with 10th/11th/1st-led house weighting and Saturn-inclusive institutional support signals.
+- Added `presets/studentOnboarding.yml` as a distinct course-entry preset using the same constants-driven YAML scoring pattern, with 4th/5th/9th-led learning weighting and education-specific weekday/nakshatra preferences.
+- Added companion review export configs under `temp/` for the staff and student onboarding presets.
+- Updated `tests/tools/test_generate_combos.py` to assert that both new presets follow the constants-driven preset pattern.
+- Updated `tests/shadbala/test_shadbala_integration.py` to use the retained archived VC preset fixture path that matches the repository's current preset layout.
+- Validated the cycle with targeted tests, full `./scripts/validate.sh`, and CLI smoke runs of the constant-backed marketing, launch, staff onboarding, and student onboarding presets.

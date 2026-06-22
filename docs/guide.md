@@ -72,5 +72,9 @@
   - reduced-column TSV export support via stacked override configs.
 - `presets/launch.yml` provides a separate launch/go-live preset for product launch, company start, offer go-live, and similar commencement-oriented use cases.
 - The launch preset intentionally emphasizes commencement/transactability houses more than the marketing preset, but now uses the same simple additive Gowri/Shadbala adjustment pattern on top of its own base score.
-- Both presets now avoid impossible or always-on quality branches for fixed-nature planets; fixed benefic/malefic tendencies are captured through the broader rubric rather than through constant `qualityScore` terms.
-- Current preset scope intentionally excludes owner/business-chart-specific natal alignment logic.
+- `presets/staffOnboarding.yml` provides a separate staff-joining/onboarding preset for formal entry into an organization.
+- It emphasizes 10th/11th/1st house fit, practical 2nd/6th support, and bounded dasha/strength support from Mercury, Sun, Jupiter, Moon, and Saturn.
+- `presets/studentOnboarding.yml` provides a separate student/course-entry preset for commencing study or onboarding into a course.
+- It emphasizes 4th/5th/9th learning support, education-specific weekday/nakshatra preferences, and bounded dasha/strength support from Jupiter, Mercury, Moon, Venus, and Sun.
+- All four richer presets now avoid impossible or always-on quality branches for fixed-nature planets; fixed benefic/malefic tendencies are captured through the broader rubric rather than through constant `qualityScore` terms.
+- Current preset scope intentionally excludes owner/business-chart-specific natal alignment logic and deeper chart-shape rules not yet exposed on the current preset surface.
