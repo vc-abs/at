@@ -2,6 +2,7 @@
 
 ## Table of Contents
 
+- [Code TODOs](#code-todos)
 - [Tooling and Developer Experience](#tooling-and-developer-experience)
 - [Architecture and Refactoring](#architecture-and-refactoring)
 - [Configuration and Input Model](#configuration-and-input-model)
@@ -10,6 +11,10 @@
 - [Output and Explainability](#output-and-explainability)
 - [Data and Validation](#data-and-validation)
 - [Documentation and Examples](#documentation-and-examples)
+
+## Code TODOs
+
+- Investigate and reduce remaining ShadBala differences vs JyotishApp for fast-moving planets, using BPHS as the canonical rule source and JA as a comparison reference (`src/at/shadBala/__init__.py`).
 
 ## Tooling and Developer Experience
 
@@ -33,7 +38,7 @@
 - Introduce `endTime` as an option to allow skipping explicit period config.
 - Introduce `startDate`, `startTime`, `endDate`, and `endTime` configs.
 - Replace `periods` with a single `period` config with values aligned to `frequency` type.
-- Make Rahu/Ketu exaltation handling configurable by tradition/school.
+- Make Rahu/Ketu exaltation handling configurable by tradition/school after correcting the current exaltation logic.
 
 ## Muhurta/Yoga Domain Coverage
 

@@ -8,7 +8,7 @@
 
 ## Current Behavior Summary
 
-The project provides a CLI-oriented auspicious-time (muhurta) analysis workflow driven by YAML configuration and optional presets.
+The project provides a CLI-oriented auspicious-time (muhurta) analysis workflow driven by YAML configuration and optional presets. Mercury's conditional quality now evaluates BPHS-aligned planetary influence using both conjunctions and graha drishti, with overlapping contributors deduplicated and balanced influence resolving to neutral.
 
 ## Observed Functional Areas
 

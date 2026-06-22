@@ -2,9 +2,11 @@ from np import sign
 from at.core.constants import (
 	objectProps,
 	maxPossibleDistance,
+	nodes,
 )
 from at.core.helpers import (
 	getShortestDistanceInCircle,
+	getSignDistance,
 )
 
 planetQualities = [
@@ -33,17 +35,57 @@ def getObjectsConjunctors(
 	]
 
 
-# #TODO: Improve the quality finding logic of mercury by considering planetary aspects.
+def isAspectingPlanet(basePlanet, influencingPlanet):
+	aspectHouses = objectProps[
+		influencingPlanet['name']
+	].get('aspects', [])
+	return getSignDistance(
+		influencingPlanet['house'],
+		basePlanet['house'],
+	) in aspectHouses
+
+
+def getObjectsAspecting(chart, basePlanet):
+	return [
+		object
+		for object in chart.objects.values()
+		if object != basePlanet
+		and object['type'] == 'planet'
+		and object['name'] not in nodes
+		and isAspectingPlanet(
+			basePlanet,
+			object,
+		)
+	]
+
+
+def getMercuryInfluencers(chart):
+	mercury = chart.objects['mercury']
+	influencers = {
+		object['name']: object
+		for object in getObjectsConjunctors(
+			chart, mercury
+		)
+	}
+	influencers.update(
+		{
+			object['name']: object
+			for object in getObjectsAspecting(
+				chart, mercury
+			)
+		}
+	)
+	return list(influencers.values())
+
+
 def getMercuryQuality(chart):
 	quality = 0
-	conjunctors = getObjectsConjunctors(
-		chart, chart.objects['mercury']
-	)
-
-	for conjunctor in conjunctors:
+	for influencer in getMercuryInfluencers(
+		chart
+	):
 		quality += qualityPoints[
 			getPlanetQuality(
-				conjunctor, chart
+				influencer, chart
 			)
 		]
 	return sign(quality)

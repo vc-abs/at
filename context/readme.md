@@ -9,8 +9,10 @@
 
 ## Execution
 
+See [`execution.md`](./execution.md).
+
 - Active execution change set: none.
-- Current lifecycle state: initialized, awaiting promotion from backlog -> plan.
+- Current lifecycle state: finalized; no active implementation cycle.
 
 ## Structural Context
 
