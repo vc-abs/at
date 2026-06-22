@@ -7,6 +7,7 @@
 - [2026-06-22: Use BPHS-oriented tithi scoring for Moon conditional quality](#2026-06-22-use-bphs-oriented-tithi-scoring-for-moon-conditional-quality)
 - [2026-06-22: Treat Dig Bala as a BPHS-oriented linear directional-strength falloff](#2026-06-22-treat-dig-bala-as-a-bphs-oriented-linear-directional-strength-falloff)
 - [2026-06-22: Treat JA Mercury Paksha Bala divergence as comparison evidence only](#2026-06-22-treat-ja-mercury-paksha-bala-divergence-as-comparison-evidence-only)
+- [2026-06-22: Prefer dedicated `*Q` columns for planet quality exposure](#2026-06-22-prefer-dedicated-q-columns-for-planet-quality-exposure)
 
 ## 2026-06-22: Adopt deliberate-dev lifecycle artefacts
 
@@ -43,3 +44,9 @@
 - **Decision**: Finalize the current broad ShadBala implementation/audit pass and defer remaining JA comparison gaps to backlog rather than continue speculative in-cycle tuning.
 - **Rationale**: The current pass materially improved implementation completeness, runtime stability, test coverage, and documentation, but residual JA differences remain in areas where canonical interpretation is not yet strong enough to justify further immediate rule changes.
 - **Consequences**: The current ShadBala pass becomes the new documented baseline, future refinement work is explicitly backlog-driven, and further alignment changes require a new deliberate-dev cycle rather than silent extension of the current one.
+
+## 2026-06-22: Prefer dedicated `*Q` columns for planet quality exposure
+
+- **Decision**: If planet quality is exposed in combo outputs, use dedicated quality columns (for example `suQ`, `moQ`, `meQ`, ...) and do not encode quality into existing `planetFlags` columns.
+- **Rationale**: Current flags represent technical state markers (retrograde/combustion) and may be computed independently; quality can be conditional and should remain explicit, semantically clear, and opt-in.
+- **Consequences**: Future quality filtering will use `*Q` columns, existing `planetFlags` semantics remain stable, and compute/selection behavior can keep quality generation optional.
