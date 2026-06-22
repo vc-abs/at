@@ -5,7 +5,7 @@ from at.readWrite.readConfig import readConfig
 def test_chart_shadbala_balas_compute_for_real_preset_stack():
 	config = readConfig(
 		[
-			'presets/.vc.yml',
+			'presets/archive/.vc.yml',
 			'presets/debug.yml',
 			'presets/allFieldSets.yml',
 		]
@@ -48,7 +48,7 @@ def test_chart_shadbala_balas_compute_for_real_preset_stack():
 def test_chart_shadbala_balas_include_runtime_sensitive_components():
 	config = readConfig(
 		[
-			'presets/.vc.yml',
+			'presets/archive/.vc.yml',
 			'presets/debug.yml',
 			'presets/allFieldSets.yml',
 		]
