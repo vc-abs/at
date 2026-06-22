@@ -39,3 +39,9 @@ def test_cli_uses_sys_argv_tail():
 	):
 		main_mod.cli()
 		main_fn.assert_called_once_with(['x.yml'])
+
+
+def test_main_module_default_config_paths_are_defined():
+	assert main_mod.defaultConfigFilePaths == [
+		'./examples/config.yml'
+	]
