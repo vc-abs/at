@@ -2,7 +2,6 @@
 
 ## Table of Contents
 
-- [Code TODOs](#code-todos)
 - [Tooling and Developer Experience](#tooling-and-developer-experience)
 - [Architecture and Refactoring](#architecture-and-refactoring)
 - [Configuration and Input Model](#configuration-and-input-model)
@@ -12,10 +11,6 @@
 - [Data and Validation](#data-and-validation)
 - [Documentation and Examples](#documentation-and-examples)
 
-## Code TODOs
-
-- Investigate and reduce remaining ShadBala differences vs JyotishApp for fast-moving planets, using BPHS as the canonical rule source and JA as a comparison reference (`src/at/shadBala/__init__.py`).
-
 ## Tooling and Developer Experience
 
 - Make `setup.sh` work well with Python 3.11.
@@ -23,6 +18,7 @@
 - Introduce proper package management.
 - Choose a testing framework and write tests for core modules and workflows.
 - Increase automated test coverage toward high-confidence levels (70%+ to start).
+- Add more integration/smoke coverage for real runtime paths, especially Chart/ShadBala preset-driven execution.
 - Standardize naming conventions across languages (for example, avoid mixing Wednesday and Budha).
 
 ## Architecture and Refactoring
@@ -54,6 +50,15 @@
 - Make `panchang.vaara` return Vedic vaara.
 - When possible, include personal natal charts to find muhurta fitment.
 
+## Data and Validation
+
+- Refine ShadBala further against manual comparison evidence while keeping BPHS as rule authority, especially around Drik/Drig Bala, Mercury Paksha Bala branch behavior, and remaining component-level divergences.
+- Introduce a yoga definition registry (YAML/CSV + Python handlers where needed) with metadata, dimensions, polarity, and rule definitions.
+- Validate presets with domain experts.
+- Get popular reference locations across regions from experts.
+- Fine tune analysis with input from https://astrologerjolly.tripod.com/muhurtha.htm.
+- Understand the impact of altitude on charts (sunrise shifts).
+
 ## Performance and Scalability
 
 - Profile runtime hotspots (Swiss ephemeris calls, chart loops, pandas operations) and prioritize optimizations from measured bottlenecks.
@@ -68,14 +73,6 @@
 - Add positive/negative yoga balance fields such as `positiveYogaCount`, `negativeYogaCount`, and `yogaNetScore`.
 - Add event-fit yoga scores such as `bizYogaScore`, `educationYogaScore`, `marriageYogaScore`, `travelYogaScore`, and `spiritualYogaScore`.
 - Add explainability fields such as `yogaHighlights` and `yogaTopContributors` alongside `planetaryYogas`.
-
-## Data and Validation
-
-- Introduce a yoga definition registry (YAML/CSV + Python handlers where needed) with metadata, dimensions, polarity, and rule definitions.
-- Validate presets with domain experts.
-- Get popular reference locations across regions from experts.
-- Fine tune analysis with input from https://astrologerjolly.tripod.com/muhurtha.htm.
-- Understand the impact of altitude on charts (sunrise shifts).
 
 ## Documentation and Examples
 

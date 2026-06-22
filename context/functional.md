@@ -8,7 +8,13 @@
 
 ## Current Behavior Summary
 
-The project provides a CLI-oriented auspicious-time (muhurta) analysis workflow driven by YAML configuration and optional presets. Mercury's conditional quality now evaluates BPHS-aligned planetary influence using both conjunctions and graha drishti, with overlapping contributors deduplicated and balanced influence resolving to neutral. Moon quality now uses a BPHS-oriented graded tithi score internally, while preserving the existing benefic/malefic quality contract for callers.
+The project provides a CLI-oriented auspicious-time (muhurta) analysis workflow driven by YAML configuration and optional presets.
+
+Current implemented rule highlights:
+- Mercury's conditional quality evaluates BPHS-aligned planetary influence using both conjunctions and graha drishti.
+- Overlapping Mercury contributors are deduplicated, and balanced influence resolves to neutral.
+- Moon quality uses a BPHS-oriented graded tithi score internally while preserving the existing benefic/malefic quality contract for callers.
+- ShadBala directional strength exposes its directional-reference longitude explicitly and documents the BPHS-oriented linear Dig Bala interpretation used by the implementation.
 
 ## Observed Functional Areas
 

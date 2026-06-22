@@ -13,13 +13,12 @@
 
 ## Most Recent Finalized Cycle
 
-- Topic: Moon conditional quality via graded tithi score.
-- Entry mode: direct execution-context creation by explicit user override.
-- Outcome: completed and finalized.
+- Topic: broad ShadBala implementation and BPHS audit pass.
+- Outcome: completed and finalized as a bounded delivery, with remaining JA comparison gaps intentionally deferred to backlog.
 - Validation evidence:
   - `./scripts/validate.sh` passed
-  - full suite passed (`62 passed`)
+  - full suite passed (`76 passed`)
 - Delivered changes:
-  - replaced the Moon quality distance proxy in `src/at/core/planetQuality.py` with a BPHS-oriented graded tithi score,
-  - preserved the existing caller-facing Moon quality label contract through `getPlanetQuality(...)`,
-  - extended `tests/core/test_planet_quality.py` to cover Moon tithi-based quality scoring and labels.
+  - completed first-pass implementations or revisions for Dig Bala, Ayana Bala, Drik Bala, Yuddha Bala, and Abda/Maasa reviewability,
+  - added mapped unit and integration/smoke tests for ShadBala runtime paths,
+  - recorded BPHS-vs-JA interpretation boundaries, including Mercury Paksha Bala divergence as comparison evidence only.

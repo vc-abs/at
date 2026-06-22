@@ -23,4 +23,5 @@
 
 - Test suite present under `tests/` with multiple domain-focused modules.
 - `tests/core/test_planet_quality.py` now covers BPHS aspect metadata, Mercury influence evaluation paths, and Moon tithi-based quality behavior.
+- `tests/shadbala/test_shadbala.py` now covers Dig Bala reference-longitude and linear falloff behavior.
 - Coverage + lint workflow referenced in README via `./scripts/validate.sh`.

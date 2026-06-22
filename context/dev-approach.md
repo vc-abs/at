@@ -23,8 +23,10 @@
 
 - Prefer deterministic calculations and explicit units/types.
 - Keep domain constants and rules traceable and documented.
+- Prefer dictionary/data-driven dispatch over long `if`/`elif` chains or switch-style branching when selecting behavior by key/category, unless branching is genuinely clearer for a small bounded case.
 - Maintain a one-to-one mapping between implementation modules and test modules.
 - Add new assertions for a module in that module's existing test file; do not create `*_more` or catch-all follow-up test files for the same source module.
 - When introducing a new implementation module, add its dedicated test module in the corresponding `tests/` area using the matching module-oriented name.
 - Add/update tests with each behavior change.
+- Prefer short lead-in sentences followed by bullet lists when recording multiple functional rules or behavior highlights in `context/functional.md`.
 - Reflect user-facing behavior changes in `docs/guide.md`.
