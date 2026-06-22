@@ -1,13 +1,10 @@
 from np import sign
 from at.core.constants import (
 	objectProps,
-	maxPossibleDistance,
 	nodes,
+	tithiCount,
 )
-from at.core.helpers import (
-	getShortestDistanceInCircle,
-	getSignDistance,
-)
+from at.core.helpers import getSignDistance
 
 planetQualities = [
 	'malefic',
@@ -88,18 +85,44 @@ def getMercuryQuality(chart):
 				influencer, chart
 			)
 		]
-	return sign(quality)
+	return int(sign(quality))
+
+
+moonBeneficTithiStart = 8
+moonBeneficTithiEnd = 23
+moonFullnessMidpoint = 15.5
+moonMaxCircularTithiDistance = tithiCount / 2
+
+
+def normalizeMoonTithi(tithi):
+	return tithiCount if tithi == 0 else tithi
+
+
+def getMoonQualityScore(chart):
+	tithi = normalizeMoonTithi(
+		chart.panchang.tithi
+	)
+	distanceFromFullMoon = min(
+		abs(tithi - moonFullnessMidpoint),
+		tithiCount - abs(tithi - moonFullnessMidpoint),
+	)
+	score = (
+		moonBeneficTithiStart
+		- distanceFromFullMoon
+	)
+	return score
+
+
+def getMoonQuality(chart):
+	return int(
+		sign(
+			getMoonQualityScore(chart)
+		)
+	)
 
 
 conditionalQualifiers = {
-	# #NOTE: There could be a minor discrepancy with JA in calculating the quality of the moon, as it depends upon tithis and below it depends upon degrees.
-	'moon': lambda chart: 1
-	if getShortestDistanceInCircle(
-		chart.objects['sun']['longitude'],
-		chart.objects['moon']['longitude'],
-	)
-	> maxPossibleDistance / 2
-	else -1,
+	'moon': getMoonQuality,
 	'mercury': getMercuryQuality,
 }
 

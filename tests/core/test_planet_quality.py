@@ -2,6 +2,8 @@ from at.core.constants import objectProps
 from at.core.planetQuality import (
 	getMercuryInfluencers,
 	getMercuryQuality,
+	getMoonQuality,
+	getMoonQualityScore,
 	getObjectsAspecting,
 	getObjectsConjunctors,
 	getPlanetQuality,
@@ -9,9 +11,15 @@ from at.core.planetQuality import (
 )
 
 
+class _Panchang:
+	def __init__(self, tithi=15):
+		self.tithi = tithi
+
+
 class _Chart:
-	def __init__(self, objects):
+	def __init__(self, objects, tithi=15):
 		self.objects = objects
+		self.panchang = _Panchang(tithi)
 
 
 def test_get_objects_conjunctors_filters_same_house_planets_only():
@@ -176,6 +184,24 @@ def test_get_mercury_quality_balances_to_neutral():
 	assert getMercuryQuality(chart) == 0
 
 
+def test_get_moon_quality_score_is_strongest_near_full_moon():
+	chart = _Chart({}, tithi=15)
+	near_new_chart = _Chart({}, tithi=30)
+
+	assert getMoonQualityScore(chart) > 0
+	assert getMoonQualityScore(near_new_chart) < 0
+	assert getMoonQualityScore(chart) > abs(
+		getMoonQualityScore(near_new_chart)
+	)
+
+
+def test_get_moon_quality_uses_bphs_tithi_ranges():
+	assert getMoonQuality(_Chart({}, tithi=8)) == 1
+	assert getMoonQuality(_Chart({}, tithi=23)) == 1
+	assert getMoonQuality(_Chart({}, tithi=7)) == -1
+	assert getMoonQuality(_Chart({}, tithi=24)) == -1
+
+
 def test_get_planet_quality_for_conditional_and_static_planets():
 	objects = {
 		'sun': {'name': 'sun', 'longitude': 10, 'house': 2, 'type': 'planet'},
@@ -188,16 +214,20 @@ def test_get_planet_quality_for_conditional_and_static_planets():
 		},
 		'venus': {'name': 'venus', 'longitude': 41, 'house': 1, 'type': 'planet'},
 	}
-	chart = _Chart(objects)
+	chart = _Chart(objects, tithi=15)
+	waning_chart = _Chart(objects, tithi=3)
 
 	assert (
 		getPlanetQuality(objects['sun'], chart)
 		== 'malefic'
 	)
-	# moon far from sun => benefic
 	assert (
 		getPlanetQuality(objects['moon'], chart)
 		== 'benefic'
+	)
+	assert (
+		getPlanetQuality(objects['moon'], waning_chart)
+		== 'malefic'
 	)
 	# mercury conjunct venus(benefic) => benefic
 	assert (

@@ -13,12 +13,13 @@
 
 ## Most Recent Finalized Cycle
 
-- Topic: Mercury Quality via BPHS Aspects.
+- Topic: Moon conditional quality via graded tithi score.
+- Entry mode: direct execution-context creation by explicit user override.
 - Outcome: completed and finalized.
 - Validation evidence:
   - `./scripts/validate.sh` passed
-  - full suite passed (`60 passed`)
+  - full suite passed (`62 passed`)
 - Delivered changes:
-  - corrected BPHS graha drishti metadata for Jupiter and Venus in `src/at/core/constants.py`,
-  - expanded Mercury conditional quality in `src/at/core/planetQuality.py` to consider conjunction and BPHS aspect influence with contributor deduplication,
-  - extended `tests/core/test_planet_quality.py` to cover BPHS aspect metadata and Mercury influence behavior.
+  - replaced the Moon quality distance proxy in `src/at/core/planetQuality.py` with a BPHS-oriented graded tithi score,
+  - preserved the existing caller-facing Moon quality label contract through `getPlanetQuality(...)`,
+  - extended `tests/core/test_planet_quality.py` to cover Moon tithi-based quality scoring and labels.
