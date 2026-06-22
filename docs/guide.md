@@ -47,9 +47,13 @@
 
 ## Preset Notes
 
-- `presets/marketing.yml` provides a first-pass marketing/campaign-launch preset.
+- `presets/marketing.yml` provides a marketing/campaign-timing preset.
 - It combines:
   - hard vetoes for compact time-window flags (`timeF`),
-  - weighted YAML scoring for houses, tithi, nakshatra, dasha phases, and quality signals,
+  - weighted YAML base scoring for houses, tithi, nakshatra, dasha phases, and quality signals,
+  - a simple additive Gowri adjustment derived from `gowriScore`,
+  - a simple additive special-planet Shadbala adjustment derived from the average of Mercury, Venus, Moon, Jupiter, and Sun strengths,
   - reduced-column TSV export support via stacked override configs.
-- Current marketing preset scope intentionally excludes owner/business-chart-specific natal alignment logic.
+- `presets/launch.yml` provides a separate launch/go-live preset for product launch, company start, offer go-live, and similar commencement-oriented use cases.
+- The launch preset intentionally emphasizes commencement/transactability houses more than the marketing preset, but now uses the same simple additive Gowri/Shadbala adjustment pattern on top of its own base score.
+- Current preset scope intentionally excludes owner/business-chart-specific natal alignment logic.

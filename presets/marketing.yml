@@ -6,7 +6,7 @@ query: >-
   meQ != 'malefic' and
   muhurtaYogaEffect >= 0 and
   marketingMin >= 24 and
-  marketingScore >= 290
+  marketingScore >= 300
 customColumns:
   # House policy:
   # - weight communication and public-impact houses more strongly for marketing
@@ -70,12 +70,29 @@ customColumns:
     (3 + padlStrength * 2 + padRemainder * 3)
   dashaScore: >-
     mdPhaseScore + adPhaseScore + padPhaseScore
-  marketingScore: >-
+  baseMarketingScore: >-
     marketingHouseScore + muhurtaYogaEffect * 12 + weekdayScore +
     nakshatraScore + tithiScore + qualityScore + dashaScore
+  # Gowri policy:
+  # - use a simple additive multiplier on the numeric gowriScore
+  # - observed baseMarketingScore ceiling in review runs was ~378
+  # - observed gowriScore range is -1..2, so 18.5 keeps the strongest positive
+  #   Gowri effect just under ~10% of that observed ceiling
+  gowriMarketingAdj: >-
+    gowriScore * 18.5
+  # Special-planet Shadbala policy:
+  # - use the core marketing planets (Mercury, Venus, Moon, Jupiter, Sun)
+  # - center their average strength near the observed neutral band (~1.27)
+  # - apply a simple additive multiplier instead of a banded percentage mapping
+  marketingSpecialStrength: >-
+    (meS + veS + moS + juS + suS) / 5
+  marketingShadbalaAdj: >-
+    (marketingSpecialStrength - 1.27) * 120
+  marketingScore: >-
+    baseMarketingScore + gowriMarketingAdj + marketingShadbalaAdj
 order:
   marketingScore: descending
-  marketingHouseScore: descending
+  baseMarketingScore: descending
   muhurtaYogaEffect: descending
 fieldSets:
   event:
@@ -99,5 +116,6 @@ fieldSets:
   antarDashas:
     - adLord
     - padLord
+  shadBalaStrength: none
   objectHouses: all
   ashtakavarga: all

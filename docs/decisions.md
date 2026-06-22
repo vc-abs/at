@@ -8,6 +8,7 @@
 - [2026-06-22: Treat Dig Bala as a BPHS-oriented linear directional-strength falloff](#2026-06-22-treat-dig-bala-as-a-bphs-oriented-linear-directional-strength-falloff)
 - [2026-06-22: Treat JA Mercury Paksha Bala divergence as comparison evidence only](#2026-06-22-treat-ja-mercury-paksha-bala-divergence-as-comparison-evidence-only)
 - [2026-06-22: Prefer dedicated `*Q` columns for planet quality exposure](#2026-06-22-prefer-dedicated-q-columns-for-planet-quality-exposure)
+- [2026-06-22: Model marketing/launch Gowri and Shadbala as additive score adjustments](#2026-06-22-model-marketinglaunch-gowri-and-shadbala-as-additive-score-adjustments)
 
 ## 2026-06-22: Adopt deliberate-dev lifecycle artefacts
 
@@ -50,3 +51,9 @@
 - **Decision**: If planet quality is exposed in combo outputs, use dedicated quality columns (for example `suQ`, `moQ`, `meQ`, ...) and do not encode quality into existing `planetFlags` columns.
 - **Rationale**: Current flags represent technical state markers (retrograde/combustion) and may be computed independently; quality can be conditional and should remain explicit, semantically clear, and opt-in.
 - **Consequences**: Future quality filtering will use `*Q` columns, existing `planetFlags` semantics remain stable, and compute/selection behavior can keep quality generation optional.
+
+## 2026-06-22: Model marketing/launch Gowri and Shadbala as additive score adjustments
+
+- **Decision**: Treat Gowri and the selected special planets' Shadbala strengths as simple additive score adjustments on top of each preset's base score, and use the same adjustment structure in both marketing and launch.
+- **Rationale**: The presets need Gowri and strength awareness, but those signals should remain transparent, reviewable, and easy to calibrate from observed ranges. A direct additive multiplier model is simpler than the earlier bounded-percentage mapping while preserving clear separation between the base rubric and the adjustment signals.
+- **Consequences**: `presets/marketing.yml` now derives `baseMarketingScore`, `presets/launch.yml` now derives `baseLaunchScore`, and both add simple Gowri/Shadbala adjustment terms on top of their distinct base rubrics. Hourly verification TSVs in `temp/` now support side-by-side review of the resulting candidate sets.

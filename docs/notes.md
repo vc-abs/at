@@ -26,3 +26,5 @@
 - Added first-pass Gowri Panchangam runtime support using sunrise/sunset-derived 8-part day/night segmentation, an algorithmic weekday-cycle model, and queryable combo-output fields.
 - Kept provenance/verification concerns out of runtime artefacts and deferred them to backlog follow-up.
 - Finalized the Gowri first-pass cycle with point-in-time-first lookup, numeric `gowriScore`, shared constants, and documented query/runtime conventions.
+- Refreshed the marketing preset to derive its final score from a base score plus simple additive Gowri and special-planet Shadbala adjustments calibrated from observed review ranges.
+- Updated the `launch` preset to use the same additive Gowri/Shadbala adjustment structure on top of its own base score, and added hourly review/verification TSV artefacts under `temp/`.

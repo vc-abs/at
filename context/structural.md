@@ -25,8 +25,11 @@
 - Combo-generation implementation now also exposes:
   - compact `timeFlags`/`timeF` output from `src/at/tools/generateCombos.py`,
   - dedicated `planetQualities`/`*Q` output from `src/at/tools/generateCombos.py`,
+  - dedicated ShadBala strength fields (`suS`, `moS`, `maS`, `meS`, `juS`, `veS`, `saS`, `totalS`, `avgIP`) selectable from `src/at/tools/generateCombos.py`,
   - dedicated Gowri fields/flags (`gowri`, `gowriScore`, `gowriM`, `gowriS`, `gowriT`, `gowriStart`, `gowriEnd`, `gowriF`) from `src/at/tools/generateCombos.py`,
-  - marketing preset configuration in `presets/marketing.yml` with weighted scoring built on existing output fields.
+  - marketing preset configuration in `presets/marketing.yml` with a `baseMarketingScore` plus simple additive Gowri/Shadbala adjustments built on existing output fields,
+  - separate launch preset configuration in `presets/launch.yml` with its own `baseLaunchScore`, the same additive Gowri/Shadbala adjustment pattern, and companion launch review configs under `temp/`,
+  - hourly review/verification artefacts under `temp/`, including `review-week-hourly.yml`, `marketing-review-week-export.yml`, `launch-review-week-export.yml`, and their generated TSV outputs.
 
 ## Validation Surface
 
