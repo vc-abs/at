@@ -8,6 +8,7 @@ from at.core.constants import (
 	combustionOrbs,
 )
 from at.core.helpers import getShortestDistanceInCircle
+from at.core.planetQuality import getPlanetQuality
 
 orderMap = {
 	'ascending': True,
@@ -137,6 +138,15 @@ def getPlanetFlags(chart):
 	}
 
 
+def getPlanetQualities(chart):
+	return {
+		f'{planet[:2]}Q': getPlanetQuality(
+			chart.objects[planet], chart
+		)
+		for planet in planets
+	}
+
+
 phalaPlanetCount = 7
 
 
@@ -208,6 +218,10 @@ fieldSets = {
 	'planetFlags': {
 		'fn': getPlanetFlags,
 		'columns': ['suF', 'moF', 'maF', 'meF', 'juF', 'veF', 'saF']
+	},
+	'planetQualities': {
+		'fn': getPlanetQualities,
+		'columns': ['suQ', 'moQ', 'maQ', 'meQ', 'juQ', 'veQ', 'saQ']
 	},
 	'shadBalaStrength': {
 		'fn': getShadBalaStrength,

@@ -10,15 +10,21 @@ from at.tools.generateCombos import (
 	getPanchang,
 	getPlanetaryDegrees,
 	getPlanetFlagsByPlanet,
+	getPlanetQualities,
 	processSummaryColumn,
 	sortData,
 	splitTimestamp,
 )
 
 
+class _DummyPanchang:
+	tithi = 1
+
+
 class _DummyChart:
 	def __init__(self, objects):
 		self.objects = objects
+		self.panchang = _DummyPanchang()
 
 
 class _PanchangObj:
@@ -92,6 +98,20 @@ def test_planetary_degrees_include_asc_and_nodes_in_order():
 	assert degrees['asD'] == 100.0
 	assert degrees['raD'] == 220.0
 	assert degrees['keD'] == 40.0
+
+
+
+def test_planet_qualities_include_all_planets_with_expected_values():
+	chart = _DummyChart(_chart_objects_for_flags())
+	qualities = getPlanetQualities(chart)
+
+	assert qualities['suQ'] == 'malefic'
+	assert qualities['moQ'] == 'malefic'
+	assert qualities['maQ'] == 'malefic'
+	assert qualities['meQ'] == 'malefic'
+	assert qualities['juQ'] == 'benefic'
+	assert qualities['veQ'] == 'benefic'
+	assert qualities['saQ'] == 'malefic'
 
 
 
@@ -208,6 +228,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 				'moD': 20.0,
 				'asD': 5.0,
 				'suF': 'R',
+				'suQ': 'malefic',
 				'avgIP': 30.0,
 			}
 		]
@@ -219,6 +240,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 			'event': 'all',
 			'planetaryDegrees': ['asD', 'suD'],
 			'planetFlags': 'none',
+			'planetQualities': ['suQ'],
 			'shadBalaStrength': ['avgIP'],
 		},
 	)
@@ -229,6 +251,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 		'time',
 		'asD',
 		'suD',
+		'suQ',
 		'avgIP',
 	]
 
