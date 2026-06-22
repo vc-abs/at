@@ -23,6 +23,8 @@
 
 - Prefer deterministic calculations and explicit units/types.
 - Keep domain constants and rules traceable and documented.
+- Prefer YAML/config-first solutions over runtime/code expansion when the requested behavior can be expressed clearly and maintainably in the existing preset/query/custom-column surface.
+- When YAML expressions become long or compound, prefer multi-line YAML string forms for readability where supported, including escaped continuation where needed to preserve query semantics.
 - Prefer dictionary/data-driven dispatch over long `if`/`elif` chains or switch-style branching when selecting behavior by key/category, unless branching is genuinely clearer for a small bounded case.
 - Maintain a one-to-one mapping between implementation modules and test modules.
 - Add new assertions for a module in that module's existing test file; do not create `*_more` or catch-all follow-up test files for the same source module.

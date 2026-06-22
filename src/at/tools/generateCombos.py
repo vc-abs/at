@@ -147,6 +147,65 @@ def getPlanetQualities(chart):
 	}
 
 
+timeFlagSegmentsByVaara = {
+	'sunday': {'RK': 8, 'YG': 5, 'GK': 7},
+	'monday': {'RK': 2, 'YG': 4, 'GK': 6},
+	'tuesday': {'RK': 7, 'YG': 3, 'GK': 5},
+	'wednesday': {'RK': 5, 'YG': 2, 'GK': 4},
+	'thursday': {'RK': 6, 'YG': 1, 'GK': 3},
+	'friday': {'RK': 4, 'YG': 7, 'GK': 2},
+	'saturday': {'RK': 3, 'YG': 6, 'GK': 1},
+}
+
+
+def isWithinDaySegment(
+	eventTime,
+	segmentIndex,
+	dayStart,
+	dayEnd,
+	segmentCount=8,
+):
+	if not dayStart <= eventTime < dayEnd:
+		return False
+
+	segmentDuration = (
+		dayEnd - dayStart
+	) / segmentCount
+	segmentStart = dayStart + (
+		segmentDuration * (segmentIndex - 1)
+	)
+	segmentEnd = dayStart + (
+		segmentDuration * segmentIndex
+	)
+
+	return segmentStart <= eventTime < segmentEnd
+
+
+
+def getTimeFlags(chart):
+	riseAndSet = chart.panchang.riseAndSet
+	eventTime = chart.config['datetime']
+	dayStart = riseAndSet['sunrise']
+	dayEnd = riseAndSet['sunset']
+	flagSegments = timeFlagSegmentsByVaara[
+		chart.panchang.vaara
+	]
+	flags = [
+		flag
+		for flag, segmentIndex in flagSegments.items()
+		if isWithinDaySegment(
+			eventTime,
+			segmentIndex,
+			dayStart,
+			dayEnd,
+		)
+	]
+
+	return {
+		'timeF': '|'.join(sorted(flags))
+	}
+
+
 phalaPlanetCount = 7
 
 
@@ -222,6 +281,10 @@ fieldSets = {
 	'planetQualities': {
 		'fn': getPlanetQualities,
 		'columns': ['suQ', 'moQ', 'maQ', 'meQ', 'juQ', 'veQ', 'saQ']
+	},
+	'timeFlags': {
+		'fn': getTimeFlags,
+		'columns': ['timeF']
 	},
 	'shadBalaStrength': {
 		'fn': getShadBalaStrength,

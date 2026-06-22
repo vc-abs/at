@@ -34,6 +34,8 @@
 - Introduce `endTime` as an option to allow skipping explicit period config.
 - Introduce `startDate`, `startTime`, `endDate`, and `endTime` configs.
 - Replace `periods` with a single `period` config with values aligned to `frequency` type.
+- Introduce a preset-level `constants` root key for reusable lists and weight maps in `query` and `customColumns`, without exporting them as output columns.
+- Refactor presets (starting with `marketing.yml`) to use shared preset-level constants after that support lands.
 - Make Rahu/Ketu exaltation handling configurable by tradition/school after correcting the current exaltation logic.
 
 ## Muhurta/Yoga Domain Coverage

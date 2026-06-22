@@ -11,6 +11,7 @@ from at.tools.generateCombos import (
 	getPlanetaryDegrees,
 	getPlanetFlagsByPlanet,
 	getPlanetQualities,
+	getTimeFlags,
 	processSummaryColumn,
 	sortData,
 	splitTimestamp,
@@ -18,13 +19,47 @@ from at.tools.generateCombos import (
 
 
 class _DummyPanchang:
-	tithi = 1
+	def __init__(self):
+		self.tithi = 1
+		self.vaara = 'wednesday'
+		self.riseAndSet = {
+			'sunrise': datetime(
+				2025,
+				1,
+				1,
+				6,
+				0,
+				0,
+				tzinfo=timezone.utc,
+			),
+			'sunset': datetime(
+				2025,
+				1,
+				1,
+				18,
+				0,
+				0,
+				tzinfo=timezone.utc,
+			),
+		}
 
 
 class _DummyChart:
-	def __init__(self, objects):
+	def __init__(self, objects, event_time=None):
 		self.objects = objects
 		self.panchang = _DummyPanchang()
+		self.config = {
+			'datetime': event_time
+			or datetime(
+				2025,
+				1,
+				1,
+				12,
+				30,
+				0,
+				tzinfo=timezone.utc,
+			),
+		}
 
 
 class _PanchangObj:
@@ -112,6 +147,44 @@ def test_planet_qualities_include_all_planets_with_expected_values():
 	assert qualities['juQ'] == 'benefic'
 	assert qualities['veQ'] == 'benefic'
 	assert qualities['saQ'] == 'malefic'
+
+
+
+def test_time_flags_encode_active_day_segment_markers():
+	chart = _DummyChart(
+		_chart_objects_for_flags(),
+		event_time=datetime(
+			2025,
+			1,
+			1,
+			12,
+			30,
+			0,
+			tzinfo=timezone.utc,
+		),
+	)
+	flags = getTimeFlags(chart)
+
+	assert flags['timeF'] == 'RK'
+
+
+
+def test_time_flags_are_empty_outside_marked_segments():
+	chart = _DummyChart(
+		_chart_objects_for_flags(),
+		event_time=datetime(
+			2025,
+			1,
+			1,
+			6,
+			30,
+			0,
+			tzinfo=timezone.utc,
+		),
+	)
+	flags = getTimeFlags(chart)
+
+	assert flags['timeF'] == ''
 
 
 
@@ -229,6 +302,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 				'asD': 5.0,
 				'suF': 'R',
 				'suQ': 'malefic',
+				'timeF': 'RK',
 				'avgIP': 30.0,
 			}
 		]
@@ -241,6 +315,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 			'planetaryDegrees': ['asD', 'suD'],
 			'planetFlags': 'none',
 			'planetQualities': ['suQ'],
+			'timeFlags': ['timeF'],
 			'shadBalaStrength': ['avgIP'],
 		},
 	)
@@ -252,6 +327,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 		'asD',
 		'suD',
 		'suQ',
+		'timeF',
 		'avgIP',
 	]
 

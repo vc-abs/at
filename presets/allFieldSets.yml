@@ -10,4 +10,5 @@ fieldSets:
   antarDashas: all
   planetFlags: all
   planetQualities: all
+  timeFlags: all
   shadBalaStrength: all

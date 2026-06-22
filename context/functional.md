@@ -16,6 +16,7 @@ Current implemented rule highlights:
 - Moon quality uses a BPHS-oriented graded tithi score internally while preserving the existing benefic/malefic quality contract for callers.
 - ShadBala directional strength exposes its directional-reference longitude explicitly and documents the BPHS-oriented linear Dig Bala interpretation used by the implementation.
 - YAML `query` expressions are passed to `pandas.DataFrame.query(...)`, so string filters support `.str.contains(...)` (for example, `nakshatra.str.contains('Rohini', na=False)`).
+- Marketing-oriented presets can combine hard vetoes with YAML-first weighted scoring, including compact time-window flags, planet qualities, dasha-aware scoring, and Ashtakavarga-backed house weighting.
 
 ## Observed Functional Areas
 
@@ -28,10 +29,11 @@ Current implemented rule highlights:
   - read/write/output behavior,
   - combo generation tooling.
 - Output field sets include `planetFlags` (`suF`, `moF`, ...), currently encoding technical state markers (retrograde `R`, combustion `C`) rather than planet quality labels.
-- If planet quality is surfaced for filtering, prefer dedicated quality columns (`*Q`) over overloading flags; quality values may be computed conditionally and should remain an explicit opt-in field set.
+- Output field sets include dedicated `planetQualities` columns (`suQ`, `moQ`, ...) for explicit quality-based filtering.
+- Output field sets also include compact `timeFlags` via `timeF`, encoding bounded muhurta time-window markers such as Rahu Kalam (`RK`), Yamaganda (`YG`), and Gulika (`GK`) for query-time exclusion.
+- A first-pass `presets/marketing.yml` now uses YAML-first weighted scoring with compact outputs, explicit taboo-time vetoes, dasha-aware scoring, and reduced-column exports for reviewable TSV output.
 
 ## Known Functional Gaps
 
 Backlog includes many requested improvements in configuration model, muhurta/yoga breadth, explainability outputs, and performance optimization.
-- Planet quality is computed in core logic but is not currently surfaced as explicit output columns for filtering.
-- Preferred future shape: add optional `*Q` columns (quality) rather than folding quality into `planetFlags`.
+- Backlog still includes preset-level `constants` support so repeated lists/weights can be centralized instead of duplicated inside YAML expression strings.
