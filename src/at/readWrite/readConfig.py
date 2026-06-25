@@ -15,7 +15,7 @@ projectRoot = path.realpath(
 	path.dirname(__file__) + '/../../..'
 )
 
-eventDefaultKeys = [
+scenarioDefaultKeys = [
 	'latitude',
 	'longitude',
 	'year',
@@ -26,17 +26,17 @@ eventDefaultKeys = [
 	'second',
 ]
 
-defaultEvents = {'default': {}}
+defaultScenarios = {'default': {}}
 
 
-def getEventTime(event, config):
+def getScenarioTime(scenario, config):
 	return datetime(
-		event['year'],
-		event['month'],
-		event['day'],
-		event['hour'],
-		event['minute'],
-		event['second'],
+		scenario['year'],
+		scenario['month'],
+		scenario['day'],
+		scenario['hour'],
+		scenario['minute'],
+		scenario['second'],
 		tzinfo=timezone(
 			offset=timedelta(
 				hours=config['utcHour'],
@@ -46,29 +46,29 @@ def getEventTime(event, config):
 	)
 
 
-def buildEvents(config):
-	defaultEventConfig = {
+def buildScenarios(config):
+	defaultScenarioConfig = {
 		k: config[k]
-		for k in eventDefaultKeys
+		for k in scenarioDefaultKeys
 		if k in config
 	}
-	events = config.get(
-		'events', defaultEvents
+	scenarios = config.get(
+		'scenarios', defaultScenarios
 	)
 
-	extendedEventConfigs = {
-		k: {**defaultEventConfig, **event}
-		for k, event in events.items()
+	extendedScenarioConfigs = {
+		k: {**defaultScenarioConfig, **scenario}
+		for k, scenario in scenarios.items()
 	}
 
 	return {
 		k: {
-			**event,
-			'date': getEventTime(
-				event, config
+			**scenario,
+			'date': getScenarioTime(
+				scenario, config
 			),
 		}
-		for k, event in extendedEventConfigs.items()
+		for k, scenario in extendedScenarioConfigs.items()
 	}
 
 merger = Merger(
@@ -100,5 +100,5 @@ def readConfig(filePaths):
 
 	return {
 		**config,
-		'events': buildEvents(config),
+		'scenarios': buildScenarios(config),
 	}

@@ -164,4 +164,4 @@
 
 ## Documentation and Examples
 
-- Write a proper example for events (refer: `panchang.yml`).
+- Write a proper example for scenarios (refer: `panchang.yml`).

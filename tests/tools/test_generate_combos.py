@@ -502,7 +502,7 @@ def test_sort_data_and_split_timestamp_mutate_dataframe():
 	df = pd.DataFrame(
 		[
 			{
-				'event': 'e',
+				'scenario': 'e',
 				'timestamp': datetime(
 					2025,
 					1,
@@ -513,7 +513,7 @@ def test_sort_data_and_split_timestamp_mutate_dataframe():
 				'score': 1,
 			},
 			{
-				'event': 'e',
+				'scenario': 'e',
 				'timestamp': datetime(
 					2025,
 					1,
@@ -560,7 +560,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 	df = pd.DataFrame(
 		[
 			{
-				'event': 'default',
+				'scenario': 'default',
 				'date': '2025-01-01',
 				'time': '00:00:00',
 				'suD': 10.0,
@@ -580,7 +580,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 	selected = addColumns(
 		df,
 		{
-			'event': 'all',
+			'scenario': 'all',
 			'planetaryDegrees': ['asD', 'suD'],
 			'planetFlags': 'none',
 			'planetQualities': ['suQ'],
@@ -591,7 +591,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 	)
 
 	assert list(selected.columns) == [
-		'event',
+		'scenario',
 		'date',
 		'time',
 		'asD',
@@ -610,7 +610,7 @@ def test_add_columns_keeps_fieldset_order():
 	df = pd.DataFrame(
 		[
 			{
-				'event': 'e',
+				'scenario': 'e',
 				'date': '2025-01-01',
 				'time': '00:00:00',
 				'suF': 'C',

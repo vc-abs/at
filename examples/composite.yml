@@ -12,7 +12,7 @@ customColumns:
       - moksha
 order:
   peak: descending
-events:
+scenarios:
   default: {}
   custom:
     month: 3

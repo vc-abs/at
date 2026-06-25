@@ -7,7 +7,7 @@ def test_main_uses_default_config_when_no_args():
 	with patch.object(main_mod, 'readConfig') as read_cfg, patch.object(
 		main_mod, 'generateCombos'
 	) as gen, patch.object(main_mod, 'output') as out:
-		read_cfg.return_value = {'events': {}, 'exportSeparator': '\t'}
+		read_cfg.return_value = {'scenarios': {}, 'exportSeparator': '\t'}
 		gen.return_value = []
 
 		main_mod.main([])
@@ -23,7 +23,7 @@ def test_main_uses_passed_config_paths():
 	with patch.object(main_mod, 'readConfig') as read_cfg, patch.object(
 		main_mod, 'generateCombos'
 	) as gen, patch.object(main_mod, 'output') as out:
-		read_cfg.return_value = {'events': {}, 'exportSeparator': '\t'}
+		read_cfg.return_value = {'scenarios': {}, 'exportSeparator': '\t'}
 		gen.return_value = []
 
 		main_mod.main(['a.yml', 'b.yml'])

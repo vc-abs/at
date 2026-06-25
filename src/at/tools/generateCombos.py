@@ -322,9 +322,9 @@ fieldSets = {
 		'fn': getKarakas,
 		'columns': ['ak', 'amk', 'bk', 'mk', 'pk', 'gk', 'dk']
 	},
-	'event': {
+	'scenario': {
 		'fn': lambda chart: {},
-		'columns': ['event', 'date', 'time']
+		'columns': ['scenario', 'date', 'time']
 	},
 	'panchang': {
 		'fn': getPanchang,
@@ -357,7 +357,7 @@ def standardizeDate(dt):
 
 
 def getTimeCombos(
-	eventName, config, dt
+	scenarioName, config, dt
 ):
 	chart = Chart(
 		{
@@ -371,18 +371,18 @@ def getTimeCombos(
 
 	return {
 		'timestamp': dt,
-		'event': eventName,
+		'scenario': scenarioName,
 		**fields,
 	}
 
 
-def generateEventCombos(
-	eventName, config
+def generateScenarioCombos(
+	scenarioName, config
 ):
-	eventConfig = config['events'][eventName]
+	scenarioConfig = config['scenarios'][scenarioName]
 	config = {
 		**config,
-		**eventConfig,
+		**scenarioConfig,
 	}
 	timeSeries = (
 		pd.date_range(
@@ -398,7 +398,7 @@ def generateEventCombos(
 		list(
 			map(
 				lambda dt: getTimeCombos(
-					eventConfig.get('name', eventName), config, dt
+					scenarioConfig.get('name', scenarioName), config, dt
 				),
 				timeSeries,
 			)
@@ -592,8 +592,8 @@ def splitTimestamp(df):
 	)
 
 def adjustColumns(df):
-	eventColumn = df.pop('event')
-	df.insert(0, 'event', eventColumn)
+	scenarioColumn = df.pop('scenario')
+	df.insert(0, 'scenario', scenarioColumn)
 
 selectionTypes = {
 	'all': lambda key, columns : fieldSets[key]['columns'],
@@ -612,14 +612,14 @@ def addColumns(df, configFieldSets):
 def generateCombos(config):
 	df = pd.DataFrame()
 
-	for eventName in config[
-		'events'
+	for scenarioName in config[
+		'scenarios'
 	].keys():
 		df = pd.concat(
 			[
 				df,
-				generateEventCombos(
-					eventName, config
+				generateScenarioCombos(
+					scenarioName, config
 				),
 			],
 		)

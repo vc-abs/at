@@ -121,7 +121,7 @@ order:
   baseStudentOnboardingScore: descending
   muhurtaYogaEffect: descending
 fieldSets:
-  event:
+  scenario:
     - date
     - time
   panchang:

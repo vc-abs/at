@@ -1,16 +1,16 @@
 from pathlib import Path
 
 from at.readWrite.readConfig import (
-	buildEvents,
-	getEventTime,
+	buildScenarios,
+	getScenarioTime,
 	mergeFiles,
 	readConfig,
 )
 
 
-def test_get_event_time_applies_timezone_offset():
+def test_get_scenario_time_applies_timezone_offset():
 	config = {'utcHour': 5, 'utcMinute': 30}
-	event = {
+	scenario = {
 		'year': 2025,
 		'month': 1,
 		'day': 2,
@@ -18,7 +18,7 @@ def test_get_event_time_applies_timezone_offset():
 		'minute': 4,
 		'second': 5,
 	}
-	dt = getEventTime(event, config)
+	dt = getScenarioTime(scenario, config)
 	assert dt.utcoffset().total_seconds() == 19800
 	assert (
 		dt.year,
@@ -30,7 +30,7 @@ def test_get_event_time_applies_timezone_offset():
 	) == (2025, 1, 2, 3, 4, 5)
 
 
-def test_build_events_merges_defaults_and_event_specific():
+def test_build_scenarios_merges_defaults_and_scenario_specific():
 	config = {
 		'latitude': 1.0,
 		'longitude': 2.0,
@@ -42,17 +42,17 @@ def test_build_events_merges_defaults_and_event_specific():
 		'second': 5,
 		'utcHour': 0,
 		'utcMinute': 0,
-		'events': {
+		'scenarios': {
 			'default': {},
 			'custom': {'hour': 8, 'name': 'c1'},
 		},
 	}
-	events = buildEvents(config)
+	scenarios = buildScenarios(config)
 
-	assert events['default']['latitude'] == 1.0
-	assert events['custom']['hour'] == 8
-	assert events['custom']['name'] == 'c1'
-	assert 'date' in events['custom']
+	assert scenarios['default']['latitude'] == 1.0
+	assert scenarios['custom']['hour'] == 8
+	assert scenarios['custom']['name'] == 'c1'
+	assert 'date' in scenarios['custom']
 
 
 def test_merge_files_merges_dicts(tmp_path: Path):
@@ -103,7 +103,7 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 	cfg.write_text(
 		'utcHour: 5\n'
 		'utcMinute: 30\n'
-		'events:\n'
+		'scenarios:\n'
 		'  default:\n'
 		'    hour: 9\n'
 	)
@@ -111,6 +111,6 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 	result = readConfig([str(cfg)])
 	assert result['utcHour'] == 5
 	assert result['constants'] == {}
-	assert 'events' in result
-	assert 'default' in result['events']
-	assert 'date' in result['events']['default']
+	assert 'scenarios' in result
+	assert 'default' in result['scenarios']
+	assert 'date' in result['scenarios']['default']

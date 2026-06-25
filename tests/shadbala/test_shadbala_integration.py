@@ -10,20 +10,20 @@ def test_chart_shadbala_balas_compute_for_real_preset_stack():
 			'presets/allFieldSets.yml',
 		]
 	)
-	event = config['events']['VC']
+	scenario = config['scenarios']['VC']
 	chart = Chart(
 		{
 			**config,
-			'year': event['year'],
-			'month': event['month'],
-			'day': event['day'],
-			'hour': event['hour'],
-			'minute': event['minute'],
-			'second': event['second'],
-			'datetime': event['date'],
-			'date': event['date'],
-			'latitude': event['latitude'],
-			'longitude': event['longitude'],
+			'year': scenario['year'],
+			'month': scenario['month'],
+			'day': scenario['day'],
+			'hour': scenario['hour'],
+			'minute': scenario['minute'],
+			'second': scenario['second'],
+			'datetime': scenario['date'],
+			'date': scenario['date'],
+			'latitude': scenario['latitude'],
+			'longitude': scenario['longitude'],
 		}
 	)
 
@@ -53,20 +53,20 @@ def test_chart_shadbala_balas_include_runtime_sensitive_components():
 			'presets/allFieldSets.yml',
 		]
 	)
-	event = config['events']['VC']
+	scenario = config['scenarios']['VC']
 	chart = Chart(
 		{
 			**config,
-			'year': event['year'],
-			'month': event['month'],
-			'day': event['day'],
-			'hour': event['hour'],
-			'minute': event['minute'],
-			'second': event['second'],
-			'datetime': event['date'],
-			'date': event['date'],
-			'latitude': event['latitude'],
-			'longitude': event['longitude'],
+			'year': scenario['year'],
+			'month': scenario['month'],
+			'day': scenario['day'],
+			'hour': scenario['hour'],
+			'minute': scenario['minute'],
+			'second': scenario['second'],
+			'datetime': scenario['date'],
+			'date': scenario['date'],
+			'latitude': scenario['latitude'],
+			'longitude': scenario['longitude'],
 		}
 	)
 

@@ -5,9 +5,9 @@ second: 0
 frequency: 1d
 periods: 365
 fieldSets:
-  event: all
+  scenario: all
   panchang: all
-events:
+scenarios:
   panchang:
     name: "panchang"
     month: 4

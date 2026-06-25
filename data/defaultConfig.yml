@@ -11,4 +11,4 @@ periods: 168 # one week, when the frequency is 1h.
 # Export config.
 exportSeparator: "\t"
 fieldSets:
-  event: all
+  scenario: all

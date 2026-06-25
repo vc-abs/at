@@ -2,7 +2,7 @@
 frequency: 15min
 periods: 35040
 fieldSets:
-  event:
+  scenario:
     - date
     - time
   panchang:

@@ -143,7 +143,7 @@ order:
   baseMarketingScore: descending
   muhurtaYogaEffect: descending
 fieldSets:
-  event:
+  scenario:
     - date
     - time
   panchang:
