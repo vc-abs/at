@@ -30,6 +30,7 @@ $ dvc push
 
 $ # Using presets. Configs to the right have more priority.
 $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
+$ # See docs/presets-cheatsheet.md for a progressive walkthrough of preset config.
 ```
 
 ## Config Constants

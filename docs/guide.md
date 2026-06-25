@@ -8,6 +8,7 @@
 - [Config Constants](#config-constants)
 - [Gowri Panchangam Notes](#gowri-panchangam-notes)
 - [Preset Notes](#preset-notes)
+- [Presets Cheatsheet](#presets-cheatsheet)
 
 ## What This Tool Does
 
@@ -78,3 +79,7 @@
 - It emphasizes 4th/5th/9th learning support, education-specific weekday/nakshatra preferences, and bounded dasha/strength support from Jupiter, Mercury, Moon, Venus, and Sun.
 - All four richer presets now avoid impossible or always-on quality branches for fixed-nature planets; fixed benefic/malefic tendencies are captured through the broader rubric rather than through constant `qualityScore` terms.
 - Current preset scope intentionally excludes owner/business-chart-specific natal alignment logic and deeper chart-shape rules not yet exposed on the current preset surface.
+
+## Presets Cheatsheet
+
+For a progressive, example-driven walkthrough of configuring and running presets, see [`presets-cheatsheet.md`](./presets-cheatsheet.md).

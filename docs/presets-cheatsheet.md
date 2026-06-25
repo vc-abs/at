@@ -1,0 +1,730 @@
+# Presets Cheatsheet
+
+## What a preset is
+
+A preset is a YAML config file passed to `main.py`.
+
+You can run one file:
+
+```bash
+python3 main.py ./presets/panchang.yml
+```
+
+Or stack multiple files:
+
+```bash
+python3 main.py ./presets/marketing.yml ./examples/presetExtensions.yml
+```
+
+Files are merged left to right.
+The file on the right has higher priority.
+
+The runtime also loads defaults from [`data/defaultConfig.yml`](../data/defaultConfig.yml) first.
+
+---
+
+## 1) Simplest useful run
+
+Use an existing preset:
+
+```bash
+python3 main.py ./presets/panchang.yml
+```
+
+That preset is small:
+
+```yml
+day: 14
+hour: 12
+minute: 0
+second: 0
+frequency: 1d
+periods: 365
+fieldSets:
+  scenario: all
+  panchang: all
+scenarios:
+  panchang:
+    name: "panchang"
+    month: 4
+```
+
+What it does:
+- scans one row per day
+- keeps only `scenario` and `panchang` output fields
+- defines a named scenario
+- relies on defaults for ayanamsa, timezone offset, and location
+
+---
+
+## 2) Small custom preset
+
+Start with a tiny file and only choose what to output.
+
+```yml
+# ./temp/my-panchang.yml
+fieldSets:
+  scenario: all
+  panchang: all
+```
+
+Run it:
+
+```bash
+python3 main.py ./temp/my-panchang.yml
+```
+
+This relies on defaults from `data/defaultConfig.yml`, including:
+- `ayanamsa`
+- `utcHour` / `utcMinute`
+- `latitude` / `longitude`
+- `frequency`
+- `periods`
+
+---
+
+## 3) Set the scan window and place
+
+Add your own date/time seed, timezone offset, place, and scan size.
+
+```yml
+# ./temp/my-window.yml
+year: 2025
+month: 1
+day: 4
+hour: 6
+minute: 0
+second: 0
+utcHour: 5
+utcMinute: 30
+latitude: 13.0827
+longitude: 80.2707
+frequency: 30min
+periods: 96
+
+fieldSets:
+  scenario: all
+  panchang: all
+```
+
+Run it:
+
+```bash
+python3 main.py ./temp/my-window.yml
+```
+
+Notes:
+- `frequency` uses pandas-style date range frequencies such as `15min`, `30min`, `1h`, `1d`.
+- `periods` is the number of rows to generate.
+- the starting timestamp comes from `year/month/day/hour/minute/second` plus `utcHour/utcMinute`
+
+---
+
+## 4) Stack presets and overrides
+
+A very common pattern is:
+1. start from a richer preset
+2. add a small override file on the right
+
+Example:
+
+```bash
+python3 main.py ./presets/launch.yml ./examples/presetExtensions.yml
+```
+
+### Merge rules
+
+When multiple YAML files are passed:
+
+- dicts are deep-merged
+- scalars are overridden
+- lists are overridden, not appended
+- the rightmost file wins
+
+### Example
+
+Base file:
+
+```yml
+fieldSets:
+  scenario: all
+  panchang: all
+customColumns:
+  score: "h1 + h5 + h9"
+```
+
+Override file:
+
+```yml
+fieldSets:
+  panchang:
+    - tithi
+    - nakshatra
+exportTo: ./temp/out.tsv
+```
+
+Merged effect:
+- `fieldSets.scenario` stays
+- `fieldSets.panchang` becomes the explicit list from the override
+- `customColumns.score` stays
+- `exportTo` is added
+
+### Important gotcha
+
+Lists do **not** merge item by item.
+If you override a list, restate the whole list you want.
+
+---
+
+## 5) Choose output columns with `fieldSets`
+
+`fieldSets` control which columns appear in the final output.
+
+Each field set accepts:
+- `all`
+- `none`
+- an explicit list of columns
+
+### Available field sets
+
+- `scenario`
+- `panchang`
+- `muhurtaYogaEffects`
+- `objectHouses`
+- `planetaryDegrees`
+- `ashtakavarga`
+- `mahaDasha`
+- `antarDashas`
+- `planetFlags`
+- `planetQualities`
+- `timeFlags`
+- `gowriFlags`
+- `shadBalaStrength`
+- `karakas`
+
+### Example: all columns from a few sets
+
+```yml
+fieldSets:
+  scenario: all
+  panchang: all
+  muhurtaYogaEffects: all
+  timeFlags: all
+```
+
+### Example: only selected columns
+
+```yml
+fieldSets:
+  scenario: all
+  panchang:
+    - tithi
+    - nakshatra
+    - vaara
+  muhurtaYogaEffects:
+    - positive
+    - negative
+  timeFlags:
+    - timeF
+```
+
+### Example: suppress a set
+
+```yml
+fieldSets:
+  scenario: all
+  panchang: all
+  shadBalaStrength: none
+```
+
+Tip: start narrow. `all` on many field sets can make output very wide.
+
+---
+
+## 6) Filter rows with `query`
+
+`query` is evaluated with `pandas.DataFrame.query(...)`.
+
+Simple example:
+
+```yml
+query: "positive + negative > 0"
+fieldSets:
+  scenario: all
+  panchang: all
+  muhurtaYogaEffects: all
+```
+
+String example:
+
+```yml
+query: >-
+  nakshatra.str.contains('rohini', case=False, na=False) and
+  timeF.str.contains('RK', na=False) == False
+```
+
+Useful patterns already used in the repo:
+- `nakshatra.str.contains('Rohini', na=False)`
+- `timeF.str.contains('RK|YG|GK', na=False) == False`
+- `gowriScore > 0`
+- `gowri == 'amirdham'`
+
+### Query gotchas
+
+- Use pandas query syntax, not arbitrary Python.
+- Reference column names that exist in the generated DataFrame.
+- Quote string literals.
+- Use `na=False` for safer string filtering on nullable columns.
+
+---
+
+## 7) Add computed columns with `customColumns`
+
+Use `customColumns` to derive scores, summaries, booleans, and helper columns.
+
+### Simple expression columns
+
+```yml
+customColumns:
+  dharma: "h1 + h5 + h9"
+  muhurtaYogaEffect: "positive + negative"
+```
+
+### Summary columns across multiple columns
+
+```yml
+customColumns:
+  minH:
+    min:
+      - h2
+      - h6
+      - h9
+      - h10
+      - h11
+```
+
+### Filter using the computed columns
+
+```yml
+query: "dharma > 75 and muhurtaYogaEffect > 0"
+order:
+  dharma: descending
+  muhurtaYogaEffect: descending
+```
+
+### Evaluation notes
+
+- string-valued `customColumns` are evaluated with `df.eval(...)`
+- summary columns such as `min`, `max`, etc. operate across listed columns
+- custom columns are available to later steps like `query`, `order`, and output selection
+
+### Gotcha
+
+Define dependencies in a safe order.
+If one custom column uses another, put the dependency first.
+
+---
+
+## 8) Reuse values with `constants`
+
+Use root-level `constants` for reusable lists, thresholds, and maps.
+
+```yml
+constants:
+  tabooTimeFlagsRegex: 'RK|YG|GK'
+  goodWeekdayWeights:
+    wednesday: 30
+    friday: 24
+    thursday: 22
+  minHouses:
+    - h3
+    - h5
+    - h7
+    - h10
+    - h11
+  minScore: 300
+
+query: >-
+  timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
+  weekdayScore > 0 and
+  score >= constants.minScore
+
+customColumns:
+  weekdayScore: >-
+    vaara.map(constants.goodWeekdayWeights).fillna(0)
+  minH:
+    min: constants.minHouses
+  score: >-
+    h3 + h5 + h7 + h10 + h11 + weekdayScore
+```
+
+You can reference constants from:
+- `query`
+- string-valued `customColumns`
+- summary/list-style custom columns such as `min: constants.minHouses`
+
+This is the main pattern used by the richer presets like:
+- `presets/marketing.yml`
+- `presets/launch.yml`
+- `presets/staffOnboarding.yml`
+- `presets/studentOnboarding.yml`
+
+---
+
+## 9) Sort results with `order`
+
+Use `order` to sort the final DataFrame before filtering/output.
+
+```yml
+order:
+  marketingScore: descending
+  baseMarketingScore: descending
+  muhurtaYogaEffect: descending
+```
+
+Another example:
+
+```yml
+order:
+  dharma: descending
+  muhurtaYogaEffect: descending
+```
+
+---
+
+## 10) Export instead of printing to stdout
+
+By default, output is printed to stdout using `exportSeparator`.
+
+To write to a file:
+
+```yml
+exportTo: ./temp/results.tsv
+exportSeparator: "\t"
+```
+
+CSV example:
+
+```yml
+exportTo: ./temp/results.csv
+exportSeparator: ","
+```
+
+Run:
+
+```bash
+python3 main.py ./temp/my-export.yml
+```
+
+---
+
+## 11) Use multiple scenarios in one run
+
+You can define `scenarios` so one config produces multiple named scans.
+
+```yml
+year: 2025
+month: 4
+day: 14
+hour: 6
+minute: 0
+second: 0
+latitude: 23.101
+longitude: 77.461
+frequency: 1d
+periods: 10
+
+fieldSets:
+  scenario: all
+  panchang: all
+
+scenarios:
+  default: {}
+  evening:
+    hour: 18
+    name: evening-scan
+  nextMonth:
+    month: 5
+    name: next-month-scan
+```
+
+Scenario values inherit the top-level defaults unless overridden.
+
+---
+
+## 12) Progressive build-up example
+
+Here is the same idea grown step by step.
+
+### Step A: just show panchang
+
+```yml
+fieldSets:
+  scenario: all
+  panchang: all
+```
+
+### Step B: add a date window
+
+```yml
+year: 2025
+month: 1
+day: 4
+hour: 6
+minute: 0
+second: 0
+frequency: 1h
+periods: 48
+
+fieldSets:
+  scenario: all
+  panchang: all
+```
+
+### Step C: add supporting data needed for filtering
+
+```yml
+fieldSets:
+  scenario: all
+  panchang: all
+  muhurtaYogaEffects: all
+  timeFlags: all
+  ashtakavarga: all
+```
+
+### Step D: add helper columns
+
+```yml
+customColumns:
+  muhurtaYogaEffect: "positive + negative"
+  dharma: "h1 + h5 + h9"
+```
+
+### Step E: add filtering and sorting
+
+```yml
+query: "dharma > 75 and muhurtaYogaEffect > 0"
+order:
+  dharma: descending
+  muhurtaYogaEffect: descending
+```
+
+### Step F: extract only the columns you care about
+
+```yml
+fieldSets:
+  scenario: all
+  panchang:
+    - tithi
+    - nakshatra
+    - vaara
+  muhurtaYogaEffects:
+    - positive
+    - negative
+```
+
+---
+
+## 13) Complete examples
+
+## Complete example A: simple custom scoring preset
+
+```yml
+# ./temp/dharma-scan.yml
+year: 2025
+month: 1
+day: 4
+hour: 6
+minute: 0
+second: 0
+utcHour: 5
+utcMinute: 30
+latitude: 23.101
+longitude: 77.461
+frequency: 1h
+periods: 72
+
+query: "dharma > 75 and muhurtaYogaEffect > 0"
+
+customColumns:
+  dharma: "h1 + h5 + h9"
+  muhurtaYogaEffect: "positive + negative"
+  maxOfDharma:
+    max:
+      - h1
+      - h5
+      - h9
+
+order:
+  dharma: descending
+  muhurtaYogaEffect: descending
+
+fieldSets:
+  scenario: all
+  panchang: all
+  muhurtaYogaEffects: all
+  ashtakavarga: all
+```
+
+Run it:
+
+```bash
+python3 main.py ./temp/dharma-scan.yml
+```
+
+## Complete example B: constants-driven marketing-style preset
+
+```yml
+# ./temp/simple-marketing.yml
+year: 2025
+month: 2
+day: 10
+hour: 6
+minute: 0
+second: 0
+utcHour: 5
+utcMinute: 30
+latitude: 23.101
+longitude: 77.461
+frequency: 30min
+periods: 96
+
+constants:
+  tabooTimeFlagsRegex: 'RK|YG|GK'
+  weekdayWeights:
+    wednesday: 30
+    friday: 24
+    thursday: 22
+  focusHouses:
+    - h3
+    - h5
+    - h7
+    - h10
+    - h11
+  minScore: 140
+
+query: >-
+  timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
+  muhurtaYogaEffect >= 0 and
+  minFocusHouse >= 24 and
+  weekdayScore > 0 and
+  score >= constants.minScore
+
+customColumns:
+  muhurtaYogaEffect: >-
+    positive + negative
+  weekdayScore: >-
+    vaara.map(constants.weekdayWeights).fillna(0)
+  minFocusHouse:
+    min: constants.focusHouses
+  score: >-
+    (h3 * 1.5 + h5 * 1.0 + h7 * 1.2 + h10 * 1.6 + h11 * 1.7) * 0.42 +
+    muhurtaYogaEffect * 12 + weekdayScore
+
+order:
+  score: descending
+  muhurtaYogaEffect: descending
+
+fieldSets:
+  scenario: all
+  panchang:
+    - tithi
+    - nakshatra
+    - vaara
+    - gowri
+    - gowriScore
+  muhurtaYogaEffects:
+    - positive
+    - negative
+  timeFlags:
+    - timeF
+  ashtakavarga: all
+```
+
+Run it:
+
+```bash
+python3 main.py ./temp/simple-marketing.yml
+```
+
+## Complete example C: stack a built-in preset with a small export override
+
+Override file:
+
+```yml
+# ./temp/launch-export.yml
+exportTo: ./temp/launch-results.tsv
+exportSeparator: "\t"
+fieldSets:
+  scenario: all
+  panchang:
+    - tithi
+    - nakshatra
+    - vaara
+    - launchScore
+  muhurtaYogaEffects:
+    - positive
+    - negative
+  timeFlags:
+    - timeF
+```
+
+Run it:
+
+```bash
+python3 main.py ./presets/launch.yml ./temp/launch-export.yml
+```
+
+This is often the cleanest workflow:
+- keep the scoring logic in a reusable preset
+- keep the run-specific output/export choices in a small override file
+
+---
+
+## 14) Built-in presets worth studying
+
+If you want real repo examples, start here:
+
+- `presets/panchang.yml` — minimal reporting preset
+- `presets/biz.yml` — simple score + filter pattern
+- `presets/marketing.yml` — richer constants-driven scoring
+- `presets/launch.yml` — launch-oriented scoring
+- `presets/staffOnboarding.yml` — institutional joining preset
+- `presets/studentOnboarding.yml` — education/course-entry preset
+- `presets/allFieldSets.yml` — useful for seeing every output group
+
+---
+
+## 15) Gotchas
+
+### Rightmost file wins
+
+```bash
+python3 main.py base.yml override.yml
+```
+
+`override.yml` has higher priority.
+
+### Lists replace, they do not append
+
+If a later file sets a list, it replaces the earlier list.
+
+### `query` uses pandas query syntax
+
+That means:
+- string expressions need quotes
+- `.str.contains(...)` is supported
+- `na=False` is usually safer for string filters
+
+### `customColumns` expressions must reference available columns
+
+If you compute from `h1`, `h5`, `h9`, make sure the underlying data exists in the generated DataFrame.
+
+### `fieldSets` affect final output, not whether columns can be computed earlier
+
+You can compute and filter on columns, then still choose a smaller final output.
+
+### Prefer `fieldSets` over `skipColumns`
+
+Some older examples mention `skipColumns`, but the current runtime path is driven by `fieldSets`.
+Prefer `fieldSets` for shaping output.
