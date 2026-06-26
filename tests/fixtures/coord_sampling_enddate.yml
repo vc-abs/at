@@ -1,0 +1,9 @@
+latitude: 23.101
+longitude: 77.461
+startDate: 2024-04-01
+startTime: 00:00:00
+endDate: 2024-04-01
+endTime: 02:00:00
+interval: 1h
+scenarios:
+  default: {}

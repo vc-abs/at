@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from at.readWrite.readConfig import (
 	buildScenarios,
 	getScenarioTime,
@@ -42,6 +44,8 @@ def test_build_scenarios_merges_defaults_and_scenario_specific():
 		'second': 5,
 		'utcHour': 0,
 		'utcMinute': 0,
+		'interval': '1h',
+		'count': 2,
 		'scenarios': {
 			'default': {},
 			'custom': {'hour': 8, 'name': 'c1'},
@@ -53,6 +57,7 @@ def test_build_scenarios_merges_defaults_and_scenario_specific():
 	assert scenarios['custom']['hour'] == 8
 	assert scenarios['custom']['name'] == 'c1'
 	assert 'date' in scenarios['custom']
+	assert scenarios['custom']['count'] == 2
 
 
 def test_merge_files_merges_dicts(tmp_path: Path):
@@ -114,3 +119,91 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 	assert 'scenarios' in result
 	assert 'default' in result['scenarios']
 	assert 'date' in result['scenarios']['default']
+
+
+def test_dms_compact_parses_to_decimal():
+	cfg = readConfig(['./tests/fixtures/coord_sampling_base.yml'])
+	assert cfg['latitude'] == pytest.approx(70 + 15 / 60)
+	assert cfg['longitude'] == pytest.approx(15 + 59 / 60 + 30 / 3600)
+
+
+def test_decimal_degrees_pass_through():
+	cfg = readConfig(['./tests/fixtures/coord_sampling_enddate.yml'])
+	assert cfg['latitude'] == pytest.approx(23.101)
+	assert cfg['longitude'] == pytest.approx(77.461)
+
+
+def test_legacy_frequency_periods_normalized_to_count_interval():
+	cfg = readConfig(['./tests/fixtures/coord_sampling_legacy.yml'])
+	assert cfg['interval'] == '1h'
+	assert cfg['count'] == 2
+	assert 'frequency' not in cfg
+	assert 'periods' not in cfg
+
+
+def test_start_date_time_aliases_base_inputs():
+	cfg = readConfig(['./tests/fixtures/coord_sampling_enddate.yml'])
+	assert (cfg['year'], cfg['month'], cfg['day']) == (2024, 4, 1)
+	assert (cfg['hour'], cfg['minute'], cfg['second']) == (0, 0, 0)
+
+
+def test_end_datetime_derives_count_both_inclusive():
+	cfg = readConfig(['./tests/fixtures/coord_sampling_enddate.yml'])
+	scenario = cfg['scenarios']['default']
+	assert scenario['count'] == 3
+
+
+def test_explicit_count_matching_derived_length_is_accepted(tmp_path):
+	f = tmp_path / 'match.yml'
+	f.write_text(
+		'latitude: 23.101\n'
+		'longitude: 77.461\n'
+		'startDate: 2024-04-01\n'
+		'startTime: 00:00:00\n'
+		'endDate: 2024-04-01\n'
+		'endTime: 02:00:00\n'
+		'interval: 1h\n'
+		'count: 3\n'
+	)
+	cfg = readConfig([str(f)])
+	assert cfg['scenarios']['default']['count'] == 3
+
+
+def test_end_window_overrides_conflicting_count(tmp_path):
+	f = tmp_path / 'mismatch.yml'
+	f.write_text(
+		'latitude: 23.101\n'
+		'longitude: 77.461\n'
+		'startDate: 2024-04-01\n'
+		'startTime: 00:00:00\n'
+		'endDate: 2024-04-01\n'
+		'endTime: 02:00:00\n'
+		'interval: 1h\n'
+		'count: 5\n'
+	)
+	cfg = readConfig([str(f)])
+	assert cfg['scenarios']['default']['count'] == 3
+	assert cfg['count'] == 3
+
+
+def test_invalid_dms_string_raises():
+	with pytest.raises(ValueError):
+		readConfig(['./tests/fixtures/coord_sampling_invalid_dms.yml'])
+
+
+def test_variable_calendar_interval_rejected():
+	with pytest.raises(ValueError):
+		readConfig(['./tests/fixtures/coord_sampling_variable_interval.yml'])
+
+
+def test_partial_end_date_time_raises(tmp_path):
+	f = tmp_path / 'partial.yml'
+	f.write_text(
+		'latitude: 23.101\n'
+		'longitude: 77.461\n'
+		'interval: 1h\n'
+		'count: 1\n'
+		'endDate: 2024-04-01\n'
+	)
+	with pytest.raises(ValueError):
+		readConfig([str(f)])

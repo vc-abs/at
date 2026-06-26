@@ -387,8 +387,8 @@ def generateScenarioCombos(
 	timeSeries = (
 		pd.date_range(
 			start=config['date'],
-			periods=config['periods'],
-			freq=config['frequency'],
+			periods=config['count'],
+			freq=config['interval'],
 		)
 		.to_pydatetime()
 		.tolist()

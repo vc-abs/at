@@ -6,6 +6,6 @@ minute: 0
 second: 0
 latitude: 23.101
 longitude: 77.461
-frequency: 15min
-periods: 700 # one week approx for the given frequency.
+interval: 15min
+count: 700 # one week approx for the given interval.
 exportTo: "./.data/sample.csv"

@@ -1,2 +1,2 @@
-frequency: 1h
-periods: 168
+interval: 1h
+count: 168

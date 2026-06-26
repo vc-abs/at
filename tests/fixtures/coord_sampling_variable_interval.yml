@@ -1,0 +1,6 @@
+latitude: 23.101
+longitude: 77.461
+interval: 1M
+count: 2
+scenarios:
+  default: {}

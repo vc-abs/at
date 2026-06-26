@@ -1,0 +1,6 @@
+latitude: 23.101
+longitude: 77.461
+frequency: 1h
+periods: 2
+scenarios:
+  default: {}

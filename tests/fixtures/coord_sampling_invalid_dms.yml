@@ -1,0 +1,6 @@
+latitude: 70X15
+longitude: 15N5930
+interval: 1h
+count: 2
+scenarios:
+  default: {}

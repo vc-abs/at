@@ -2,8 +2,8 @@ day: 14
 hour: 12
 minute: 0
 second: 0
-frequency: 1d
-periods: 365
+interval: 1d
+count: 365
 fieldSets:
   scenario: all
   panchang: all
