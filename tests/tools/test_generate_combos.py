@@ -2,31 +2,31 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from at.tools.generateCombos import (
-	addColumns,
-	addCustomColumns,
-	formatDashaData,
-	getColumn,
-	getExpressionLocals,
-	getGowriFlags,
-	getPanchang,
-	getPlanetaryDegrees,
-	getPlanetFlagsByPlanet,
-	getPlanetQualities,
-	getTimeFlags,
-	processSummaryColumn,
-	resolveConstantReference,
-	rewriteConstantsExpression,
-	sortData,
-	splitTimestamp,
+from at.tools.generate_combos import (
+	add_columns,
+	add_custom_columns,
+	format_dasha_data,
+	get_column,
+	get_expression_locals,
+	get_gowri_flags,
+	get_panchang,
+	get_planetary_degrees,
+	get_planet_flags_by_planet,
+	get_planet_qualities,
+	get_time_flags,
+	process_summary_column,
+	resolve_constant_reference,
+	rewrite_constants_expression,
+	sort_data,
+	split_timestamp,
 )
 
 
-class _DummyPanchang:
+class _dummy_panchang:
 	def __init__(self):
 		self.tithi = 1
 		self.vaara = 'wednesday'
-		self.riseAndSet = {
+		self.rise_and_set = {
 			'sunrise': datetime(
 				2025,
 				1,
@@ -74,10 +74,10 @@ class _DummyPanchang:
 		}
 
 
-class _DummyChart:
+class _dummy_chart:
 	def __init__(self, objects, event_time=None):
 		self.objects = objects
-		self.panchang = _DummyPanchang()
+		self.panchang = _dummy_panchang()
 		self.config = {
 			'datetime': event_time
 			or datetime(
@@ -92,9 +92,9 @@ class _DummyChart:
 		}
 
 
-class _PanchangObj:
+class _panchang_obj:
 	def __init__(self):
-		self.riseAndSet = {
+		self.rise_and_set = {
 			'sunrise': datetime(
 				2025,
 				1,
@@ -145,9 +145,9 @@ class _PanchangObj:
 		}
 
 
-class _PanchangChart:
+class _panchang_chart:
 	def __init__(self):
-		self.panchang = _PanchangObj()
+		self.panchang = _panchang_obj()
 
 
 
@@ -168,20 +168,20 @@ def _chart_objects_for_flags():
 
 
 def test_planet_flags_are_pipe_sorted_and_compact():
-	chart = _DummyChart(_chart_objects_for_flags())
+	chart = _dummy_chart(_chart_objects_for_flags())
 
 	# mercury: retrograde + within 14 degrees of sun -> C|R
-	assert getPlanetFlagsByPlanet(chart, 'mercury') == 'C|R'
+	assert get_planet_flags_by_planet(chart, 'mercury') == 'C|R'
 	# moon: combust only
-	assert getPlanetFlagsByPlanet(chart, 'moon') == 'C'
+	assert get_planet_flags_by_planet(chart, 'moon') == 'C'
 	# jupiter: retro only (too far from sun)
-	assert getPlanetFlagsByPlanet(chart, 'jupiter') == 'R'
+	assert get_planet_flags_by_planet(chart, 'jupiter') == 'R'
 
 
 
 def test_planetary_degrees_include_asc_and_nodes_in_order():
-	chart = _DummyChart(_chart_objects_for_flags())
-	degrees = getPlanetaryDegrees(chart)
+	chart = _dummy_chart(_chart_objects_for_flags())
+	degrees = get_planetary_degrees(chart)
 
 	keys = list(degrees.keys())
 	assert keys[0] == 'asD'
@@ -193,8 +193,8 @@ def test_planetary_degrees_include_asc_and_nodes_in_order():
 
 
 def test_planet_qualities_include_all_planets_with_expected_values():
-	chart = _DummyChart(_chart_objects_for_flags())
-	qualities = getPlanetQualities(chart)
+	chart = _dummy_chart(_chart_objects_for_flags())
+	qualities = get_planet_qualities(chart)
 
 	assert qualities['suQ'] == 'malefic'
 	assert qualities['moQ'] == 'malefic'
@@ -207,7 +207,7 @@ def test_planet_qualities_include_all_planets_with_expected_values():
 
 
 def test_time_flags_encode_active_day_segment_markers():
-	chart = _DummyChart(
+	chart = _dummy_chart(
 		_chart_objects_for_flags(),
 		event_time=datetime(
 			2025,
@@ -219,14 +219,14 @@ def test_time_flags_encode_active_day_segment_markers():
 			tzinfo=timezone.utc,
 		),
 	)
-	flags = getTimeFlags(chart)
+	flags = get_time_flags(chart)
 
 	assert flags['timeF'] == 'RK'
 
 
 
 def test_time_flags_are_empty_outside_marked_segments():
-	chart = _DummyChart(
+	chart = _dummy_chart(
 		_chart_objects_for_flags(),
 		event_time=datetime(
 			2025,
@@ -238,7 +238,7 @@ def test_time_flags_are_empty_outside_marked_segments():
 			tzinfo=timezone.utc,
 		),
 	)
-	flags = getTimeFlags(chart)
+	flags = get_time_flags(chart)
 
 	assert flags['timeF'] == ''
 
@@ -252,7 +252,7 @@ def test_format_dasha_data_uses_placeholder_when_bala_missing():
 		'remainder': 0.5,
 	}
 	balas = {}
-	out = formatDashaData(dasha, balas, 'md')
+	out = format_dasha_data(dasha, balas, 'md')
 
 	assert out['mdLord'] == 'rahu'
 	assert out['mdlStrength'] == 0
@@ -263,15 +263,15 @@ def test_format_dasha_data_uses_placeholder_when_bala_missing():
 def test_get_column_supports_str_expression_and_dict_summary():
 	df = pd.DataFrame([{'a': 1, 'b': 2}])
 	config = {'constants': {}}
-	assert getColumn(df, 'a + b', config).iloc[0] == 3
-	assert getColumn(df, {'sum': ['a', 'b']}, config).iloc[0] == 3
+	assert get_column(df, 'a + b', config).iloc[0] == 3
+	assert get_column(df, {'sum': ['a', 'b']}, config).iloc[0] == 3
 
 
 
 def test_get_column_returns_unsupported_values_unchanged():
 	df = pd.DataFrame([{'a': 1}])
 	value = ['a']
-	assert getColumn(df, value, {'constants': {}}) is value
+	assert get_column(df, value, {'constants': {}}) is value
 
 
 
@@ -282,7 +282,7 @@ def test_process_summary_column_directly():
 			{'x': 4, 'y': 5},
 		]
 	)
-	res = processSummaryColumn(
+	res = process_summary_column(
 		df,
 		{'sum': ['x', 'y']},
 		{'constants': {}},
@@ -293,7 +293,7 @@ def test_process_summary_column_directly():
 
 def test_add_custom_columns_adds_each_declared_column():
 	df = pd.DataFrame([{'a': 1, 'b': 2}])
-	addCustomColumns(
+	add_custom_columns(
 		df,
 		{
 			'c': 'a + b',
@@ -308,20 +308,20 @@ def test_add_custom_columns_adds_each_declared_column():
 
 
 def test_rewrite_constants_expression_marks_namespace_for_pandas():
-	assert rewriteConstantsExpression(
+	assert rewrite_constants_expression(
 		'vaara.isin(constants.marketingWeekdays)'
 	) == 'vaara.isin(@constants.marketingWeekdays)'
-	assert rewriteConstantsExpression(
+	assert rewrite_constants_expression(
 		'constants.thresholds.score >= 300'
 	) == '@constants.thresholds.score >= 300'
-	assert rewriteConstantsExpression(
+	assert rewrite_constants_expression(
 		'vaara.isin(@constants.marketingWeekdays)'
 	) == 'vaara.isin(@constants.marketingWeekdays)'
 
 
 
 def test_get_expression_locals_exposes_constants_namespace():
-	locals_ = getExpressionLocals(
+	locals_ = get_expression_locals(
 		{
 			'constants': {
 				'marketingWeekdays': ['wednesday', 'friday'],
@@ -336,7 +336,7 @@ def test_get_expression_locals_exposes_constants_namespace():
 
 
 def test_get_expression_locals_exposes_mapping_constants_for_map_usage():
-	locals_ = getExpressionLocals(
+	locals_ = get_expression_locals(
 		{
 			'constants': {
 				'marketingWeekdayWeights': {
@@ -355,7 +355,7 @@ def test_get_expression_locals_exposes_mapping_constants_for_map_usage():
 def test_get_column_supports_constants_namespace_expression():
 	df = pd.DataFrame([{'a': 1, 'b': 2}])
 	config = {'constants': {'weights': {'a': 10, 'b': 100}}}
-	result = getColumn(
+	result = get_column(
 		df,
 		'a * constants.weights.a + b * constants.weights.b',
 		config,
@@ -376,7 +376,7 @@ def test_process_summary_column_resolves_constant_reference_list():
 			'marketingMinHouses': ['h3', 'h5', 'h7'],
 		}
 	}
-	res = processSummaryColumn(
+	res = process_summary_column(
 		df,
 		{'min': 'constants.marketingMinHouses'},
 		config,
@@ -387,8 +387,8 @@ def test_process_summary_column_resolves_constant_reference_list():
 
 def test_resolve_constant_reference_returns_non_constant_strings_unchanged():
 	config = {'constants': {'x': ['a']}}
-	assert resolveConstantReference(['h1'], config) == ['h1']
-	assert resolveConstantReference('h1', config) == 'h1'
+	assert resolve_constant_reference(['h1'], config) == ['h1']
+	assert resolve_constant_reference('h1', config) == 'h1'
 
 
 
@@ -404,7 +404,7 @@ def test_add_custom_columns_supports_constants_and_does_not_export_them():
 			'marketingMinHouses': ['h3', 'h5', 'h7'],
 		}
 	}
-	addCustomColumns(
+	add_custom_columns(
 		df,
 		{
 			'isMarketingWeekday': 'vaara.isin(constants.marketingWeekdays)',
@@ -446,7 +446,7 @@ def test_add_custom_columns_supports_mapping_constants_with_series_map():
 			},
 		}
 	}
-	addCustomColumns(
+	add_custom_columns(
 		df,
 		{
 			'weekdayScore': (
@@ -459,8 +459,8 @@ def test_add_custom_columns_supports_mapping_constants_with_series_map():
 
 
 
-def test_launch_preset_uses_constants_pattern_consistently():
-	with open('presets/launch.yml', 'r') as f:
+def test_launch_preset_uses_constants_pattern_consistently(repo_root):
+	with open(repo_root / 'presets/launch.yml', 'r') as f:
 		text = f.read()
 
 	assert 'constants:' in text
@@ -472,8 +472,8 @@ def test_launch_preset_uses_constants_pattern_consistently():
 
 
 
-def test_staff_onboarding_preset_uses_constants_pattern_consistently():
-	with open('presets/staffOnboarding.yml', 'r') as f:
+def test_staff_onboarding_preset_uses_constants_pattern_consistently(repo_root):
+	with open(repo_root / 'presets/staffOnboarding.yml', 'r') as f:
 		text = f.read()
 
 	assert 'constants:' in text
@@ -485,8 +485,8 @@ def test_staff_onboarding_preset_uses_constants_pattern_consistently():
 
 
 
-def test_student_onboarding_preset_uses_constants_pattern_consistently():
-	with open('presets/studentOnboarding.yml', 'r') as f:
+def test_student_onboarding_preset_uses_constants_pattern_consistently(repo_root):
+	with open(repo_root / 'presets/studentOnboarding.yml', 'r') as f:
 		text = f.read()
 
 	assert 'constants:' in text
@@ -526,17 +526,17 @@ def test_sort_data_and_split_timestamp_mutate_dataframe():
 		]
 	)
 
-	sortData(df, {'score': 'descending'})
+	sort_data(df, {'score': 'descending'})
 	assert list(df['score']) == [2, 1]
 
-	splitTimestamp(df)
+	split_timestamp(df)
 	assert 'timestamp' not in df.columns
 	assert list(df.columns[:2]) == ['date', 'time']
 
 
 
 def test_get_panchang_formats_time_strings():
-	result = getPanchang(_PanchangChart())
+	result = get_panchang(_panchang_chart())
 	assert result['sunrise'] == '06:00:00'
 	assert result['sunset'] == '18:00:00'
 	assert result['tithi'] == 1
@@ -547,7 +547,7 @@ def test_get_panchang_formats_time_strings():
 
 
 def test_get_gowri_flags_formats_compact_fields():
-	result = getGowriFlags(_PanchangChart())
+	result = get_gowri_flags(_panchang_chart())
 	assert result['gowri'] == 'laabam'
 	assert result['gowriScore'] == 1
 	assert result['gowriStart'] == '06:00:00'
@@ -577,7 +577,7 @@ def test_add_columns_supports_all_none_and_some_selectors():
 		]
 	)
 
-	selected = addColumns(
+	selected = add_columns(
 		df,
 		{
 			'scenario': 'all',
@@ -621,7 +621,7 @@ def test_add_columns_keeps_fieldset_order():
 		]
 	)
 
-	selected = addColumns(
+	selected = add_columns(
 		df,
 		{
 			'planetFlags': ['suF', 'moF'],

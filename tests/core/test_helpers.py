@@ -2,11 +2,11 @@ import pytest
 
 from at.core import constants
 from at.core.helpers import (
-	normalizeCircularValue,
-	getDistanceInCircle,
-	getShortestDistanceInCircle,
-	getSignDistance,
-	getSignFromLongitude,
+	normalize_circular_value,
+	get_distance_in_circle,
+	get_shortest_distance_in_circle,
+	get_sign_distance,
+	get_sign_from_longitude,
 	fold,
 	select,
 )
@@ -15,21 +15,21 @@ from at.core.helpers import (
 def test_normalize_circular_value_basic():
 	# unchanged values
 	assert (
-		normalizeCircularValue(1, 360) == 1
+		normalize_circular_value(1, 360) == 1
 	)
 	assert (
-		normalizeCircularValue(360, 360)
+		normalize_circular_value(360, 360)
 		== 360
 	)
 
 
 def test_normalize_circular_value_wraps():
 	assert (
-		normalizeCircularValue(361, 360)
+		normalize_circular_value(361, 360)
 		== 1
 	)
 	assert (
-		normalizeCircularValue(0, 360)
+		normalize_circular_value(0, 360)
 		== 360
 	)
 
@@ -45,7 +45,7 @@ def test_get_distance_in_circle(
 	p1, p2, exp
 ):
 	assert (
-		getDistanceInCircle(
+		get_distance_in_circle(
 			p1, p2, constants.degrees
 		)
 		== exp
@@ -63,7 +63,7 @@ def test_get_shortest_distance_in_circle(
 	p1, p2, exp
 ):
 	assert (
-		getShortestDistanceInCircle(
+		get_shortest_distance_in_circle(
 			p1, p2, constants.degrees
 		)
 		== exp
@@ -73,12 +73,12 @@ def test_get_shortest_distance_in_circle(
 def test_get_sign_distance_and_from_longitude():
 	# Using default sign count of 12, width 30 degrees
 	# Distance from sign 1 to 12 should be 12 steps
-	assert getSignDistance(1, 12) == 12
+	assert get_sign_distance(1, 12) == 12
 	# Longitude boundaries
-	assert getSignFromLongitude(0) == 1
+	assert get_sign_from_longitude(0) == 1
 	assert (
-		getSignFromLongitude(359.9)
-		== constants.signCount
+		get_sign_from_longitude(359.9)
+		== constants.sign_count
 	)
 
 

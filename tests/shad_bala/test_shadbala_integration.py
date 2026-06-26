@@ -1,16 +1,16 @@
 from at.chart import Chart
-from at.readWrite.readConfig import readConfig
+from at.read_write.read_config import read_config
 
 
-def test_chart_shadbala_balas_compute_for_real_preset_stack():
-	config = readConfig(
+def test_chart_shadbala_balas_compute_for_real_preset_stack(repo_root):
+	config = read_config(
 		[
-			'presets/archive/.vc.yml',
-			'presets/debug.yml',
-			'presets/allFieldSets.yml',
+			str(repo_root / 'tests/fixtures/shadbala_scenario.yml'),
+			str(repo_root / 'presets/debug.yml'),
+			str(repo_root / 'presets/allFieldSets.yml'),
 		]
 	)
-	scenario = config['scenarios']['VC']
+	scenario = config['scenarios']['referenceEvent']
 	chart = Chart(
 		{
 			**config,
@@ -27,7 +27,7 @@ def test_chart_shadbala_balas_compute_for_real_preset_stack():
 		}
 	)
 
-	balas = chart.shadBala.balas
+	balas = chart.shad_bala.balas
 
 	assert set(balas.keys()) == {
 		'sun',
@@ -45,15 +45,15 @@ def test_chart_shadbala_balas_compute_for_real_preset_stack():
 	assert all('yuddhaBala' in bala for bala in balas.values())
 
 
-def test_chart_shadbala_balas_include_runtime_sensitive_components():
-	config = readConfig(
+def test_chart_shadbala_balas_include_runtime_sensitive_components(repo_root):
+	config = read_config(
 		[
-			'presets/archive/.vc.yml',
-			'presets/debug.yml',
-			'presets/allFieldSets.yml',
+			str(repo_root / 'tests/fixtures/shadbala_scenario.yml'),
+			str(repo_root / 'presets/debug.yml'),
+			str(repo_root / 'presets/allFieldSets.yml'),
 		]
 	)
-	scenario = config['scenarios']['VC']
+	scenario = config['scenarios']['referenceEvent']
 	chart = Chart(
 		{
 			**config,
@@ -70,7 +70,7 @@ def test_chart_shadbala_balas_include_runtime_sensitive_components():
 		}
 	)
 
-	balas = chart.shadBala.balas
+	balas = chart.shad_bala.balas
 	mercury = balas['mercury']
 	venus = balas['venus']
 

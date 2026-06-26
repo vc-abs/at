@@ -2,10 +2,10 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
 from at.panchang import Panchang
-from at.panchang.gowri import getScheduleNames
+from at.panchang.gowri import get_schedule_names
 
 
-class _Chart:
+class _chart:
 	def __init__(self, event_time):
 		self._config = {
 			'date': event_time,
@@ -32,13 +32,13 @@ def _rise_set_stub(config):
 
 
 def _make_panchang(event_time):
-	chart = _Chart(event_time)
+	chart = _chart(event_time)
 	with patch(
-		'at.panchang.getRiseAndSetTimes',
+		'at.panchang.get_rise_and_set_times',
 		side_effect=_rise_set_stub,
 	):
 		panchang = Panchang(chart)
-		_ = panchang.riseAndSet
+		_ = panchang.rise_and_set
 		_ = panchang.vaara
 		return panchang
 
@@ -48,7 +48,7 @@ def test_gowri_schedule_has_day_and_night_rows():
 	p = _make_panchang(
 		datetime(2025, 1, 5, 8, 0, 0, tzinfo=timezone.utc)
 	)
-	schedule = p.gowriSchedule
+	schedule = p.gowri_schedule
 
 	assert list(schedule.keys()) == ['day', 'night']
 	assert len(schedule['day']) == 8
@@ -62,7 +62,7 @@ def test_gowri_segment_uses_day_schedule_and_boundaries():
 	p = _make_panchang(
 		datetime(2025, 1, 6, 7, 0, 0, tzinfo=timezone.utc)
 	)
-	segment = p.gowriSegment
+	segment = p.gowri_segment
 
 	assert segment['name'] == 'amirdham'
 	assert segment['tod'] == 'day'
@@ -75,7 +75,7 @@ def test_gowri_segment_uses_night_schedule():
 	p = _make_panchang(
 		datetime(2025, 1, 6, 20, 0, 0, tzinfo=timezone.utc)
 	)
-	segment = p.gowriSegment
+	segment = p.gowri_segment
 
 	assert segment['name'] == 'soram'
 	assert segment['tod'] == 'night'
@@ -98,6 +98,6 @@ def test_gowri_flags_are_exposed_with_compact_marker():
 
 
 def test_night_gowri_matches_day_gowri_of_plus_four_weekday():
-	assert getScheduleNames('sunday', 'night') == getScheduleNames('thursday', 'day')
-	assert getScheduleNames('monday', 'night') == getScheduleNames('friday', 'day')
-	assert getScheduleNames('tuesday', 'night') == getScheduleNames('saturday', 'day')
+	assert get_schedule_names('sunday', 'night') == get_schedule_names('thursday', 'day')
+	assert get_schedule_names('monday', 'night') == get_schedule_names('friday', 'day')
+	assert get_schedule_names('tuesday', 'night') == get_schedule_names('saturday', 'day')

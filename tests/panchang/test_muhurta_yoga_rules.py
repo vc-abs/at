@@ -1,9 +1,9 @@
-from at.panchang.getMuhurtaYoga import (
-	getMuhurtaYogas,
+from at.panchang.get_muhurta_yoga import (
+	get_muhurta_yogas,
 )
 
 
-class _Panchang:
+class _panchang:
 	def __init__(self, tithi, vaara, nakshatra):
 		self.tithi = tithi
 		self.vaara = vaara
@@ -16,8 +16,8 @@ def _get_yoga_names(
 	nakshatra,
 ):
 	return set(
-		getMuhurtaYogas(
-			_Panchang(
+		get_muhurta_yogas(
+			_panchang(
 				tithi=tithi,
 				vaara=vaara,
 				nakshatra=nakshatra,

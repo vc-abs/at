@@ -1,7 +1,7 @@
-from at.core.karakas import getKarakas, sortByDegree
+from at.core.karakas import get_karakas, sort_by_degree
 
 
-class _Chart:
+class _chart:
 	def __init__(self, objects):
 		self.objects = objects
 
@@ -10,7 +10,7 @@ def test_sort_by_degree_prefers_higher_degree_within_sign():
 	# 29 deg in sign should outrank 1 deg in sign
 	a = {'longitude': 29.0}
 	b = {'longitude': 1.0}
-	assert sortByDegree(a) < sortByDegree(b)
+	assert sort_by_degree(a) < sort_by_degree(b)
 
 
 def test_get_karakas_filters_to_day_rulers_and_orders_them():
@@ -25,8 +25,8 @@ def test_get_karakas_filters_to_day_rulers_and_orders_them():
 		'rahu': {'name': 'rahu', 'longitude': 10.0},
 		'ketu': {'name': 'ketu', 'longitude': 190.0},
 	}
-	chart = _Chart(objects)
-	karakas = getKarakas(chart)
+	chart = _chart(objects)
+	karakas = get_karakas(chart)
 
 	assert list(karakas.keys()) == [
 		'ak',

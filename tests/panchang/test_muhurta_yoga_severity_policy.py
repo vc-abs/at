@@ -1,16 +1,10 @@
-from pathlib import Path
-
 import pandas as pd
 import yaml
 
 
-def test_yoga_policy_tracks_all_dataset_yogas():
-	csv_path = Path(
-		'src/at/panchang/muhurtaYogaEffects.csv'
-	)
-	policy_path = Path(
-		'data/yogaWeightPolicy.yml'
-	)
+def test_yoga_policy_tracks_all_dataset_yogas(repo_root):
+	csv_path = repo_root / 'src/at/panchang/muhurtaYogaEffects.csv'
+	policy_path = repo_root / 'data/yogaWeightPolicy.yml'
 
 	df = pd.read_csv(csv_path)
 	with policy_path.open('r', encoding='utf-8') as f:
@@ -24,13 +18,9 @@ def test_yoga_policy_tracks_all_dataset_yogas():
 	assert yoga_names == policy_names
 
 
-def test_yoga_policy_allowed_effects_match_dataset():
-	csv_path = Path(
-		'src/at/panchang/muhurtaYogaEffects.csv'
-	)
-	policy_path = Path(
-		'data/yogaWeightPolicy.yml'
-	)
+def test_yoga_policy_allowed_effects_match_dataset(repo_root):
+	csv_path = repo_root / 'src/at/panchang/muhurtaYogaEffects.csv'
+	policy_path = repo_root / 'data/yogaWeightPolicy.yml'
 
 	df = pd.read_csv(csv_path)
 	df['weightedEffect'] = (

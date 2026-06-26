@@ -1,25 +1,25 @@
-from at.core.constants import objectProps
-from at.core.planetQuality import (
-	getMercuryInfluencers,
-	getMercuryQuality,
-	getMoonQuality,
-	getMoonQualityScore,
-	getObjectsAspecting,
-	getObjectsConjunctors,
-	getPlanetQuality,
-	isAspectingPlanet,
+from at.core.constants import object_props
+from at.core.planet_quality import (
+	get_mercury_influencers,
+	get_mercury_quality,
+	get_moon_quality,
+	get_moon_quality_score,
+	get_objects_aspecting,
+	get_objects_conjunctors,
+	get_planet_quality,
+	is_aspecting_planet,
 )
 
 
-class _Panchang:
+class _panchang:
 	def __init__(self, tithi=15):
 		self.tithi = tithi
 
 
-class _Chart:
+class _chart:
 	def __init__(self, objects, tithi=15):
 		self.objects = objects
-		self.panchang = _Panchang(tithi)
+		self.panchang = _panchang(tithi)
 
 
 def test_get_objects_conjunctors_filters_same_house_planets_only():
@@ -33,21 +33,21 @@ def test_get_objects_conjunctors_filters_same_house_planets_only():
 		'moon': {'name': 'moon', 'house': 3, 'type': 'planet'},
 		'asc': {'name': 'asc', 'house': 2, 'type': 'angle'},
 	}
-	chart = _Chart(objects)
-	conjunctors = getObjectsConjunctors(
+	chart = _chart(objects)
+	conjunctors = get_objects_conjunctors(
 		chart, objects['mercury']
 	)
 	assert [o['name'] for o in conjunctors] == ['sun']
 
 
 def test_bphs_aspect_metadata_matches_expected_values():
-	assert objectProps['sun']['aspects'] == [7]
-	assert objectProps['moon']['aspects'] == [7]
-	assert objectProps['mars']['aspects'] == [4, 7, 8]
-	assert objectProps['mercury']['aspects'] == [7]
-	assert objectProps['jupiter']['aspects'] == [5, 7, 9]
-	assert objectProps['venus']['aspects'] == [7]
-	assert objectProps['saturn']['aspects'] == [3, 7, 10]
+	assert object_props['sun']['aspects'] == [7]
+	assert object_props['moon']['aspects'] == [7]
+	assert object_props['mars']['aspects'] == [4, 7, 8]
+	assert object_props['mercury']['aspects'] == [7]
+	assert object_props['jupiter']['aspects'] == [5, 7, 9]
+	assert object_props['venus']['aspects'] == [7]
+	assert object_props['saturn']['aspects'] == [3, 7, 10]
 
 
 def test_is_aspecting_planet_uses_house_based_drishti():
@@ -67,8 +67,8 @@ def test_is_aspecting_planet_uses_house_based_drishti():
 		'type': 'planet',
 	}
 
-	assert isAspectingPlanet(mercury, jupiter) is True
-	assert isAspectingPlanet(mercury, venus) is False
+	assert is_aspecting_planet(mercury, jupiter) is True
+	assert is_aspecting_planet(mercury, venus) is False
 
 
 def test_get_objects_aspecting_filters_bphs_aspecting_planets_only():
@@ -99,8 +99,8 @@ def test_get_objects_aspecting_filters_bphs_aspecting_planets_only():
 		},
 		'asc': {'name': 'asc', 'house': 1, 'type': 'angle'},
 	}
-	chart = _Chart(objects)
-	aspecting = getObjectsAspecting(chart, objects['mercury'])
+	chart = _chart(objects)
+	aspecting = get_objects_aspecting(chart, objects['mercury'])
 	assert [o['name'] for o in aspecting] == ['jupiter']
 
 
@@ -132,10 +132,10 @@ def test_get_mercury_quality_from_conjunctors_and_aspects():
 			'longitude': 200,
 		},
 	}
-	chart = _Chart(objects)
-	influencers = getMercuryInfluencers(chart)
+	chart = _chart(objects)
+	influencers = get_mercury_influencers(chart)
 	assert {o['name'] for o in influencers} == {'sun', 'jupiter'}
-	assert getMercuryQuality(chart) == 0
+	assert get_mercury_quality(chart) == 0
 
 
 def test_get_mercury_influencers_deduplicates_overlap_between_conjunction_and_aspect():
@@ -153,10 +153,10 @@ def test_get_mercury_influencers_deduplicates_overlap_between_conjunction_and_as
 			'longitude': 215,
 		},
 	}
-	chart = _Chart(objects)
-	influencers = getMercuryInfluencers(chart)
+	chart = _chart(objects)
+	influencers = get_mercury_influencers(chart)
 	assert [o['name'] for o in influencers] == ['jupiter']
-	assert getMercuryQuality(chart) == 1
+	assert get_mercury_quality(chart) == 1
 
 
 def test_get_mercury_quality_balances_to_neutral():
@@ -180,26 +180,26 @@ def test_get_mercury_quality_balances_to_neutral():
 			'longitude': 65,
 		},
 	}
-	chart = _Chart(objects)
-	assert getMercuryQuality(chart) == 0
+	chart = _chart(objects)
+	assert get_mercury_quality(chart) == 0
 
 
 def test_get_moon_quality_score_is_strongest_near_full_moon():
-	chart = _Chart({}, tithi=15)
-	near_new_chart = _Chart({}, tithi=30)
+	chart = _chart({}, tithi=15)
+	near_new_chart = _chart({}, tithi=30)
 
-	assert getMoonQualityScore(chart) > 0
-	assert getMoonQualityScore(near_new_chart) < 0
-	assert getMoonQualityScore(chart) > abs(
-		getMoonQualityScore(near_new_chart)
+	assert get_moon_quality_score(chart) > 0
+	assert get_moon_quality_score(near_new_chart) < 0
+	assert get_moon_quality_score(chart) > abs(
+		get_moon_quality_score(near_new_chart)
 	)
 
 
 def test_get_moon_quality_uses_bphs_tithi_ranges():
-	assert getMoonQuality(_Chart({}, tithi=8)) == 1
-	assert getMoonQuality(_Chart({}, tithi=23)) == 1
-	assert getMoonQuality(_Chart({}, tithi=7)) == -1
-	assert getMoonQuality(_Chart({}, tithi=24)) == -1
+	assert get_moon_quality(_chart({}, tithi=8)) == 1
+	assert get_moon_quality(_chart({}, tithi=23)) == 1
+	assert get_moon_quality(_chart({}, tithi=7)) == -1
+	assert get_moon_quality(_chart({}, tithi=24)) == -1
 
 
 def test_get_planet_quality_for_conditional_and_static_planets():
@@ -214,24 +214,24 @@ def test_get_planet_quality_for_conditional_and_static_planets():
 		},
 		'venus': {'name': 'venus', 'longitude': 41, 'house': 1, 'type': 'planet'},
 	}
-	chart = _Chart(objects, tithi=15)
-	waning_chart = _Chart(objects, tithi=3)
+	chart = _chart(objects, tithi=15)
+	waning_chart = _chart(objects, tithi=3)
 
 	assert (
-		getPlanetQuality(objects['sun'], chart)
+		get_planet_quality(objects['sun'], chart)
 		== 'malefic'
 	)
 	assert (
-		getPlanetQuality(objects['moon'], chart)
+		get_planet_quality(objects['moon'], chart)
 		== 'benefic'
 	)
 	assert (
-		getPlanetQuality(objects['moon'], waning_chart)
+		get_planet_quality(objects['moon'], waning_chart)
 		== 'malefic'
 	)
 	# mercury conjunct venus(benefic) => benefic
 	assert (
-		getPlanetQuality(
+		get_planet_quality(
 			objects['mercury'], chart
 		)
 		== 'benefic'

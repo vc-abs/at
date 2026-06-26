@@ -2,11 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from at.readWrite.readConfig import (
-	buildScenarios,
-	getScenarioTime,
-	mergeFiles,
-	readConfig,
+from at.read_write.read_config import (
+	build_scenarios,
+	get_scenario_time,
+	merge_files,
+	read_config,
 )
 
 
@@ -20,7 +20,7 @@ def test_get_scenario_time_applies_timezone_offset():
 		'minute': 4,
 		'second': 5,
 	}
-	dt = getScenarioTime(scenario, config)
+	dt = get_scenario_time(scenario, config)
 	assert dt.utcoffset().total_seconds() == 19800
 	assert (
 		dt.year,
@@ -51,7 +51,7 @@ def test_build_scenarios_merges_defaults_and_scenario_specific():
 			'custom': {'hour': 8, 'name': 'c1'},
 		},
 	}
-	scenarios = buildScenarios(config)
+	scenarios = build_scenarios(config)
 
 	assert scenarios['default']['latitude'] == 1.0
 	assert scenarios['custom']['hour'] == 8
@@ -66,7 +66,7 @@ def test_merge_files_merges_dicts(tmp_path: Path):
 	f1.write_text('a: 1\nobj:\n  x: 1\n')
 	f2.write_text('b: 2\nobj:\n  y: 2\n')
 
-	merged = mergeFiles([str(f1), str(f2)])
+	merged = merge_files([str(f1), str(f2)])
 	assert merged['a'] == 1
 	assert merged['b'] == 2
 	assert merged['obj'] == {'x': 1, 'y': 2}
@@ -91,7 +91,7 @@ def test_merge_files_merges_constants_nested_dicts(tmp_path: Path):
 		'      floor: 24\n'
 	)
 
-	merged = mergeFiles([str(f1), str(f2)])
+	merged = merge_files([str(f1), str(f2)])
 	assert merged['constants'] == {
 		'marketing': {
 			'weekdays': ['wednesday'],
@@ -113,7 +113,7 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 		'    hour: 9\n'
 	)
 
-	result = readConfig([str(cfg)])
+	result = read_config([str(cfg)])
 	assert result['utcHour'] == 5
 	assert result['constants'] == {}
 	assert 'scenarios' in result
@@ -121,34 +121,34 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 	assert 'date' in result['scenarios']['default']
 
 
-def test_dms_compact_parses_to_decimal():
-	cfg = readConfig(['./tests/fixtures/coord_sampling_base.yml'])
+def test_dms_compact_parses_to_decimal(repo_root):
+	cfg = read_config([str(repo_root / 'tests/fixtures/coord_sampling_base.yml')])
 	assert cfg['latitude'] == pytest.approx(70 + 15 / 60)
 	assert cfg['longitude'] == pytest.approx(15 + 59 / 60 + 30 / 3600)
 
 
-def test_decimal_degrees_pass_through():
-	cfg = readConfig(['./tests/fixtures/coord_sampling_enddate.yml'])
+def test_decimal_degrees_pass_through(repo_root):
+	cfg = read_config([str(repo_root / 'tests/fixtures/coord_sampling_enddate.yml')])
 	assert cfg['latitude'] == pytest.approx(23.101)
 	assert cfg['longitude'] == pytest.approx(77.461)
 
 
-def test_legacy_frequency_periods_normalized_to_count_interval():
-	cfg = readConfig(['./tests/fixtures/coord_sampling_legacy.yml'])
+def test_legacy_frequency_periods_normalized_to_count_interval(repo_root):
+	cfg = read_config([str(repo_root / 'tests/fixtures/coord_sampling_legacy.yml')])
 	assert cfg['interval'] == '1h'
 	assert cfg['count'] == 2
 	assert 'frequency' not in cfg
 	assert 'periods' not in cfg
 
 
-def test_start_date_time_aliases_base_inputs():
-	cfg = readConfig(['./tests/fixtures/coord_sampling_enddate.yml'])
+def test_start_date_time_aliases_base_inputs(repo_root):
+	cfg = read_config([str(repo_root / 'tests/fixtures/coord_sampling_enddate.yml')])
 	assert (cfg['year'], cfg['month'], cfg['day']) == (2024, 4, 1)
 	assert (cfg['hour'], cfg['minute'], cfg['second']) == (0, 0, 0)
 
 
-def test_end_datetime_derives_count_both_inclusive():
-	cfg = readConfig(['./tests/fixtures/coord_sampling_enddate.yml'])
+def test_end_datetime_derives_count_both_inclusive(repo_root):
+	cfg = read_config([str(repo_root / 'tests/fixtures/coord_sampling_enddate.yml')])
 	scenario = cfg['scenarios']['default']
 	assert scenario['count'] == 3
 
@@ -165,7 +165,7 @@ def test_explicit_count_matching_derived_length_is_accepted(tmp_path):
 		'interval: 1h\n'
 		'count: 3\n'
 	)
-	cfg = readConfig([str(f)])
+	cfg = read_config([str(f)])
 	assert cfg['scenarios']['default']['count'] == 3
 
 
@@ -181,19 +181,19 @@ def test_end_window_overrides_conflicting_count(tmp_path):
 		'interval: 1h\n'
 		'count: 5\n'
 	)
-	cfg = readConfig([str(f)])
+	cfg = read_config([str(f)])
 	assert cfg['scenarios']['default']['count'] == 3
 	assert cfg['count'] == 3
 
 
-def test_invalid_dms_string_raises():
+def test_invalid_dms_string_raises(repo_root):
 	with pytest.raises(ValueError):
-		readConfig(['./tests/fixtures/coord_sampling_invalid_dms.yml'])
+		read_config([str(repo_root / 'tests/fixtures/coord_sampling_invalid_dms.yml')])
 
 
-def test_variable_calendar_interval_rejected():
+def test_variable_calendar_interval_rejected(repo_root):
 	with pytest.raises(ValueError):
-		readConfig(['./tests/fixtures/coord_sampling_variable_interval.yml'])
+		read_config([str(repo_root / 'tests/fixtures/coord_sampling_variable_interval.yml')])
 
 
 def test_partial_end_date_time_raises(tmp_path):
@@ -206,4 +206,4 @@ def test_partial_end_date_time_raises(tmp_path):
 		'endDate: 2024-04-01\n'
 	)
 	with pytest.raises(ValueError):
-		readConfig([str(f)])
+		read_config([str(f)])

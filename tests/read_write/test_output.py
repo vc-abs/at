@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from at.readWrite.output import output
+from at.read_write.output import output
 
 
 def test_output_exports_to_file_when_export_to_is_present(tmp_path: Path):

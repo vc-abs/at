@@ -41,9 +41,9 @@
 - Added `presets/studentOnboarding.yml` as a distinct course-entry preset using the same constants-driven YAML scoring pattern, with 4th/5th/9th-led learning weighting and education-specific weekday/nakshatra preferences.
 - Added companion review export configs under `temp/` for the staff and student onboarding presets.
 - Updated `tests/tools/test_generate_combos.py` to assert that both new presets follow the constants-driven preset pattern.
-- Updated `tests/shadbala/test_shadbala_integration.py` to use the retained archived VC preset fixture path that matches the repository's current preset layout.
+- Updated `tests/shad_bala/test_shadbala_integration.py` to load the reference-event scenario fixture from `tests/fixtures/shadbala_scenario.yml` (scenario `referenceEvent`) alongside `presets/debug.yml` and `presets/allFieldSets.yml`.
 - Validated the cycle with targeted tests, full `./scripts/validate.sh`, and CLI smoke runs of the constant-backed marketing, launch, staff onboarding, and student onboarding presets.
 - Finalized the configuration and input model cycle: introduced `count`+`interval` as the canonical sampling keys (legacy `frequency`/`periods` normalized at parse time), `startDate`/`startTime` aliases for base date/time inputs, `endDate`/`endTime` window inputs that derive `count` via both-inclusive ranges, compact DMS coordinate parsing, and fixed-duration `interval` validation.
 - Unified config standardization into a single `_standardizeConfig` helper applied to both the global config and each scenario's merged config, eliminating the `endDatetime` internal variable and per-scenario special-case branching.
 - Migrated `data/defaultConfig.yml`, `examples/`, and all `presets/` to the `count`+`interval` schema.
-- Extended `tests/readwrite/test_read_config.py` with DMS, sampling, alias, and validation assertions; consolidated all `readConfig` assertions into the existing test module per the one-to-one module-to-test mapping.
+- Extended `tests/read_write/test_read_config.py` with DMS, sampling, alias, and validation assertions; consolidated all `readConfig` assertions into the existing test module per the one-to-one module-to-test mapping.

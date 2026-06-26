@@ -1,0 +1,13 @@
+# Reference event used by the shadBala integration tests.
+# Coordinates and time describe a birth chart near Madurai, India.
+scenarios:
+  referenceEvent:
+    name: "referenceEvent"
+    day: 31
+    month: 7
+    year: 1984
+    hour: 8
+    minute: 25
+    second: 0
+    latitude: 9.95
+    longitude: 78.81

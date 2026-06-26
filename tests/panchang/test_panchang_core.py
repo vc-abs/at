@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
-from at.panchang import Panchang, getObjectDistance
+from at.panchang import Panchang, get_object_distance
 
 
-class _Chart:
+class _chart:
 	def __init__(self):
 		self._config = {
 			'date': datetime(
@@ -36,7 +36,7 @@ def _rise_set_stub(config):
 
 def test_get_object_distance_wraps_correctly():
 	assert (
-		getObjectDistance(
+		get_object_distance(
 			{'longitude': 350},
 			{'longitude': 10},
 		)
@@ -45,9 +45,9 @@ def test_get_object_distance_wraps_correctly():
 
 
 def test_panchang_core_properties_with_stubbed_rise_set():
-	chart = _Chart()
+	chart = _chart()
 	with patch(
-		'at.panchang.getRiseAndSetTimes',
+		'at.panchang.get_rise_and_set_times',
 		side_effect=_rise_set_stub,
 	):
 		p = Panchang(chart)
@@ -64,6 +64,6 @@ def test_panchang_core_properties_with_stubbed_rise_set():
 			'jupiter',
 			'mars',
 		]
-		assert 1 <= p.nakshatraNumber <= 27
+		assert 1 <= p.nakshatra_number <= 27
 		assert isinstance(p.nakshatra, str)
-		assert 1 <= p.nakshatraPada <= 4
+		assert 1 <= p.nakshatra_pada <= 4
