@@ -4,7 +4,6 @@
 
 - [Tooling and Developer Experience](#tooling-and-developer-experience)
 - [Architecture and Refactoring](#architecture-and-refactoring)
-- [Configuration and Input Model](#configuration-and-input-model)
 - [Muhurta/Yoga Domain Coverage](#muhurtayoga-domain-coverage)
 - [Performance and Scalability](#performance-and-scalability)
 - [Output and Explainability](#output-and-explainability)
@@ -28,13 +27,9 @@
 - Try to depend on chart objects, rather than Python `datetime`, for weekday calculations.
 - Prefer numbers over strings for calculations; add a translation layer at output time.
 
-## Configuration and Input Model
 
-- Make configuration more human-readable.
-- Support DMS notation for latitudes and longitudes.
-- Introduce `endTime` as an option to allow skipping explicit period config.
-- Introduce `startDate`, `startTime`, `endDate`, and `endTime` configs.
-- Replace `periods` with a single `period` config with values aligned to `frequency` type.
+## Domain Correctness
+
 - Make Rahu/Ketu exaltation handling configurable by tradition/school after correcting the current exaltation logic.
 
 ## Muhurta/Yoga Domain Coverage

@@ -4,6 +4,7 @@
 
 - [What This Tool Does](#what-this-tool-does)
 - [Basic Usage](#basic-usage)
+- [Configuration Inputs](#configuration-inputs)
 - [Query Language Notes](#query-language-notes)
 - [Config Constants](#config-constants)
 - [Gowri Panchangam Notes](#gowri-panchangam-notes)
@@ -19,6 +20,30 @@
 - Setup environment: `sh ./setup.sh`
 - Run with config: `python3 main.py ./examples/config.yml`
 - Run validation: `./scripts/validate.sh`
+
+## Configuration Inputs
+
+### Coordinates
+
+- `latitude` and `longitude` accept either **decimal degrees** (e.g. `23.101`) or **compact DMS** form: `<deg><hemisphere><min>` or `<deg><hemisphere><min><sec>`.
+  - `70E15` => 70°15′E
+  - `15N5930` => 15°59′30″N
+  - Hemisphere letters set sign: N/E positive, S/W negative.
+
+### Date and Time
+
+- `startDate` / `startTime` are aliases for the base `year`/`month`/`day`/`hour`/`minute`/`second` inputs.
+  - Date format: `(YY)YY-MM-DD` (e.g. `2024-01-04` or `24-01-04`).
+  - Time format: `hh:mm:ss` (24-hour, e.g. `06:00:00`).
+- `endDate` / `endTime` define an optional time window boundary. When provided, `count` is derived from the inclusive range `[start, end]` at the given `interval`. Both `endDate` and `endTime` must be specified together.
+
+### Sampling Model
+
+- `count`: number of generated records/samples.
+- `interval`: cadence between samples, as a fixed-duration pandas frequency alias (e.g. `1h`, `15min`, `1d`). Variable-calendar anchors such as `M` (month) or `Y` (year) are rejected.
+- Legacy `frequency` / `periods` keys are accepted and normalized to `interval` / `count`.
+- When `endDate` / `endTime` are present, the derived count overrides any explicit `count` (the window is authoritative).
+- Range boundary semantics are **both-inclusive**: both the start and end timestamps appear in the generated series.
 
 ## Query Language Notes
 

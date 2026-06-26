@@ -22,6 +22,7 @@ Current implemented rule highlights:
 - A new `staffOnboarding` preset now targets institutional joining/onboarding use cases with stronger weighting on 10th/11th/1st house fit, practical 2nd/6th support, and bounded Saturn-inclusive dasha/strength signals.
 - A new `studentOnboarding` preset now targets course-entry and learning-commencement use cases with stronger weighting on 4th/5th/9th learning support, education-specific weekday/nakshatra preferences, and Jupiter/Mercury-led dasha/strength signals.
 - The system generally evaluates many point-in-time records rather than operating range-first, and first-pass Gowri Panchangam follows that same model by deriving the current segment from sunrise/sunset-based 8-part day/night segmentation and an algorithmic weekday-cycle rule.
+- Configuration inputs are standardized at the parsing layer: `latitude`/`longitude` accept compact DMS (`70E15`) or decimal degrees; `startDate`/`startTime` alias the base date/time inputs; `endDate`/`endTime` derive `count` via a both-inclusive range; `count`+`interval` are the canonical sampling keys (legacy `frequency`/`periods` normalized away); and `interval` must be a fixed-duration pandas alias.
 
 ## Observed Functional Areas
 

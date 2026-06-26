@@ -21,6 +21,11 @@
 
 ## Implementation Guidelines
 
+### Comment policy
+- Keep comments rare and purposeful. Prefer readable code over inline explanations.
+- Avoid comments that restate obvious mechanics.
+- If a comment is needed, it should explain the "why" (non-obvious decision, invariant, or workaround).
+
 - Prefer deterministic calculations and explicit units/types.
 - Keep domain constants and rules traceable and documented.
 - Prefer YAML/config-first solutions over runtime/code expansion when the requested behavior can be expressed clearly and maintainably in the existing preset/query/custom-column surface.
@@ -40,6 +45,7 @@
 - Add/update tests with each behavior change.
 - Prefer short lead-in sentences followed by bullet lists when recording multiple functional rules or behavior highlights in `context/functional.md`.
 - Reflect user-facing behavior changes in `docs/guide.md`.
+- Avoid referencing gitignored files (e.g., `presets/.private/*`, `temp/*`) as reproducible evidence in `context/execution.md` validation blocks or docs: ripgrep and `git ls-files` skip gitignored paths by default, so such references are invisible to tooling/models that explore via those commands and cannot be independently reproduced. Prefer tracked fixtures under `tests/fixtures/` or tracked presets for validation evidence.
 - For large binary reference artifacts (for example PDFs), prefer keeping only immediately used artifacts in-repo; otherwise store source links in backlog/docs for on-demand retrieval.
 - If large PDFs must be retained locally, track them with DVC pointers (`*.dvc`) and do not commit raw binaries to Git history.
 - Repository pre-commit policy denies direct `.pdf` staging.

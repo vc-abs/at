@@ -11,6 +11,8 @@
 - [2026-06-22: Model marketing/launch Gowri and Shadbala as additive score adjustments](#2026-06-22-model-marketinglaunch-gowri-and-shadbala-as-additive-score-adjustments)
 - [2026-06-22: Use root config constants with author-facing `constants.foo` syntax](#2026-06-22-use-root-config-constants-with-author-facing-constantsfoo-syntax)
 - [2026-06-22: Keep preset `qualityScore` limited to dynamically varying planet qualities](#2026-06-22-keep-preset-qualityscore-limited-to-dynamically-varying-planet-qualities)
+- [2026-06-25: Adopt `count`+`interval` sampling model with parse-time normalization](#2026-06-25-adopt-countinterval-sampling-model-with-parse-time-normalization)
+- [2026-06-25: Use compact DMS form for coordinate encoding](#2026-06-25-use-compact-dms-form-for-coordinate-encoding)
 
 ## 2026-06-22: Adopt deliberate-dev lifecycle artefacts
 
@@ -71,3 +73,15 @@
 - **Decision**: Restrict `qualityScore` in the marketing and launch presets to dynamically varying quality labels only (`Mercury`, `Moon`) and do not score fixed-nature planets through `Q` branches.
 - **Rationale**: In the current implementation, `Venus` and `Jupiter` are always benefic by `Q`, while `Sun` and `Mars` are always malefic; scoring them through preset `qualityScore` created constant or impossible branches that looked meaningful but did not discriminate real candidates.
 - **Consequences**: Both presets now avoid impossible/always-on `qualityScore` cases, launch no longer depends on a hard `moQ != 'malefic'` gate to produce candidates, and preset thresholds/rubrics now reflect actual dynamic quality variation more faithfully.
+
+## 2026-06-25: Adopt `count`+`interval` sampling model with parse-time normalization
+
+- **Decision**: Replace `frequency`+`periods` with `count`+`interval` as the canonical sampling keys, normalized at the parsing layer so downstream code consumes only `count`+`interval`.
+- **Rationale**: A single unified sampling model expressed as sample count and fixed cadence is clearer than the legacy frequency/periods pair. Normalizing at parse time avoids a parallel config model downstream.
+- **Consequences**: Legacy `frequency`/`periods` are accepted and normalized away (not rejected). `interval` must be a fixed-duration pandas frequency alias; variable-calendar anchors (`M`, `Y`, etc.) are rejected as non-deterministic. `endDate`/`endTime` derive `count` via a both-inclusive range, overriding any coexisting `count` (the window is authoritative). All presets and defaults migrated to `count`+`interval`.
+
+## 2026-06-25: Use compact DMS form for coordinate encoding
+
+- **Decision**: Accept compact hemisphere-in-between DMS form (`70E15`, `15N5930`) and decimal degrees for `latitude`/`longitude`; reject structured-object and delimiter-string forms.
+- **Rationale**: One canonical encoding plus the decimal shortcut minimizes parser surface while removing the need for users to pre-convert minutes/seconds to decimal degrees.
+- **Consequences**: Compact form parses to decimal degrees at the config layer before any chart computation; hemisphere letters set sign (N/E positive, S/W negative).

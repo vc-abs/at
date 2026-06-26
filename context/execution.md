@@ -10,45 +10,23 @@ This document stores active implementation-cycle state for the current execution
 
 ## Active Cycle
 
-- Current cycle item: **none**.
-- Active change set: **none**.
-- Cycle status: **idle (no active implementation cycle)**.
+- Active execution change set: none (cycle finalized).
 
 ## Validation
 
 Latest finalized-cycle validation evidence:
 
-- `./.venv/bin/python main.py ./presets/staffOnboarding.yml ./presets/archive/.quick.yml ./presets/.private/vc.yml | head -n 5` ✅
-  - result: staff onboarding preset produced candidate rows on the retained VC chart
-- `./.venv/bin/python main.py ./presets/studentOnboarding.yml ./presets/archive/.quick.yml ./presets/.private/vc.yml | head -n 5` ✅
-  - result: student onboarding preset produced candidate rows on the retained VC chart
-- `./.venv/bin/python main.py ./temp/staff-onboarding-review-week-export.yml ./presets/staffOnboarding.yml ./presets/.private/vc.yml` ✅
-  - result: staff onboarding weekly review TSV generated successfully
-- `./.venv/bin/python main.py ./temp/student-onboarding-review-week-export.yml ./presets/studentOnboarding.yml ./presets/.private/vc.yml` ✅
-  - result: student onboarding weekly review TSV generated successfully
-- `./.venv/bin/python main.py ./temp/staff-onboarding-review-month-export.yml ./presets/staffOnboarding.yml` ✅
-  - result: staff onboarding monthly review TSV generated successfully in `temp/`
-- `./.venv/bin/python main.py ./temp/student-onboarding-review-month-export.yml ./presets/studentOnboarding.yml` ✅
-  - result: student onboarding monthly review TSV generated successfully in `temp/`
-- `./.venv/bin/python -m pytest tests/tools/test_generate_combos.py -q` ✅
-  - result: preset-structure and combo-generation checks passed
-- `./.venv/bin/python -m pytest tests/shadbala/test_shadbala_integration.py -q` ✅
-  - result: archived VC fixture integration checks passed
 - `./scripts/validate.sh` ✅
-  - result: `106 passed`
+  - result: `116 passed`
+- `./.venv/bin/python -m pytest tests/readwrite/test_read_config.py -q` ✅
+  - result: DMS parsing, sampling normalization, alias equivalence, end-window count derivation, fixed-duration interval validation, and partial-end-pair fail-fast checks passed
+- `./.venv/bin/python main.py ./presets/debug.yml` ✅
+  - result: debug preset generated successfully with migrated `count`+`interval` schema
+- `./.venv/bin/python -c "from at.readWrite.readConfig import readConfig; readConfig(['./presets/debug.yml'])"` ✅
+  - result: `interval: 1h` (inherited from default), `count: 1`; `endDatetime` absent from returned config
 
 ## Completion State
 
-- Most recent finalized cycle: **Staff and student onboarding presets**.
-- Finalization state: **complete**.
-- Plan synchronization state: **clean** (`plan.md` has no active plan items).
-
-Finalization summary:
-
-- added `presets/staffOnboarding.yml`
-- added `presets/studentOnboarding.yml`
-- kept `presets/education.yml` unchanged as the minimal legacy education preset
-- added weekly and monthly review export configs/TSVs under `temp/` for both onboarding presets
-- added preset-structure assertions for both onboarding presets in `tests/tools/test_generate_combos.py`
-- updated `tests/shadbala/test_shadbala_integration.py` to use `presets/archive/.vc.yml`, matching the retained repository fixture layout
-- synchronized `docs/guide.md`, `docs/notes.md`, `context/functional.md`, and `context/structural.md` with the delivered onboarding preset behavior
+- Most recent finalized cycle: **Configuration and Input Model**.
+- Finalization state: **finalized**.
+- Plan synchronization state: **promoted and finalized** (configuration/input-model plan entry dissolved into active context, then cleared on finalization).

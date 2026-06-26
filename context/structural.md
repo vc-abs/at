@@ -18,6 +18,13 @@
 - Main implementation files currently visible:
   - `src/at/main.py`
   - `src/at/__init__.py`
+- Configuration parsing now standardizes all accepted inputs in `src/at/readWrite/readConfig.py` via a single `_standardizeConfig` helper applied to both the global config and each scenario's merged config:
+  - compact DMS and decimal-degree coordinate parsing for `latitude`/`longitude`,
+  - `startDate`/`startTime` aliases consumed into base `year`/`month`/`day`/`hour`/`minute`/`second`,
+  - `endDate`/`endTime` window inputs that derive per-scenario `count` via both-inclusive `pd.date_range`,
+  - legacy `frequency`/`periods` normalized to `interval`/`count`,
+  - fixed-duration `interval` validation rejecting variable-calendar anchors,
+  - downstream `generateScenarioCombos` in `src/at/tools/generateCombos.py` consumes only `count`+`interval`.
 - Panchang implementation now also includes:
   - Gowri schedule runtime in `src/at/panchang/gowri.py`,
   - shared Gowri constants in `src/at/core/constants.py`,
@@ -46,4 +53,5 @@
 - `tests/tools/test_generate_combos.py` now covers compact time-flag output, planet-quality output, Gowri output fields, field-set selection behavior, and constant-backed query/custom-column behavior for combo generation, including preset-structure checks for `launch`, `staffOnboarding`, and `studentOnboarding`.
 - `tests/shadbala/test_shadbala.py` now covers Dig Bala reference-longitude and linear falloff behavior.
 - `tests/shadbala/test_shadbala_integration.py` now resolves the retained VC fixture from `presets/archive/.vc.yml` so validation matches the repository's current preset layout.
+- `tests/readwrite/test_read_config.py` covers scenario merging, file merge behavior, default-config loading, DMS compact/decimal coordinate parsing, `startDate`/`startTime` alias equivalence, `endDate`/`endTime` count derivation (both-inclusive), legacy `frequency`/`periods` normalization, fixed-duration `interval` validation, and partial-end-pair fail-fast behavior.
 - Coverage + lint workflow referenced in README via `./scripts/validate.sh`.
