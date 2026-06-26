@@ -1,26 +1,26 @@
 from at.core.constants import (
-	signCount,
-	signWidth,
+	sign_count,
+	sign_width,
 	degrees,
 )
 
 
-def getHoraSign(planet, varga):
-	degreeInSign = (
-		planet['longitude'] % signWidth
+def get_hora_sign(planet, varga):
+	degree_in_sign = (
+		planet['longitude'] % sign_width
 	)
-	vargaPosition = degreeInSign // (
-		signWidth // varga
+	varga_position = degree_in_sign // (
+		sign_width // varga
 	)
 
 	return (
 		4
-		+ (planet['sign'] + vargaPosition)
+		+ (planet['sign'] + varga_position)
 		% varga
 	)
 
 
-trimshamsaRulership = [
+trimshamsa_rulership = [
 	{
 		(0, 5): 2,
 		(5, 10): 6,
@@ -44,22 +44,22 @@ trimshamsaRulership = [
 ]
 
 
-def getTrimshamsaSign(planet, varga):
-	degreeInSign = (
-		planet['longitude'] % signWidth
+def get_trimshamsa_sign(planet, varga):
+	degree_in_sign = (
+		planet['longitude'] % sign_width
 	)
 
 	for (
 		(start, end),
 		sign,
-	) in trimshamsaRulership[
+	) in trimshamsa_rulership[
 		planet['sign'] % 2
 	].items():
-		if start <= degreeInSign < end:
+		if start <= degree_in_sign < end:
 			return sign
 
 
-vargaConfig = {
+varga_config = {
 	1: {
 		'type': 'custom',
 		'fn': lambda planet, varga: planet[
@@ -68,7 +68,7 @@ vargaConfig = {
 	},
 	2: {
 		'type': 'custom',
-		'fn': getHoraSign,
+		'fn': get_hora_sign,
 	},
 	3: {
 		'type': 'division',
@@ -131,7 +131,7 @@ vargaConfig = {
 	27: {'type': 'perfect'},
 	30: {
 		'type': 'custom',
-		'fn': getTrimshamsaSign,
+		'fn': get_trimshamsa_sign,
 	},
 	40: {
 		'type': 'sign',
@@ -161,118 +161,118 @@ vargaConfig = {
 }
 
 
-def getVargaOffset(
-	offsetData, vargaPosition, sign
+def get_varga_offset(
+	offset_data, varga_position, sign
 ):
 	return (
-		offsetData['offsets'][vargaPosition]
+		offset_data['offsets'][varga_position]
 		- 1
 	)
 
 
-def getRashiOffset(
-	offsetData, vargaPosition, sign
+def get_rashi_offset(
+	offset_data, varga_position, sign
 ):
-	offsets = offsetData['offsets']
+	offsets = offset_data['offsets']
 	return (
 		offsets[(sign - 1) % len(offsets)]
 		- 1
-		+ vargaPosition
+		+ varga_position
 	)
 
 
-offsetTypeProcessors = {
-	'division': getVargaOffset,
-	'sign': getRashiOffset,
+offset_type_processors = {
+	'division': get_varga_offset,
+	'sign': get_rashi_offset,
 }
 
 
-def getVargaDegrees(planet, varga):
-	vargaLongitude = (
+def get_varga_degrees(planet, varga):
+	varga_longitude = (
 		planet['longitude'] * varga
 	) % degrees
-	vargaDegree = (
-		vargaLongitude % signWidth
+	varga_degree = (
+		varga_longitude % sign_width
 	)
 
-	return (vargaLongitude, vargaDegree)
+	return (varga_longitude, varga_degree)
 
 
-def getOffset(
-	varga, vargaPosition, sign
+def get_offset(
+	varga, varga_position, sign
 ):
-	offsetData = vargaConfig[varga]
-	return offsetTypeProcessors[
-		offsetData['type']
-	](offsetData, vargaPosition, sign)
+	offset_data = varga_config[varga]
+	return offset_type_processors[
+		offset_data['type']
+	](offset_data, varga_position, sign)
 
 
-def getOffsetVargaPosition(
+def get_offset_varga_position(
 	planet, varga
 ):
 	longitude = planet['longitude']
-	signIndex = planet['sign'] - 1
-	degreesWithinSign = (
-		longitude % signWidth
+	sign_index = planet['sign'] - 1
+	degrees_within_sign = (
+		longitude % sign_width
 	)
-	vargaWidth = signWidth / varga
-	vargaPosition = int(
-		degreesWithinSign // vargaWidth
+	varga_width = sign_width / varga
+	varga_position = int(
+		degrees_within_sign // varga_width
 	)
-	offset = getOffset(
-		varga, vargaPosition, planet['sign']
+	offset = get_offset(
+		varga, varga_position, planet['sign']
 	)
-	vargaSign = int(
-		(signIndex + offset) % signCount + 1
+	varga_sign = int(
+		(sign_index + offset) % sign_count + 1
 	)
 
-	return vargaSign
+	return varga_sign
 
 
-def getPerfectVargaPosition(
+def get_perfect_varga_position(
 	planet, varga
 ):
-	vargaLongitude, vargaDegree = (
-		getVargaDegrees(planet, varga)
+	varga_longitude, varga_degree = (
+		get_varga_degrees(planet, varga)
 	)
 
-	vargaSign = (
-		int(vargaLongitude // signWidth)
-		% signCount
+	varga_sign = (
+		int(varga_longitude // sign_width)
+		% sign_count
 	) + 1
 
-	return vargaSign
+	return varga_sign
 
 
-def getCustomVargaPosition(
+def get_custom_varga_position(
 	planet, varga
 ):
-	sign = vargaConfig[varga]['fn'](
+	sign = varga_config[varga]['fn'](
 		planet, varga
 	)
 
 	return sign
 
 
-vargaTypeProcessors = {
-	'perfect': getPerfectVargaPosition,
-	'sign': getOffsetVargaPosition,
-	'division': getOffsetVargaPosition,
-	'custom': getCustomVargaPosition,
+varga_type_processors = {
+	'perfect': get_perfect_varga_position,
+	'sign': get_offset_varga_position,
+	'division': get_offset_varga_position,
+	'custom': get_custom_varga_position,
 }
 
 
-def getVargaPosition(planet, varga):
-	vargaType = vargaConfig.get(
+def get_varga_position(planet, varga):
+	varga_type = varga_config.get(
 		varga, {}
 	).get('type', 'perfect')
 
 	sign = int(
-		vargaTypeProcessors[vargaType](
+		varga_type_processors[varga_type](
 			planet, varga
 		)
 	)
-	longitude, degree = getVargaDegrees(
+	longitude, degree = get_varga_degrees(
 		planet, varga
 	)
 

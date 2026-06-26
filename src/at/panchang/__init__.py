@@ -1,36 +1,36 @@
 import math
-from at.core.Cached import Cached
+from at.core.cached import Cached
 from at.core.constants import (
-	signCount,
-	tithiCount,
+	sign_count,
+	tithi_count,
 	degrees,
 	weekdays,
-	daysInAWeek,
-	weekdayLords,
-	horaLordSequence,
-	horasPerDay,
+	days_in_a_week,
+	weekday_lords,
+	hora_lord_sequence,
+	horas_per_day,
 	nakshatras,
-	nakshatraCount,
-	padasPerNakshatra,
+	nakshatra_count,
+	padas_per_nakshatra,
 )
-from at.core.sweHelpers import (
-	getRiseAndSetTimes,
+from at.core.swe_helpers import (
+	get_rise_and_set_times,
 )
 from at.core.helpers import (
-	getOrdinalPosition,
+	get_ordinal_position,
 )
-from at.panchang.getMuhurtaYoga import (
-	getMuhurtaYogas,
-	getMuhurtaYogaEffects,
+from at.panchang.get_muhurta_yoga import (
+	get_muhurta_yogas,
+	get_muhurta_yoga_effects,
 )
 from at.panchang.gowri import (
-	getGowriSchedule,
-	getCurrentGowriSegment,
-	getGowriWindowFlags,
+	get_gowri_schedule,
+	get_current_gowri_segment,
+	get_gowri_window_flags,
 )
 
 
-def getObjectDistance(
+def get_object_distance(
 	source, destination
 ):
 	return (
@@ -45,7 +45,7 @@ class Panchang(Cached):
 		super().__init__()
 		self._chart = chart
 
-	def _getTithi(self):
+	def _get_tithi(self):
 		return (
 			math.ceil(
 				(
@@ -58,31 +58,31 @@ class Panchang(Cached):
 					+ degrees
 				)
 				% degrees
-				/ signCount
+				/ sign_count
 			)
-			% tithiCount
+			% tithi_count
 		)
 
-	def _getRiseAndSet(self):
-		return getRiseAndSetTimes(
+	def _get_rise_and_set(self):
+		return get_rise_and_set_times(
 			self._chart._config
 		)
 
-	def _getDayLengths(self):
-		riseAndSet = self.riseAndSet
-		eventTime = self._chart.config[
+	def _get_day_lengths(self):
+		rise_and_set = self.rise_and_set
+		event_time = self._chart.config[
 			'datetime'
 		]
 		elapsed = int(
 			(
-				eventTime
-				- riseAndSet['sunrise']
+				event_time
+				- rise_and_set['sunrise']
 			).total_seconds()
 		)
 		length = int(
 			(
-				riseAndSet['nextRise']
-				- riseAndSet['sunrise']
+				rise_and_set['nextRise']
+				- rise_and_set['sunrise']
 			).total_seconds()
 		)
 
@@ -91,24 +91,24 @@ class Panchang(Cached):
 			'total': length,
 		}
 
-	def _getTod(self):
-		riseAndSetTimes = self.riseAndSet
+	def _get_tod(self):
+		rise_and_set_times = self.rise_and_set
 
 		return (
 			'day'
 			if (
-				riseAndSetTimes['sunrise']
+				rise_and_set_times['sunrise']
 				<= self._chart.config[
 					'datetime'
 				]
-				< riseAndSetTimes['sunset']
+				< rise_and_set_times['sunset']
 			)
 			else 'night'
 		)
 
-	def _getVaara(self):
-		calendarDayAdjustment = (
-			self.riseAndSet['sunrise'].day
+	def _get_vaara(self):
+		calendar_day_adjustment = (
+			self.rise_and_set['sunrise'].day
 			- self._chart.config[
 				'datetime'
 			].day
@@ -120,62 +120,62 @@ class Panchang(Cached):
 					'date'
 				].weekday()
 				+ 1
-				+ calendarDayAdjustment
+				+ calendar_day_adjustment
 			)
-			% daysInAWeek
+			% days_in_a_week
 		]
 
-	def _getHora(self):
+	def _get_hora(self):
 		vaara = self.vaara
-		dayStartHoraLordIndex = (
-			horaLordSequence.index(
-				weekdayLords[vaara]
+		day_start_hora_lord_index = (
+			hora_lord_sequence.index(
+				weekday_lords[vaara]
 			)
 		)
-		eventHora = int(
-			horasPerDay
+		event_hora = int(
+			horas_per_day
 			* (
-				self.dayLengths['elapsed']
-				/ self.dayLengths['total']
+				self.day_lengths['elapsed']
+				/ self.day_lengths['total']
 			)
 		)
-		eventHoraLordIndex = (
-			dayStartHoraLordIndex + eventHora
-		) % daysInAWeek
+		event_hora_lord_index = (
+			day_start_hora_lord_index + event_hora
+		) % days_in_a_week
 
-		return horaLordSequence[
-			eventHoraLordIndex
+		return hora_lord_sequence[
+			event_hora_lord_index
 		]
 
-	def _getNakshatraNumber(self):
-		return getOrdinalPosition(
+	def _get_nakshatra_number(self):
+		return get_ordinal_position(
 			self._chart.objects['moon'][
 				'longitude'
 			],
-			nakshatraCount,
+			nakshatra_count,
 		)
 
-	def _getNakshatra(self):
+	def _get_nakshatra(self):
 		return nakshatras[
-			self._getNakshatraNumber() - 1
+			self._get_nakshatra_number() - 1
 		]
 
-	def _getNakshatraPada(self):
+	def _get_nakshatra_pada(self):
 		return (
-			self._getNakshatraNumber() - 1
-		) % padasPerNakshatra + 1
+			self._get_nakshatra_number() - 1
+		) % padas_per_nakshatra + 1
 
-	def _getMuhurtaYogas(self):
-		return getMuhurtaYogas(self)
+	def _get_muhurta_yogas(self):
+		return get_muhurta_yogas(self)
 
-	def _getMuhurtaYogaEffects(self):
-		return getMuhurtaYogaEffects(self)
+	def _get_muhurta_yoga_effects(self):
+		return get_muhurta_yoga_effects(self)
 
-	def _getGowriSchedule(self):
-		return getGowriSchedule(self)
+	def _get_gowri_schedule(self):
+		return get_gowri_schedule(self)
 
-	def _getGowriSegment(self):
-		return getCurrentGowriSegment(self)
+	def _get_gowri_segment(self):
+		return get_current_gowri_segment(self)
 
-	def _getGowri(self):
-		return getGowriWindowFlags(self)
+	def _get_gowri(self):
+		return get_gowri_window_flags(self)

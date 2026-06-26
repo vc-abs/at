@@ -5,18 +5,18 @@ from at.chart import Chart
 from at.core.constants import (
 	planets,
 	nodes,
-	combustionOrbs,
+	combustion_orbs,
 )
-from at.core.helpers import getShortestDistanceInCircle
-from at.core.planetQuality import getPlanetQuality
+from at.core.helpers import get_shortest_distance_in_circle
+from at.core.planet_quality import get_planet_quality
 
-orderMap = {
+order_map = {
 	'ascending': True,
 	'descending': False,
 }
 
 
-def getObjectHouses(chart):
+def get_object_houses(chart):
 	return dict(
 		{
 			'asS': chart.objects['asc'][
@@ -24,19 +24,19 @@ def getObjectHouses(chart):
 			]
 		},
 		**{
-			(objectKey[:2] + 'H'): object[
+			(object_key[:2] + 'H'): object[
 				'house'
 			]
 			for (
-				objectKey,
+				object_key,
 				object,
 			) in chart.objects.items()
-			if objectKey != 'asc'
+			if object_key != 'asc'
 		},
 	)
 
 
-def getPlanetaryDegrees(chart):
+def get_planetary_degrees(chart):
 	return {
 		'asD': chart.objects['asc'][
 			'longitude'
@@ -56,18 +56,18 @@ def getPlanetaryDegrees(chart):
 	}
 
 
-placeHolderPlanetBalas = {
+place_holder_planet_balas = {
 	'strength': 0,
 	'ishtaPhala': 0,
 }
 
 
-def formatDashaData(
+def format_dasha_data(
 	dasha, balas, prefix
 ):
-	dashaLordPhala = balas.get(
+	dasha_lord_phala = balas.get(
 		dasha['lord'],
-		placeHolderPlanetBalas,
+		place_holder_planet_balas,
 	)
 
 	return {
@@ -75,79 +75,79 @@ def formatDashaData(
 			f'{ prefix }{ k[0].upper() }{ k[1:] }': v
 			for k, v in dasha.items()
 		},
-		f'{ prefix }lStrength': dashaLordPhala[
+		f'{ prefix }lStrength': dasha_lord_phala[
 			'strength'
 		],
-		f'{ prefix }lIshtaPhala': dashaLordPhala[
+		f'{ prefix }lIshtaPhala': dasha_lord_phala[
 			'ishtaPhala'
 		],
 	}
 
 
-def getMahaDasha(chart):
-	return formatDashaData(
-		chart.dasha.mahaDasha,
-		chart.shadBala.balas,
+def get_maha_dasha(chart):
+	return format_dasha_data(
+		chart.dasha.maha_dasha,
+		chart.shad_bala.balas,
 		'md',
 	)
 
 
-def getAntarDashas(chart):
-	formattedDashas = [
-		formatDashaData(
-			antarDashaData,
-			chart.shadBala.balas,
-			antarDashaPrefix,
+def get_antar_dashas(chart):
+	formatted_dashas = [
+		format_dasha_data(
+			antar_dasha_data,
+			chart.shad_bala.balas,
+			antar_dasha_prefix,
 		)
-		for antarDashaPrefix, antarDashaData in chart.dasha.antarDashas.items()
+		for antar_dasha_prefix, antar_dasha_data in chart.dasha.antar_dashas.items()
 	]
 	return {
 		k: v
-		for d in formattedDashas
+		for d in formatted_dashas
 		for k, v in d.items()
 	}
 
 
-def getPlanetFlagsByPlanet(chart, planet):
-	sunLongitude = chart.objects['sun']['longitude']
-	planetData = chart.objects[planet]
+def get_planet_flags_by_planet(chart, planet):
+	sun_longitude = chart.objects['sun']['longitude']
+	planet_data = chart.objects[planet]
 	flags = []
 
-	if planetData.get('retrograde'):
+	if planet_data.get('retrograde'):
 		flags.append('R')
 
-	combustionOrb = combustionOrbs.get(planet)
-	if combustionOrb and (
-		getShortestDistanceInCircle(
-			planetData['longitude'],
-			sunLongitude,
+	combustion_orb = combustion_orbs.get(planet)
+	if combustion_orb and (
+		get_shortest_distance_in_circle(
+			planet_data['longitude'],
+			sun_longitude,
 		)
-		<= combustionOrb
+		<= combustion_orb
 	):
 		flags.append('C')
 
 	return '|'.join(sorted(flags))
 
 
-def getPlanetFlags(chart):
+def get_planet_flags(chart):
 	return {
-		f'{planet[:2]}F': getPlanetFlagsByPlanet(
+		f'{planet[:2]}F': get_planet_flags_by_planet(
 			chart, planet
 		)
 		for planet in planets
 	}
 
 
-def getPlanetQualities(chart):
+def get_planet_qualities(chart):
 	return {
-		f'{planet[:2]}Q': getPlanetQuality(
+		f'{planet[:2]}Q': get_planet_quality(
 			chart.objects[planet], chart
 		)
 		for planet in planets
 	}
 
 
-timeFlagSegmentsByVaara = {
+time_flag_segments_by_vaara = {
 	'sunday': {'RK': 8, 'YG': 5, 'GK': 7},
 	'monday': {'RK': 2, 'YG': 4, 'GK': 6},
 	'tuesday': {'RK': 7, 'YG': 3, 'GK': 5},
@@ -158,46 +158,46 @@ timeFlagSegmentsByVaara = {
 }
 
 
-def isWithinDaySegment(
-	eventTime,
-	segmentIndex,
-	dayStart,
-	dayEnd,
-	segmentCount=8,
+def is_within_day_segment(
+	event_time,
+	segment_index,
+	day_start,
+	day_end,
+	segment_count=8,
 ):
-	if not dayStart <= eventTime < dayEnd:
+	if not day_start <= event_time < day_end:
 		return False
 
-	segmentDuration = (
-		dayEnd - dayStart
-	) / segmentCount
-	segmentStart = dayStart + (
-		segmentDuration * (segmentIndex - 1)
+	segment_duration = (
+		day_end - day_start
+	) / segment_count
+	segment_start = day_start + (
+		segment_duration * (segment_index - 1)
 	)
-	segmentEnd = dayStart + (
-		segmentDuration * segmentIndex
+	segment_end = day_start + (
+		segment_duration * segment_index
 	)
 
-	return segmentStart <= eventTime < segmentEnd
+	return segment_start <= event_time < segment_end
 
 
 
-def getTimeFlags(chart):
-	riseAndSet = chart.panchang.riseAndSet
-	eventTime = chart.config['datetime']
-	dayStart = riseAndSet['sunrise']
-	dayEnd = riseAndSet['sunset']
-	flagSegments = timeFlagSegmentsByVaara[
+def get_time_flags(chart):
+	rise_and_set = chart.panchang.rise_and_set
+	event_time = chart.config['datetime']
+	day_start = rise_and_set['sunrise']
+	day_end = rise_and_set['sunset']
+	flag_segments = time_flag_segments_by_vaara[
 		chart.panchang.vaara
 	]
 	flags = [
 		flag
-		for flag, segmentIndex in flagSegments.items()
-		if isWithinDaySegment(
-			eventTime,
-			segmentIndex,
-			dayStart,
-			dayEnd,
+		for flag, segment_index in flag_segments.items()
+		if is_within_day_segment(
+			event_time,
+			segment_index,
+			day_start,
+			day_end,
 		)
 	]
 
@@ -207,7 +207,7 @@ def getTimeFlags(chart):
 
 
 
-def getGowriFlags(chart):
+def get_gowri_flags(chart):
 	gowri = chart.panchang.gowri
 	return {
 		'gowri': gowri['gowri'],
@@ -221,21 +221,21 @@ def getGowriFlags(chart):
 	}
 
 
-phalaPlanetCount = 7
+phala_planet_count = 7
 
 
-def getShadBalaStrength(chart):
+def get_shad_bala_strength(chart):
 	strengths = {
 		planet: phala['strength']
-		for planet, phala in chart.shadBala.balas.items()
+		for planet, phala in chart.shad_bala.balas.items()
 	}
 
-	avgIshtaPhala = (
+	avg_ishta_phala = (
 		sum(
 			phala['ishtaPhala']
-			for phala in chart.shadBala.balas.values()
+			for phala in chart.shad_bala.balas.values()
 		)
-		/ phalaPlanetCount
+		/ phala_planet_count
 	)
 
 	return {
@@ -244,17 +244,17 @@ def getShadBalaStrength(chart):
 			for planet, strength in strengths.items()
 		},
 		'totalS': sum(strengths.values()),
-		'avgIP': avgIshtaPhala,
+		'avgIP': avg_ishta_phala,
 	}
 
 
-def getKarakas(chart):
+def get_karakas(chart):
 	return chart.karakas
 
-def getPanchang(chart):
-	riseAndSet = chart.panchang.riseAndSet
-	sunrise = riseAndSet['sunrise'].strftime("%H:%M:%S")
-	sunset = riseAndSet['sunset'].strftime("%H:%M:%S")
+def get_panchang(chart):
+	rise_and_set = chart.panchang.rise_and_set
+	sunrise = rise_and_set['sunrise'].strftime("%H:%M:%S")
+	sunset = rise_and_set['sunset'].strftime("%H:%M:%S")
 
 	gowri = chart.panchang.gowri
 
@@ -273,17 +273,17 @@ def getPanchang(chart):
 		'gowriEnd': gowri['gowriEnd'].strftime("%H:%M:%S"),
   }
 
-fieldSets = {
+field_sets = {
 	'muhurtaYogaEffects': {
-		'fn': lambda chart: chart.panchang.muhurtaYogaEffects,
+		'fn': lambda chart: chart.panchang.muhurta_yoga_effects,
 		'columns': ['positive', 'negative', 'yogas']
 	},
 	'objectHouses': {
-		'fn': getObjectHouses,
+		'fn': get_object_houses,
 		'columns': ['asS','suH', 'moH', 'maH', 'meH', 'juH', 'veH', 'saH', 'raH', 'keH']
 	},
 	'planetaryDegrees': {
-		'fn': getPlanetaryDegrees,
+		'fn': get_planetary_degrees,
 		'columns': ['asD', 'suD', 'moD', 'maD', 'meD', 'juD', 'veD', 'saD', 'raD', 'keD']
 	},
 	'ashtakavarga': {
@@ -291,35 +291,35 @@ fieldSets = {
 		'columns': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12']
 	},
 	'mahaDasha': {
-		'fn': getMahaDasha,
+		'fn': get_maha_dasha,
 		'columns': ['mdLord', 'mdStartsAt', 'mdEndsAt', 'mdRemainder', 'mdlStrength', 'mdlIshtaPhala']
 	},
 	'antarDashas': {
-		'fn': getAntarDashas,
+		'fn': get_antar_dashas,
 		'columns': ['adLord', 'adStartsAt', 'adEndsAt', 'adRemainder', 'adlStrength', 'adlIshtaPhala', 'padLord', 'padStartsAt', 'padEndsAt', 'padRemainder', 'padlStrength', 'padlIshtaPhala', 'skdLord', 'skdStartsAt', 'skdEndsAt', 'skdRemainder', 'skdlStrength', 'skdlIshtaPhala','prdLord', 'prdStartsAt', 'prdEndsAt', 'prdRemainder', 'prdlStrength', 'prdlIshtaPhala']
 	},
 	'planetFlags': {
-		'fn': getPlanetFlags,
+		'fn': get_planet_flags,
 		'columns': ['suF', 'moF', 'maF', 'meF', 'juF', 'veF', 'saF']
 	},
 	'planetQualities': {
-		'fn': getPlanetQualities,
+		'fn': get_planet_qualities,
 		'columns': ['suQ', 'moQ', 'maQ', 'meQ', 'juQ', 'veQ', 'saQ']
 	},
 	'timeFlags': {
-		'fn': getTimeFlags,
+		'fn': get_time_flags,
 		'columns': ['timeF']
 	},
 	'gowriFlags': {
-		'fn': getGowriFlags,
+		'fn': get_gowri_flags,
 		'columns': ['gowri', 'gowriScore', 'gowriM', 'gowriS', 'gowriT', 'gowriStart', 'gowriEnd', 'gowriF']
 	},
 	'shadBalaStrength': {
-		'fn': getShadBalaStrength,
+		'fn': get_shad_bala_strength,
 		'columns': ['suS', 'moS', 'maS', 'meS', 'juS', 'veS', 'saS', 'totalS', 'avgIP']
 	},
 	'karakas': {
-		'fn': getKarakas,
+		'fn': get_karakas,
 		'columns': ['ak', 'amk', 'bk', 'mk', 'pk', 'gk', 'dk']
 	},
 	'scenario': {
@@ -327,24 +327,24 @@ fieldSets = {
 		'columns': ['scenario', 'date', 'time']
 	},
 	'panchang': {
-		'fn': getPanchang,
+		'fn': get_panchang,
 		'columns': ['tithi', 'nakshatra', 'vaara', 'sunrise', 'sunset', 'gowri', 'gowriScore', 'gowriM', 'gowriS', 'gowriT', 'gowriStart', 'gowriEnd']
 	}
 }
 
-def getFields(config, chart):
+def get_fields(config, chart):
 	return reduce(
-		lambda acc, fieldSet: (
+		lambda acc, field_set: (
 			{
 				**acc,
-				**fieldSets[fieldSet[0]]['fn'](chart),
+				**field_sets[field_set[0]]['fn'](chart),
 			}
 		),
 		config['fieldSets'].items(), {}
 	)
 
 
-def standardizeDate(dt):
+def standardize_date(dt):
 	return {
 		'year': dt.year,
 		'month': dt.month,
@@ -356,35 +356,35 @@ def standardizeDate(dt):
 	}
 
 
-def getTimeCombos(
-	scenarioName, config, dt
+def get_time_combos(
+	scenario_name, config, dt
 ):
 	chart = Chart(
 		{
 			**config,
-			**standardizeDate(dt),
+			**standardize_date(dt),
 			'datetime': dt,
 		}
 	)
 
-	fields = getFields(config, chart)
+	fields = get_fields(config, chart)
 
 	return {
 		'timestamp': dt,
-		'scenario': scenarioName,
+		'scenario': scenario_name,
 		**fields,
 	}
 
 
-def generateScenarioCombos(
-	scenarioName, config
+def generate_scenario_combos(
+	scenario_name, config
 ):
-	scenarioConfig = config['scenarios'][scenarioName]
+	scenario_config = config['scenarios'][scenario_name]
 	config = {
 		**config,
-		**scenarioConfig,
+		**scenario_config,
 	}
-	timeSeries = (
+	time_series = (
 		pd.date_range(
 			start=config['date'],
 			periods=config['count'],
@@ -397,10 +397,10 @@ def generateScenarioCombos(
 	return pd.DataFrame(
 		list(
 			map(
-				lambda dt: getTimeCombos(
-					scenarioConfig.get('name', scenarioName), config, dt
+				lambda dt: get_time_combos(
+					scenario_config.get('name', scenario_name), config, dt
 				),
-				timeSeries,
+				time_series,
 			)
 		),
 	)
@@ -415,11 +415,11 @@ class ConstantNamespace(Mapping):
 			value = self._data[key]
 		except KeyError as exc:
 			raise AttributeError(key) from exc
-		return wrapConstants(value)
+		return wrap_constants(value)
 
 	def __getitem__(self, key):
 		value = self._data[key]
-		return wrapConstants(value)
+		return wrap_constants(value)
 
 	def __iter__(self):
 		return iter(self._data)
@@ -438,7 +438,7 @@ class ConstantNamespace(Mapping):
 		return repr(self._data)
 
 
-def wrapConstants(value):
+def wrap_constants(value):
 	if isinstance(value, ConstantNamespace):
 		return value
 	if isinstance(value, Mapping):
@@ -446,43 +446,43 @@ def wrapConstants(value):
 	return value
 
 
-def getConstantNamespace(config):
-	return wrapConstants(config.get('constants', {}))
+def get_constant_namespace(config):
+	return wrap_constants(config.get('constants', {}))
 
 
-def rewriteConstantsExpression(expression):
+def rewrite_constants_expression(expression):
 	parts = []
 	i = 0
-	inSingleQuote = False
-	inDoubleQuote = False
+	in_single_quote = False
+	in_double_quote = False
 
 	while i < len(expression):
 		char = expression[i]
-		previousChar = expression[i - 1] if i > 0 else ''
+		previous_char = expression[i - 1] if i > 0 else ''
 
-		if char == "'" and not inDoubleQuote and previousChar != '\\':
-			inSingleQuote = not inSingleQuote
+		if char == "'" and not in_double_quote and previous_char != '\\':
+			in_single_quote = not in_single_quote
 			parts.append(char)
 			i += 1
 			continue
 
-		if char == '"' and not inSingleQuote and previousChar != '\\':
-			inDoubleQuote = not inDoubleQuote
+		if char == '"' and not in_single_quote and previous_char != '\\':
+			in_double_quote = not in_double_quote
 			parts.append(char)
 			i += 1
 			continue
 
-		isBoundary = i == 0 or (
-			previousChar not in '@._'
-			and not previousChar.isalnum()
+		is_boundary = i == 0 or (
+			previous_char not in '@._'
+			and not previous_char.isalnum()
 		)
-		isRootConstantsReference = (
-			not inSingleQuote
-			and not inDoubleQuote
+		is_root_constants_reference = (
+			not in_single_quote
+			and not in_double_quote
 			and expression.startswith('constants.', i)
-			and isBoundary
+			and is_boundary
 		)
-		if isRootConstantsReference:
+		if is_root_constants_reference:
 			parts.append('@')
 
 		parts.append(char)
@@ -491,13 +491,13 @@ def rewriteConstantsExpression(expression):
 	return ''.join(parts)
 
 
-def getExpressionLocals(config):
+def get_expression_locals(config):
 	return {
-		'constants': getConstantNamespace(config),
+		'constants': get_constant_namespace(config),
 	}
 
 
-def resolveConstantReference(value, config):
+def resolve_constant_reference(value, config):
 	if not (
 		isinstance(value, str)
 		and value.startswith('constants.')
@@ -510,51 +510,51 @@ def resolveConstantReference(value, config):
 	return resolved
 
 
-def processSummaryColumn(df, summary, config):
-	summaryFn, summaryColumns = next(
+def process_summary_column(df, summary, config):
+	summary_fn, summary_columns = next(
 		iter(summary.items())
 	)
-	summaryColumns = resolveConstantReference(
-		summaryColumns, config
+	summary_columns = resolve_constant_reference(
+		summary_columns, config
 	)
 
 	return getattr(
-		df[summaryColumns], summaryFn
+		df[summary_columns], summary_fn
 	)(axis=1)
 
 
-def getColumn(df, column, config):
+def get_column(df, column, config):
 	if isinstance(column, str):
-		rewrittenColumn = rewriteConstantsExpression(
+		rewritten_column = rewrite_constants_expression(
 			column
 		)
 		return df.eval(
-			rewrittenColumn,
-			local_dict=getExpressionLocals(config),
+			rewritten_column,
+			local_dict=get_expression_locals(config),
 		)
 
 	if isinstance(column, Mapping):
-		return processSummaryColumn(
+		return process_summary_column(
 			df, column, config
 		)
 
 	return column
 
 
-def addCustomColumns(df, columns, config):
+def add_custom_columns(df, columns, config):
 	keys = list(columns.keys())
 
 	for key in keys:
-		df[key] = getColumn(
+		df[key] = get_column(
 			df, columns[key], config
 		)
 
 
-def sortData(df, order):
+def sort_data(df, order):
 	keys = list(order.keys())
 	orders = list(
 		map(
-			lambda column: orderMap[column],
+			lambda column: order_map[column],
 			order.values(),
 		)
 	)
@@ -566,7 +566,7 @@ def sortData(df, order):
 	)
 
 
-def splitTimestamp(df):
+def split_timestamp(df):
 	df.insert(
 		0,
 		'date',
@@ -591,53 +591,53 @@ def splitTimestamp(df):
 		columns=['timestamp'], inplace=True
 	)
 
-def adjustColumns(df):
-	scenarioColumn = df.pop('scenario')
-	df.insert(0, 'scenario', scenarioColumn)
+def adjust_columns(df):
+	scenario_column = df.pop('scenario')
+	df.insert(0, 'scenario', scenario_column)
 
-selectionTypes = {
-	'all': lambda key, columns : fieldSets[key]['columns'],
+selection_types = {
+	'all': lambda key, columns : field_sets[key]['columns'],
 	'none': lambda key, columns : [],
 	'some': lambda key, columns : columns
 }
 
-def addColumns(df, configFieldSets):
-	columnsToInclude = []
-	for fieldSet in configFieldSets.items():
-		key, value = fieldSet
-		selectorType = value if type(value).__name__ == 'str' else 'some'
-		columnsToInclude = columnsToInclude + selectionTypes[selectorType](key, value)
-	return df[columnsToInclude]
+def add_columns(df, config_field_sets):
+	columns_to_include = []
+	for field_set in config_field_sets.items():
+		key, value = field_set
+		selector_type = value if type(value).__name__ == 'str' else 'some'
+		columns_to_include = columns_to_include + selection_types[selector_type](key, value)
+	return df[columns_to_include]
 
-def generateCombos(config):
+def generate_combos(config):
 	df = pd.DataFrame()
 
-	for scenarioName in config[
+	for scenario_name in config[
 		'scenarios'
 	].keys():
 		df = pd.concat(
 			[
 				df,
-				generateScenarioCombos(
-					scenarioName, config
+				generate_scenario_combos(
+					scenario_name, config
 				),
 			],
 		)
 
-	addCustomColumns(
+	add_custom_columns(
 		df, config['customColumns'], config
 	)
-	sortData(df, config['order'])
-	splitTimestamp(df)
-	adjustColumns(df)
-	filteredDF = df.query(
-		rewriteConstantsExpression(
+	sort_data(df, config['order'])
+	split_timestamp(df)
+	adjust_columns(df)
+	filtered_df = df.query(
+		rewrite_constants_expression(
 			config['query']
 		),
-		local_dict=getExpressionLocals(config),
+		local_dict=get_expression_locals(config),
 	)
-	modifiedDF = addColumns(
-		filteredDF, config['fieldSets']
+	modified_df = add_columns(
+		filtered_df, config['fieldSets']
 	)
 
-	return modifiedDF
+	return modified_df

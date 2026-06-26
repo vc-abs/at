@@ -1,9 +1,9 @@
 from at.core.constants import (
-	dayRulers,
-	signWidth,
+	day_rulers,
+	sign_width,
 )
 
-karakaOrder = [
+karaka_order = [
 	'ak',
 	'amk',
 	'bk',
@@ -14,30 +14,30 @@ karakaOrder = [
 ]
 
 
-def sortByDegree(object):
-	return signWidth - (
-		object['longitude'] % signWidth
+def sort_by_degree(object):
+	return sign_width - (
+		object['longitude'] % sign_width
 	)
 
 
-def getKarakas(chart):
-	filteredObjects = [
+def get_karakas(chart):
+	filtered_objects = [
 		object
 		for object in chart.objects.values()
-		if object['name'] in dayRulers
+		if object['name'] in day_rulers
 	]
-	sortedObjects = sorted(
-		filteredObjects, key=sortByDegree
+	sorted_objects = sorted(
+		filtered_objects, key=sort_by_degree
 	)
 
-	planetNames = [
+	planet_names = [
 		planet['name']
-		for planet in sortedObjects
+		for planet in sorted_objects
 	]
 
 	return {
-		karakatva: planetName
-		for karakatva, planetName in zip(
-			karakaOrder, planetNames
+		karakatva: planet_name
+		for karakatva, planet_name in zip(
+			karaka_order, planet_names
 		)
 	}

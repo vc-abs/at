@@ -2,10 +2,10 @@ from datetime import (
 	datetime,
 )
 
-selectAllQuery = 'ilevel_0 in ilevel_0'
+select_all_query = 'ilevel_0 in ilevel_0'
 
 
-def getDefaultConfig():
+def get_default_config():
 	now = datetime.now()
 
 	return {
@@ -15,7 +15,7 @@ def getDefaultConfig():
 		'hour': now.hour,
 		'minute': now.minute,
 		'second': now.second,
-		'query': selectAllQuery,
+		'query': select_all_query,
 		'constants': {},
 		'fieldSets': {},
 		'customColumns': {},

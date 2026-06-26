@@ -3,21 +3,21 @@ from io import StringIO
 from pandas import DataFrame
 
 
-def exportToFile(context):
-	exportTo = context['exportTo']
+def export_to_file(context):
+	export_to = context['exportTo']
 	makedirs(
-		path.dirname(exportTo),
+		path.dirname(export_to),
 		exist_ok=True,
 	)
 
 	DataFrame(context['data']).to_csv(
-		exportTo,
+		export_to,
 		index=False,
 		sep=context['exportSeparator'],
 	)
 
 
-def printToStdOut(context):
+def print_to_std_out(context):
 	output = StringIO()
 
 	DataFrame(context['data']).to_csv(
@@ -31,8 +31,8 @@ def printToStdOut(context):
 
 def output(context):
 	action = (
-		exportToFile
+		export_to_file
 		if context.get('exportTo')
-		else printToStdOut
+		else print_to_std_out
 	)
 	action(context)

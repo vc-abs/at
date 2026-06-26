@@ -1,17 +1,17 @@
-from at.ashtakavarga import getAshtakavarga
+from at.ashtakavarga import get_ashtakavarga
 from at.panchang import Panchang
 from at.dasha import Dasha
-from at.shadBala import ShadBala
+from at.shad_bala import ShadBala
 from at.varga import Varga
-from at.core.planetaryPositions import (
-	getPlanetaryPositions,
+from at.core.planetary_positions import (
+	get_planetary_positions,
 )
-from at.core.karakas import getKarakas
-from at.core.sweHelpers import (
-	setAyanamsa,
-	getAyanamsaOffset,
+from at.core.karakas import get_karakas
+from at.core.swe_helpers import (
+	set_ayanamsa,
+	get_ayanamsa_offset,
 )
-from at.core.Cached import Cached
+from at.core.cached import Cached
 
 
 class Chart(Cached):
@@ -21,38 +21,38 @@ class Chart(Cached):
 		self.__cache__ = {
 			'config': config,
 		}
-		setAyanamsa(config['ayanamsa'])
+		set_ayanamsa(config['ayanamsa'])
 
-	def _getObjects(self):
-		return getPlanetaryPositions(
+	def _get_objects(self):
+		return get_planetary_positions(
 			self.config
 		)
 
-	def _getAshtakavarga(self):
-		return getAshtakavarga(self.objects)
+	def _get_ashtakavarga(self):
+		return get_ashtakavarga(self.objects)
 
-	def _getAyanamsa(self):
+	def _get_ayanamsa(self):
 		return {
 			'name': self.config['ayanamsa'],
-			'offset': getAyanamsaOffset(
+			'offset': get_ayanamsa_offset(
 				self.config['datetime']
 			),
 		}
 
-	def _getPanchang(self):
+	def _get_panchang(self):
 		return Panchang(self)
 
-	def _getDasha(self):
+	def _get_dasha(self):
 		return Dasha(self)
 
-	def _getShadBala(self):
+	def _get_shad_bala(self):
 		return ShadBala(self)
 
-	def _getVarga(self):
+	def _get_varga(self):
 		return Varga(self)
 
-	def _getKarakas(self):
-		return getKarakas(self)
+	def _get_karakas(self):
+		return get_karakas(self)
 
 
 __all__ = [Chart]

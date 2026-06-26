@@ -1,186 +1,186 @@
 from at.core.constants import (
 	weekdays,
-	gowriSegmentNameCycle,
-	gowriSegmentMeanings,
-	gowriSegmentScores,
-	gowriRahuSegmentByVaara,
-	gowriNightWeekdayOffset,
-	gowriSegmentCount,
+	gowri_segment_name_cycle,
+	gowri_segment_meanings,
+	gowri_segment_scores,
+	gowri_rahu_segment_by_vaara,
+	gowri_night_weekday_offset,
+	gowri_segment_count,
 )
 
 
 
-def insertVisham(values, segmentIndex):
-	insertAt = segmentIndex - 1
-	return values[:insertAt] + ['visham'] + values[insertAt:]
+def insert_visham(values, segment_index):
+	insert_at = segment_index - 1
+	return values[:insert_at] + ['visham'] + values[insert_at:]
 
 
 
-def getSegmentDuration(start, end):
-	return (end - start) / gowriSegmentCount
+def get_segment_duration(start, end):
+	return (end - start) / gowri_segment_count
 
 
 
-def getSegmentBounds(start, end, segmentIndex):
-	segmentDuration = getSegmentDuration(
+def get_segment_bounds(start, end, segment_index):
+	segment_duration = get_segment_duration(
 		start,
 		end,
 	)
-	segmentStart = start + (
-		segmentDuration * (segmentIndex - 1)
+	segment_start = start + (
+		segment_duration * (segment_index - 1)
 	)
-	segmentEnd = start + (
-		segmentDuration * segmentIndex
+	segment_end = start + (
+		segment_duration * segment_index
 	)
-	return segmentStart, segmentEnd
+	return segment_start, segment_end
 
 
 
-def getSegmentIndex(eventTime, start, end):
-	if not start <= eventTime < end:
+def get_segment_index(event_time, start, end):
+	if not start <= event_time < end:
 		return None
 
-	segmentDuration = getSegmentDuration(
+	segment_duration = get_segment_duration(
 		start,
 		end,
 	)
-	elapsed = eventTime - start
-	return int(elapsed / segmentDuration) + 1
+	elapsed = event_time - start
+	return int(elapsed / segment_duration) + 1
 
 
 
-def getEffectiveWeekday(vaara, tod):
+def get_effective_weekday(vaara, tod):
 	if tod == 'day':
 		return vaara
 
-	weekdayIndex = weekdays.index(vaara)
+	weekday_index = weekdays.index(vaara)
 	return weekdays[
-		(weekdayIndex + gowriNightWeekdayOffset)
+		(weekday_index + gowri_night_weekday_offset)
 		% len(weekdays)
 	]
 
 
 
-def getScheduleNames(vaara, tod):
-	effectiveWeekday = getEffectiveWeekday(
+def get_schedule_names(vaara, tod):
+	effective_weekday = get_effective_weekday(
 		vaara,
 		tod,
 	)
-	baseIndex = weekdays.index(
-		effectiveWeekday
+	base_index = weekdays.index(
+		effective_weekday
 	)
-	baseSequence = [
-		gowriSegmentNameCycle[
-			(baseIndex + offset)
-			% len(gowriSegmentNameCycle)
+	base_sequence = [
+		gowri_segment_name_cycle[
+			(base_index + offset)
+			% len(gowri_segment_name_cycle)
 		]
 		for offset in range(
-			len(gowriSegmentNameCycle)
+			len(gowri_segment_name_cycle)
 		)
 	]
-	return insertVisham(
-		baseSequence,
-		gowriRahuSegmentByVaara[
-			effectiveWeekday
+	return insert_visham(
+		base_sequence,
+		gowri_rahu_segment_by_vaara[
+			effective_weekday
 		],
 	)
 
 
 
-def getGowriSegmentByIndex(
-	panchang, segmentIndex, tod
+def get_gowri_segment_by_index(
+	panchang, segment_index, tod
 ):
-	riseAndSet = panchang.riseAndSet
-	periodStart = (
-		riseAndSet['sunrise']
+	rise_and_set = panchang.rise_and_set
+	period_start = (
+		rise_and_set['sunrise']
 		if tod == 'day'
-		else riseAndSet['sunset']
+		else rise_and_set['sunset']
 	)
-	periodEnd = (
-		riseAndSet['sunset']
+	period_end = (
+		rise_and_set['sunset']
 		if tod == 'day'
-		else riseAndSet['nextRise']
+		else rise_and_set['nextRise']
 	)
-	name = getScheduleNames(
+	name = get_schedule_names(
 		panchang.vaara,
 		tod,
-	)[segmentIndex - 1]
-	segmentStart, segmentEnd = getSegmentBounds(
-		periodStart,
-		periodEnd,
-		segmentIndex,
+	)[segment_index - 1]
+	segment_start, segment_end = get_segment_bounds(
+		period_start,
+		period_end,
+		segment_index,
 	)
 
 	return {
-		'segment': segmentIndex,
+		'segment': segment_index,
 		'tod': tod,
 		'name': name,
-		'meaning': gowriSegmentMeanings[name],
-		'score': gowriSegmentScores[name],
-		'startsAt': segmentStart,
-		'endsAt': segmentEnd,
+		'meaning': gowri_segment_meanings[name],
+		'score': gowri_segment_scores[name],
+		'startsAt': segment_start,
+		'endsAt': segment_end,
 	}
 
 
 
-def getGowriSchedule(panchang):
+def get_gowri_schedule(panchang):
 	return {
 		'day': [
-			getGowriSegmentByIndex(
+			get_gowri_segment_by_index(
 				panchang,
-				segmentIndex,
+				segment_index,
 				'day',
 			)
-			for segmentIndex in range(
+			for segment_index in range(
 				1,
-				gowriSegmentCount + 1,
+				gowri_segment_count + 1,
 			)
 		],
 		'night': [
-			getGowriSegmentByIndex(
+			get_gowri_segment_by_index(
 				panchang,
-				segmentIndex,
+				segment_index,
 				'night',
 			)
-			for segmentIndex in range(
+			for segment_index in range(
 				1,
-				gowriSegmentCount + 1,
+				gowri_segment_count + 1,
 			)
 		],
 	}
 
 
 
-def getCurrentGowriSegment(panchang):
-	eventTime = panchang._chart.config['datetime']
-	riseAndSet = panchang.riseAndSet
+def get_current_gowri_segment(panchang):
+	event_time = panchang._chart.config['datetime']
+	rise_and_set = panchang.rise_and_set
 	tod = panchang.tod
-	periodStart = (
-		riseAndSet['sunrise']
+	period_start = (
+		rise_and_set['sunrise']
 		if tod == 'day'
-		else riseAndSet['sunset']
+		else rise_and_set['sunset']
 	)
-	periodEnd = (
-		riseAndSet['sunset']
+	period_end = (
+		rise_and_set['sunset']
 		if tod == 'day'
-		else riseAndSet['nextRise']
+		else rise_and_set['nextRise']
 	)
-	segmentIndex = getSegmentIndex(
-		eventTime,
-		periodStart,
-		periodEnd,
+	segment_index = get_segment_index(
+		event_time,
+		period_start,
+		period_end,
 	)
-	segmentIndex = segmentIndex or gowriSegmentCount
-	return getGowriSegmentByIndex(
+	segment_index = segment_index or gowri_segment_count
+	return get_gowri_segment_by_index(
 		panchang,
-		segmentIndex,
+		segment_index,
 		tod,
 	)
 
 
 
-def getGowriWindowFlags(panchang):
-	segment = getCurrentGowriSegment(panchang)
+def get_gowri_window_flags(panchang):
+	segment = get_current_gowri_segment(panchang)
 	return {
 		'gowri': segment['name'],
 		'gowriScore': segment['score'],
@@ -201,8 +201,8 @@ def getGowriWindowFlags(panchang):
 
 
 __all__ = [
-	getGowriSchedule,
-	getCurrentGowriSegment,
-	getGowriWindowFlags,
-	getScheduleNames,
+	get_gowri_schedule,
+	get_current_gowri_segment,
+	get_gowri_window_flags,
+	get_schedule_names,
 ]

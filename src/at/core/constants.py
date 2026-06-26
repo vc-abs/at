@@ -1,21 +1,21 @@
 import swisseph as swe
 
-signCount = 12
+sign_count = 12
 signs = [
-	i + 1 for i in range(0, signCount)
+	i + 1 for i in range(0, sign_count)
 ]
 degrees = 360
-maxPossibleDistance = degrees / 2
-daysPerYear = 365.256364
-houseCount = signCount
-signWidth = degrees / signCount
-tithiCount = 30
-tithis = range(0, tithiCount)
-pakshaTithiCount = tithiCount / 2
+max_possible_distance = degrees / 2
+days_per_year = 365.256364
+house_count = sign_count
+sign_width = degrees / sign_count
+tithi_count = 30
+tithis = range(0, tithi_count)
+paksha_tithi_count = tithi_count / 2
 houses = [
-	i + 1 for i in range(0, houseCount)
+	i + 1 for i in range(0, house_count)
 ]
-horasPerDay = 24
+horas_per_day = 24
 weekdays = [
 	'sunday',
 	'monday',
@@ -25,7 +25,7 @@ weekdays = [
 	'friday',
 	'saturday',
 ]
-daysInAWeek = len(weekdays)
+days_in_a_week = len(weekdays)
 planets = [
 	'sun',
 	'moon',
@@ -36,7 +36,7 @@ planets = [
 	'saturn',
 ]
 
-combustionOrbs = {
+combustion_orbs = {
 	'moon': 12,
 	'mars': 17,
 	'mercury': 14,
@@ -56,7 +56,7 @@ ashtaka = angles + planets
 
 objects = ashtaka + nodes
 
-dayRulers = [
+day_rulers = [
 	'sun',
 	'moon',
 	'mars',
@@ -65,11 +65,11 @@ dayRulers = [
 	'venus',
 	'saturn',
 ]
-weekdayLords = {
+weekday_lords = {
 	k: v
-	for k, v in zip(weekdays, dayRulers)
+	for k, v in zip(weekdays, day_rulers)
 }
-horaLordSequence = [
+hora_lord_sequence = [
 	'sun',
 	'venus',
 	'mercury',
@@ -79,7 +79,7 @@ horaLordSequence = [
 	'mars',
 ]
 
-gowriSegmentNameCycle = [
+gowri_segment_name_cycle = [
 	'uthi',
 	'amirdham',
 	'rogam',
@@ -89,7 +89,7 @@ gowriSegmentNameCycle = [
 	'soram',
 ]
 
-gowriSegmentMeanings = {
+gowri_segment_meanings = {
 	'amirdham': 'best',
 	'uthi': 'good',
 	'laabam': 'gain',
@@ -100,7 +100,7 @@ gowriSegmentMeanings = {
 	'visham': 'bad',
 }
 
-gowriSegmentScores = {
+gowri_segment_scores = {
 	'amirdham': 2,
 	'uthi': 1,
 	'laabam': 1,
@@ -111,7 +111,7 @@ gowriSegmentScores = {
 	'visham': -1,
 }
 
-gowriRahuSegmentByVaara = {
+gowri_rahu_segment_by_vaara = {
 	'sunday': 8,
 	'monday': 2,
 	'tuesday': 7,
@@ -121,11 +121,11 @@ gowriRahuSegmentByVaara = {
 	'saturday': 3,
 }
 
-gowriNightWeekdayOffset = 4
+gowri_night_weekday_offset = 4
 
-gowriSegmentCount = 8
+gowri_segment_count = 8
 
-objectProps = {
+object_props = {
 	'sun': {
 		'exaltation': 10,
 		'debilitation': 190,
@@ -246,24 +246,24 @@ objectProps = {
 		'quality': 'malefic',
 	},
 }
-objectIDs = {
-	object: objectAttrs['sweID']
-	for object, objectAttrs in objectProps.items()
-	if 'sweID' in objectAttrs
+object_i_ds = {
+	object: object_attrs['sweID']
+	for object, object_attrs in object_props.items()
+	if 'sweID' in object_attrs
 }
-houseQualities = [
+house_qualities = [
 	'kendra',
 	'panapara',
 	'apoklima',
 ]
 
-kendradiBala = {
+kendradi_bala = {
 	'kendra': 60,
 	'panapara': 30,
 	'apoklima': 15,
 }
 
-signLords = [
+sign_lords = [
 	None,
 	'mars',
 	'venus',
@@ -279,7 +279,7 @@ signLords = [
 	'jupiter',
 ]
 
-planetaryFriendships = {
+planetary_friendships = {
 	('sun', 'sun'): 2,
 	('sun', 'moon'): 1,
 	('sun', 'mars'): 1,
@@ -393,16 +393,16 @@ nakshatras = [
 	'revati',
 ]
 
-nakshatraCount = len(nakshatras)
-nakshatraWidth = (
-	degrees / nakshatraCount
+nakshatra_count = len(nakshatras)
+nakshatra_width = (
+	degrees / nakshatra_count
 )
-padasPerNakshatra = 4
-padaCount = (
-	nakshatraCount * padasPerNakshatra
+padas_per_nakshatra = 4
+pada_count = (
+	nakshatra_count * padas_per_nakshatra
 )
 
-ayanamsaSWEConstants = {
+ayanamsa_swe_constants = {
 	'fagan_bradley': swe.SIDM_FAGAN_BRADLEY,
 	'lahiri': swe.SIDM_LAHIRI,
 	'deluce': swe.SIDM_DELUCE,

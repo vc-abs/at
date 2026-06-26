@@ -3,29 +3,29 @@ import math
 from os import path
 from at.core.constants import (
 	objects,
-	signCount,
-	signWidth,
+	sign_count,
+	sign_width,
 	degrees,
-	objectProps,
-	houseQualities,
+	object_props,
+	house_qualities,
 )
 
 
-def isTraditionalObject(object):
+def is_traditional_object(object):
 	return object['name'] in objects
 
 
-def getOrdinalPosition(
-	cardinalPosition,
-	segmentCount=signCount,
+def get_ordinal_position(
+	cardinal_position,
+	segment_count=sign_count,
 ):
 	return math.ceil(
-		cardinalPosition
-		/ (degrees / segmentCount)
+		cardinal_position
+		/ (degrees / segment_count)
 	)
 
 
-def selectObjects(
+def select_objects(
 	items, selection=objects
 ):
 	return list(
@@ -37,10 +37,10 @@ def selectObjects(
 	)
 
 
-def fold(listOfDicts, prop='name'):
+def fold(list_of_dicts, prop='name'):
 	return {
 		item[prop]: item
-		for item in listOfDicts
+		for item in list_of_dicts
 	}
 
 
@@ -50,7 +50,7 @@ def select(dict, keys):
 	}
 
 
-def resolveRelativePath(leaf):
+def resolve_relative_path(leaf):
 	return path.join(
 		path.dirname(
 			inspect.stack()[1].filename
@@ -59,17 +59,17 @@ def resolveRelativePath(leaf):
 	)
 
 
-def getPlanetaryQuality(planet):
-	return objectProps[planet['name']][
+def get_planetary_quality(planet):
+	return object_props[planet['name']][
 		'quality'
 	]
 
 
-def getHouseQuality(house):
-	return houseQualities[(house + 2) % 3]
+def get_house_quality(house):
+	return house_qualities[(house + 2) % 3]
 
 
-def normalizeCircularValue(
+def normalize_circular_value(
 	value, circumference
 ):
 	return (
@@ -77,42 +77,42 @@ def normalizeCircularValue(
 	) % circumference + 1
 
 
-def getDistanceInCircle(
-	p1DistanceFromStart,
-	p2DistanceFromStart,
+def get_distance_in_circle(
+	p1_distance_from_start,
+	p2_distance_from_start,
 	circumference=degrees,
 ):
 	return (
 		circumference
-		+ p2DistanceFromStart
-		- p1DistanceFromStart
+		+ p2_distance_from_start
+		- p1_distance_from_start
 	) % circumference
 
 
-def getShortestDistanceInCircle(
-	p1DistanceFromStart,
-	p2DistanceFromStart,
+def get_shortest_distance_in_circle(
+	p1_distance_from_start,
+	p2_distance_from_start,
 	circumference=degrees,
 ):
 	return min(
-		getDistanceInCircle(
-			p1DistanceFromStart,
-			p2DistanceFromStart,
+		get_distance_in_circle(
+			p1_distance_from_start,
+			p2_distance_from_start,
 			circumference,
 		),
-		getDistanceInCircle(
-			p2DistanceFromStart,
-			p1DistanceFromStart,
+		get_distance_in_circle(
+			p2_distance_from_start,
+			p1_distance_from_start,
 			circumference,
 		),
 	)
 
 
-def getSignDistance(fromSign, toSign):
+def get_sign_distance(from_sign, to_sign):
 	return (
-		abs(toSign + signCount - fromSign)
-	) % signCount + 1
+		abs(to_sign + sign_count - from_sign)
+	) % sign_count + 1
 
 
-def getSignFromLongitude(longitude):
-	return int(longitude / signWidth) + 1
+def get_sign_from_longitude(longitude):
+	return int(longitude / sign_width) + 1

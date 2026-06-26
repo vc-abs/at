@@ -1,27 +1,27 @@
 import sys
-from at.readWrite.output import output
-from at.readWrite.readConfig import (
-	readConfig,
+from at.read_write.output import output
+from at.read_write.read_config import (
+	read_config,
 )
-from at.tools.generateCombos import (
-	generateCombos,
+from at.tools.generate_combos import (
+	generate_combos,
 )
 
-defaultConfigFilePaths = [
+default_config_file_paths = [
 	'./examples/config.yml'
 ]
 
 
 def main(
-	inputConfigFilePaths,
+	input_config_file_paths,
 ):
-	configFilePaths = (
-		inputConfigFilePaths
-		if len(inputConfigFilePaths)
-		else defaultConfigFilePaths
+	config_file_paths = (
+		input_config_file_paths
+		if len(input_config_file_paths)
+		else default_config_file_paths
 	)
-	context = readConfig(configFilePaths)
-	data = generateCombos(context)
+	context = read_config(config_file_paths)
+	data = generate_combos(context)
 	output({'data': data, **context})
 
 

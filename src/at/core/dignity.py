@@ -1,9 +1,9 @@
 from at.core.constants import (
-	planetaryFriendships,
-	signLords,
+	planetary_friendships,
+	sign_lords,
 )
 from at.core.helpers import (
-	getSignDistance,
+	get_sign_distance,
 )
 
 
@@ -11,24 +11,24 @@ from at.core.helpers import (
 # #NOTE: Moolatrikona is not used, as it's not used in JH or JA.
 
 
-def getTemporaryRelationshipPoints(
+def get_temporary_relationship_points(
 	planet, dispositor
 ):
-	signDistance = getSignDistance(
+	sign_distance = get_sign_distance(
 		planet['sign'], dispositor['sign']
 	)
 
 	return (
 		1
 		if (
-			1 < signDistance < 5
-			or 9 < signDistance
+			1 < sign_distance < 5
+			or 9 < sign_distance
 		)
 		else -1
 	)
 
 
-compositeDignities = [
+composite_dignities = [
 	'greatEnemy',
 	'enemy',
 	'neutral',
@@ -38,36 +38,36 @@ compositeDignities = [
 ]
 
 
-def getDispositorRelationship(
+def get_dispositor_relationship(
 	planet, objects
 ):
-	dispositorName = signLords[
+	dispositor_name = sign_lords[
 		planet['sign']
 	]
-	dignityIndex = (
+	dignity_index = (
 		3
-		if dispositorName == planet['name']
-		else planetaryFriendships[
+		if dispositor_name == planet['name']
+		else planetary_friendships[
 			(
 				planet['name'],
-				dispositorName,
+				dispositor_name,
 			)
 		]
-		+ getTemporaryRelationshipPoints(
+		+ get_temporary_relationship_points(
 			objects[planet['name']],
-			objects[dispositorName],
+			objects[dispositor_name],
 		)
 	) + 2
 
-	dignity = compositeDignities[
-		dignityIndex
+	dignity = composite_dignities[
+		dignity_index
 	]
 
 	return dignity
 
 
-def getPlanetDignity(chart, planet={}):
+def get_planet_dignity(chart, planet={}):
 	objects = chart.objects
-	return getDispositorRelationship(
+	return get_dispositor_relationship(
 		planet, objects
 	)

@@ -1,22 +1,22 @@
 from itertools import product
 import pandas as pd
 from at.core.helpers import (
-	resolveRelativePath,
+	resolve_relative_path,
 	select,
 )
 from at.core.constants import (
 	ashtaka,
 	planets,
 	signs,
-	houseCount,
+	house_count,
 )
 
-ashtakavargaBaseDF = pd.read_csv(
-	resolveRelativePath(
+ashtakavarga_base_df = pd.read_csv(
+	resolve_relative_path(
 		'./ashtakavarga.csv'
 	)
 )
-ashtakavargaBufferDF = pd.DataFrame(
+ashtakavarga_buffer_df = pd.DataFrame(
 	product(signs, planets, ashtaka),
 	columns=[
 		'sign',
@@ -25,7 +25,7 @@ ashtakavargaBufferDF = pd.DataFrame(
 	],
 )
 
-columnRenameMap = {
+column_rename_map = {
 	1: 'h1',
 	2: 'h2',
 	3: 'h3',
@@ -41,22 +41,22 @@ columnRenameMap = {
 }
 
 
-def getAshtakavarga(objects):
-	ashtakaObjects = list(
+def get_ashtakavarga(objects):
+	ashtaka_objects = list(
 		select(objects, ashtaka).values()
 	)
-	ascSign = objects['asc']['sign']
+	asc_sign = objects['asc']['sign']
 
-	objectPositionsDF = (
+	object_positions_df = (
 		pd.DataFrame.from_records(
-			ashtakaObjects,
+			ashtaka_objects,
 			columns=['name', 'sign'],
 		).rename(columns={'name': 'object'})
 	)
 
-	ashtakavargaDF = (
-		ashtakavargaBufferDF.merge(
-			objectPositionsDF,
+	ashtakavarga_df = (
+		ashtakavarga_buffer_df.merge(
+			object_positions_df,
 			on='object',
 			how='left',
 		)
@@ -67,7 +67,7 @@ def getAshtakavarga(objects):
 			}
 		)
 		.merge(
-			objectPositionsDF,
+			object_positions_df,
 			left_on='reference',
 			right_on='object',
 			how='left',
@@ -85,18 +85,18 @@ def getAshtakavarga(objects):
 				row['sign']
 				- row['referenceSign']
 			)
-			% houseCount
+			% house_count
 			+ 1,
 			house=lambda row: (
-				houseCount
+				house_count
 				+ row['sign']
-				- ascSign
+				- asc_sign
 			)
-			% houseCount
+			% house_count
 			+ 1,
 		)
 		.merge(
-			ashtakavargaBaseDF,
+			ashtakavarga_base_df,
 			on=[
 				'object',
 				'reference',
@@ -105,10 +105,10 @@ def getAshtakavarga(objects):
 		)
 		.groupby('house')['points']
 		.sum()
-		.rename(columnRenameMap)
+		.rename(column_rename_map)
 	)
 
-	return ashtakavargaDF
+	return ashtakavarga_df
 
 
-__all__ = [getAshtakavarga]
+__all__ = [get_ashtakavarga]
