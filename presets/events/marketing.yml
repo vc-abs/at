@@ -1,0 +1,60 @@
+imports: [../muhurta-base.yml]
+# Marketing / campaign-timing preset. Imports the shared muhurta base and
+# supplies only its coefficients and the event-specific score formulas.
+computations:
+  constants:
+    eventWeekdayWeights:
+      wednesday: 30
+      friday: 24
+      thursday: 22
+      sunday: 18
+    eventNakshatras:
+      - asvini
+      - rohini
+      - mrigashira
+      - punarvasu
+      - pushya
+      - hasta
+      - chitra
+      - svati
+      - anuradha
+      - shravana
+      - dhanishta
+      - revati
+    eventMinHouses: [h3, h5, h7, h10, h11]
+    eventCorePlanets: [mercury, venus, jupiter, moon, sun]
+    eventNakshatraBonus: 36
+    eventPreferredTithiBonus: 28
+    eventFullMoonBonus: 10
+    eventTithiAvoidPenalty: 18
+    eventWaningEarlyPenalty: 8
+    eventWaningMidPenalty: 14
+    eventWaningLatePenalty: 22
+    eventWaningRiktaPenalty: 6
+    eventWaningPoornaBonus: 4
+    eventMercuryBeneficBonus: 20
+    eventMercuryNeutralBonus: 10
+    eventMoonBeneficBonus: 18
+    eventGowriMultiplier: 18.5
+    eventStrengthCols: [meS, veS, moS, juS, suS]
+    eventShadbalaCenter: 1.27
+    eventShadbalaMultiplier: 120
+    eventMinThreshold: 24
+    eventScoreThreshold: 300
+  fields:
+    # House policy: weight communication and public-impact houses more strongly
+    # (3rd media/outreach, 10th visibility, 11th gains/reach), with 2nd/5th/7th
+    # as secondary supports; scale the combined house score so it stays important
+    # without dominating the overall marketing score.
+    eventHouseScore: >-
+      (h2 * 0.9 + h5 * 1.0 + h7 * 1.2 + h3 * 1.5 + h10 * 1.6 + h11 * 1.7) * 0.42
+    baseEventScore: >-
+      eventHouseScore + muhurtaYogaEffect * 12 + weekdayScore +
+      nakshatraScore + tithiScore + qualityScore + dashaScore
+    eventScore: >-
+      baseEventScore + gowriEventAdj + eventShadbalaAdj
+# Marketing keeps only Mercury in the qualities field set.
+report:
+  fieldSets:
+    planetQualities:
+      - meQ

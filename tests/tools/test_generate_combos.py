@@ -460,42 +460,62 @@ def test_add_custom_columns_supports_mapping_constants_with_series_map():
 
 
 
-def test_launch_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/launch.yml', 'r') as f:
+def test_muhurta_base_owns_constants_driven_score_chain(repo_root):
+	import yaml
+	with open(repo_root / 'presets/muhurta-base.yml', 'r') as f:
+		base = yaml.safe_load(f)
+	fields = base['computations']['fields']
+
+	# The shared score-chain formulas are coefficient-driven via `constants.event*`,
+	# so an event preset only supplies constants + the event-specific formulas.
+	assert 'vaara.map(constants.eventWeekdayWeights).fillna(0)' in fields['weekdayScore']
+	assert 'mdLord.isin(constants.eventCorePlanets)' in fields['mdPhaseScore']
+	assert fields['eventMin'] == {'min': 'constants.eventMinHouses'}
+	assert 'eventScore' in base['report']['order']
+	# The base is abstract: it does not define the event-specific formulas.
+	assert 'eventHouseScore' not in fields
+	assert 'baseEventScore' not in fields
+	assert 'eventScore' not in fields
+
+
+def test_launch_preset_imports_base_and_supplies_event_constants(repo_root):
+	with open(repo_root / 'presets/events/launch.yml', 'r') as f:
 		text = f.read()
 
-	assert 'constants:' in text
-	assert 'launchWeekdayWeights:' in text
-	assert 'launchCorePlanets:' in text
-	assert 'vaara.map(constants.launchWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.launchCorePlanets)' in text
-	assert 'min: constants.launchMinHouses' in text
+	assert 'imports: [../muhurta-base.yml]' in text
+	assert 'eventWeekdayWeights:' in text
+	assert 'eventCorePlanets:' in text
+	assert 'eventMinHouses:' in text
+	# The event supplies the event-specific formulas the base references.
+	assert 'eventHouseScore:' in text
+	assert 'baseEventScore:' in text
+	assert 'eventScore:' in text
 
 
-
-def test_staff_onboarding_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/staffOnboarding.yml', 'r') as f:
+def test_staff_onboarding_preset_imports_base_and_supplies_event_constants(repo_root):
+	with open(repo_root / 'presets/events/staffOnboarding.yml', 'r') as f:
 		text = f.read()
 
-	assert 'constants:' in text
-	assert 'staffOnboardingWeekdayWeights:' in text
-	assert 'staffOnboardingCorePlanets:' in text
-	assert 'vaara.map(constants.staffOnboardingWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.staffOnboardingCorePlanets)' in text
-	assert 'min: constants.staffOnboardingMinHouses' in text
+	assert 'imports: [../muhurta-base.yml]' in text
+	assert 'eventWeekdayWeights:' in text
+	assert 'eventCorePlanets:' in text
+	assert 'eventMinHouses:' in text
+	assert 'eventHouseScore:' in text
+	assert 'baseEventScore:' in text
+	assert 'eventScore:' in text
 
 
-
-def test_student_onboarding_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/studentOnboarding.yml', 'r') as f:
+def test_student_onboarding_preset_imports_base_and_supplies_event_constants(repo_root):
+	with open(repo_root / 'presets/events/studentOnboarding.yml', 'r') as f:
 		text = f.read()
 
-	assert 'constants:' in text
-	assert 'studentOnboardingWeekdayWeights:' in text
-	assert 'studentOnboardingCorePlanets:' in text
-	assert 'vaara.map(constants.studentOnboardingWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.studentOnboardingCorePlanets)' in text
-	assert 'min: constants.studentOnboardingMinHouses' in text
+	assert 'imports: [../muhurta-base.yml]' in text
+	assert 'eventWeekdayWeights:' in text
+	assert 'eventCorePlanets:' in text
+	assert 'eventMinHouses:' in text
+	assert 'eventHouseScore:' in text
+	assert 'baseEventScore:' in text
+	assert 'eventScore:' in text
 
 
 

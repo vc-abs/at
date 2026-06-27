@@ -13,7 +13,7 @@ python3 main.py ./presets/panchang.yml
 Or stack multiple files:
 
 ```bash
-python3 main.py ./presets/marketing.yml ./examples/presetExtensions.yml
+python3 main.py ./presets/events/marketing.yml ./examples/presetExtensions.yml
 ```
 
 Files are merged left to right.
@@ -129,7 +129,7 @@ A very common pattern is:
 Example:
 
 ```bash
-python3 main.py ./presets/launch.yml ./examples/presetExtensions.yml
+python3 main.py ./presets/events/launch.yml ./examples/presetExtensions.yml
 ```
 
 ### Merge rules
@@ -174,6 +174,57 @@ Merged effect:
 Lists do **not** merge item by item.
 If you override a list, restate the whole list you want.
 
+
+---
+
+## 4b) Import other presets with `imports`
+
+Stacking files on the command line is self-documenting only if everyone knows
+the base stack. An in-file `imports:` directive makes the same stacking
+self-contained: a preset declares what it builds on, and a colleague can run
+it without knowing the base stack.
+
+```yml
+# ./presets/events/marketing.yml
+imports: [../muhurta-base.yml]
+computations:
+  constants:
+    eventScoreThreshold: 300
+    # ...event-specific coefficients...
+  fields:
+    eventHouseScore: >-
+      (h2 * 0.9 + h5 * 1.0 + h7 * 1.2 + h3 * 1.5 + h10 * 1.6 + h11 * 1.7) * 0.42
+    eventScore: >-
+      baseEventScore + gowriEventAdj + eventShadbalaAdj
+```
+
+### Import merge rules
+
+`imports:` is exactly the same merge as command-line stacking, just declared in-file:
+
+- imports resolve **relative to the importing file's directory**, not CWD, so a preset is portable;
+- imports are resolved depth-first, then merged left-to-right (earlier import = lower priority);
+- the importing file's own body is merged on top (highest priority);
+- the `imports:` key is stripped from the merged result, so downstream code never sees it;
+- `data/defaultConfig.yml` is still prepended once at the very bottom of the stack - imports do not bypass or duplicate defaults;
+- cycles raise a `ValueError` naming the chain (`a.yml -> b.yml -> a.yml`).
+
+So `imports: [base.yml, tweaks.yml]` in `this.yml` produces the same merged
+result as `main.py base.yml tweaks.yml this.yml`.
+
+### Canonical example: `muhurta-base.yml`
+
+The four event presets (`presets/events/{marketing,launch,staffOnboarding,studentOnboarding}.yml`)
+all import [`presets/muhurta-base.yml`](../presets/muhurta-base.yml). The base
+owns the shared `sources`, the shared score-chain structure (coefficient-driven
+via `constants.event*`), and the shared `report` keyed on `eventScore`. Each
+event preset supplies only its `computations.constants` (the coefficients and
+planet/house/tithi lists) plus the event-specific formulas `eventHouseScore`,
+`baseEventScore`, and `eventScore`.
+
+`muhurta-base.yml` is an **abstract base**: its `report.selection` and score
+chain reference `eventHouseScore` / `baseEventScore` / `eventScore`, which an
+importing event preset must supply. It is not standalone-runnable.
 ---
 
 ## 5) Choose output columns with `fieldSets`
@@ -368,21 +419,22 @@ You can reference constants from:
 - summary/list-style custom columns such as `min: constants.minHouses`
 
 This is the main pattern used by the richer presets like:
-- `presets/marketing.yml`
-- `presets/launch.yml`
-- `presets/staffOnboarding.yml`
-- `presets/studentOnboarding.yml`
+- `presets/events/marketing.yml`
+- `presets/events/launch.yml`
+- `presets/events/staffOnboarding.yml`
+- `presets/events/studentOnboarding.yml`
+
+Each imports [`presets/muhurta-base.yml`](../presets/muhurta-base.yml); see *4b) Import other presets with `imports`*.
 
 ---
 
 ## 9) Sort results with `order`
 
 Use `order` to sort the filtered DataFrame before output. `report.selection` is applied first, then `order` sorts the surviving rows; the sort is stable, so tied rows keep their original relative order.
-
 ```yml
 order:
-  marketingScore: descending
-  baseMarketingScore: descending
+  eventScore: descending
+  baseEventScore: descending
   muhurtaYogaEffect: descending
 ```
 
@@ -669,7 +721,7 @@ fieldSets:
     - tithi
     - nakshatra
     - vaara
-    - launchScore
+    - eventScore
   muhurtaYogaEffects:
     - positive
     - negative
@@ -680,7 +732,7 @@ fieldSets:
 Run it:
 
 ```bash
-python3 main.py ./presets/launch.yml ./temp/launch-export.yml
+python3 main.py ./presets/events/launch.yml ./temp/launch-export.yml
 ```
 
 This is often the cleanest workflow:
@@ -695,10 +747,11 @@ If you want real repo examples, start here:
 
 - `presets/panchang.yml` — minimal reporting preset
 - `presets/biz.yml` — simple score + filter pattern
-- `presets/marketing.yml` — richer constants-driven scoring
-- `presets/launch.yml` — launch-oriented scoring
-- `presets/staffOnboarding.yml` — institutional joining preset
-- `presets/studentOnboarding.yml` — education/course-entry preset
+- `presets/muhurta-base.yml` — abstract shared base for the event presets (see *4b)*)
+- `presets/events/marketing.yml` — richer constants-driven scoring (imports the base)
+- `presets/events/launch.yml` — launch-oriented scoring (imports the base)
+- `presets/events/staffOnboarding.yml` — institutional joining preset (imports the base)
+- `presets/events/studentOnboarding.yml` — education/course-entry preset (imports the base)
 - `presets/allFieldSets.yml` — useful for seeing every output group
 
 ---

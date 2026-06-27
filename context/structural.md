@@ -39,11 +39,12 @@
     - wrapping constants in a shared attribute-access namespace,
     - rewriting author-facing `constants.foo` expressions to pandas-native external-variable access at evaluation time,
     - resolving constant-backed summary/list references before DataFrame summary operations,
-  - marketing preset configuration in `presets/marketing.yml` with a `baseMarketingScore` plus simple additive Gowri/Shadbala adjustments built on existing output fields,
-  - separate launch preset configuration in `presets/launch.yml` with its own `baseLaunchScore`, the same additive Gowri/Shadbala adjustment pattern, and companion launch review configs under `temp/`,
-  - separate staff onboarding preset configuration in `presets/staffOnboarding.yml` with its own `baseStaffOnboardingScore`, institutional-fit weighting, and companion review export config under `temp/`,
-  - separate student onboarding preset configuration in `presets/studentOnboarding.yml` with its own `baseStudentOnboardingScore`, learning-support weighting, and companion review export config under `temp/`,
-  - hourly review/verification artefacts under `temp/`, including `review-week-hourly.yml`, `marketing-review-week-export.yml`, `launch-review-week-export.yml`, `staff-onboarding-review-week-export.yml`, `student-onboarding-review-week-export.yml`, and their generated TSV outputs.
+  - marketing preset configuration in `presets/events/marketing.yml` (importing `presets/muhurta-base.yml`) with a `baseEventScore` plus simple additive Gowri/Shadbala adjustments built on existing output fields,
+  - separate launch preset configuration in `presets/events/launch.yml` (importing the base) with the same additive Gowri/Shadbala adjustment pattern and companion launch review configs under `temp/`,
+  - separate staff onboarding preset configuration in `presets/events/staffOnboarding.yml` (importing the base) with institutional-fit weighting and companion review export config under `temp/`,
+  - separate student onboarding preset configuration in `presets/events/studentOnboarding.yml` (importing the base) with learning-support weighting and companion review export config under `temp/`,
+  - a shared abstract muhurta base in `presets/muhurta-base.yml` that owns the common `sources`, the shared score-chain structure (coefficient-driven via `constants.event*`), the shared muhurta tithi lists (`preferredTithis`/`tithisToAvoid`/`waningRiktaTithis`/`waningPoornaTithis`), and the shared `report` keyed on `eventScore`; not standalone-runnable,
+  - preset `imports:` directive resolution in `src/at/read_write/read_config.py` (`_load_with_imports`): paths resolve relative to the importing file's directory, imports merge depth-first left-to-right with the importing file's body on top (matching CLI stacking), cycle detection via a visited-path chain, and the `imports:` key stripped from the merged result; `defaultConfig.yml` is still prepended once at the bottom,
 
 ## Validation Surface
 

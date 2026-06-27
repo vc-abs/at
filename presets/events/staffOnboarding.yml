@@ -1,0 +1,58 @@
+imports: [../muhurta-base.yml]
+# Staff joining / onboarding preset. Imports the shared muhurta base and
+# supplies only its coefficients and the event-specific score formulas.
+computations:
+  constants:
+    eventWeekdayWeights:
+      wednesday: 30
+      thursday: 26
+      sunday: 18
+      monday: 14
+      saturday: 10
+      friday: 8
+    eventNakshatras:
+      - asvini
+      - rohini
+      - punarvasu
+      - pushya
+      - hasta
+      - anuradha
+      - shravana
+      - dhanishta
+      - revati
+    eventMinHouses: [h1, h2, h6, h10, h11]
+    eventCorePlanets: [mercury, sun, jupiter, moon, saturn]
+    eventNakshatraBonus: 32
+    eventPreferredTithiBonus: 24
+    eventFullMoonBonus: 6
+    eventTithiAvoidPenalty: 16
+    eventWaningEarlyPenalty: 6
+    eventWaningMidPenalty: 12
+    eventWaningLatePenalty: 18
+    eventWaningRiktaPenalty: 5
+    eventWaningPoornaBonus: 2
+    eventMercuryBeneficBonus: 22
+    eventMercuryNeutralBonus: 10
+    eventMoonBeneficBonus: 20
+    eventGowriMultiplier: 16.5
+    # Special-planet Shadbala uses Mercury, Venus, Moon, Jupiter, Sun (the
+    # same five-planet set as marketing/launch); Saturn features in the dasha
+    # core-planet list above, not in the strength average.
+    eventStrengthCols: [meS, veS, moS, juS, suS]
+    eventShadbalaCenter: 1.27
+    eventShadbalaMultiplier: 120
+    eventMinThreshold: 22
+    eventScoreThreshold: 275
+  fields:
+    # House policy: prioritize profession, institutional fit, and support from
+    # the existing system - 10th and 11th anchor, 1st supports the beginning
+    # itself, 2nd and 6th are practical salary/service supports, 7th/9th stay
+    # secondary.
+    eventHouseScore: >-
+      (h10 * 1.6 + h11 * 1.6 + h1 * 1.3 + h2 * 1.1 + h6 * 1.0 +
+      h7 * 0.8 + h9 * 0.9) * 0.38
+    baseEventScore: >-
+      eventHouseScore + muhurtaYogaEffect * 12 + weekdayScore +
+      nakshatraScore + tithiScore + qualityScore + dashaScore
+    eventScore: >-
+      baseEventScore + gowriEventAdj + eventShadbalaAdj

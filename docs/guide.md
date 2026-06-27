@@ -64,11 +64,11 @@
 - In expression strings such as `report.selection` and string-valued `computations`, use author-facing `constants.foo` syntax.
 - `sources` is the source-group pruning list: keep it broad in defaults, narrow it in presets when you want to avoid computing unused groups.
 - Example patterns:
-  - allow/filter lists: `nakshatra.isin(constants.launchNakshatras)`
-  - mapping/weight dictionaries: `vaara.map(constants.marketingWeekdayWeights).fillna(0)`
+  - allow/filter lists: `nakshatra.isin(constants.eventNakshatras)`
+  - mapping/weight dictionaries: `vaara.map(constants.eventWeekdayWeights).fillna(0)`
   - numeric lookups: `h2 * constants.houseWeights.h2 + h3 * constants.houseWeights.h3`
 - In summary/list-style custom columns, constant-backed lists can also be referenced directly:
-  - `min: constants.marketingMinHouses`
+  - `min: constants.eventMinHouses`
 - A useful pattern is to centralize weekday preferences as a weight map and then query on the derived score, for example `weekdayScore > 0`, instead of duplicating both a weekday allow-list and a separate weekday score formula.
 - Constants stay available on merged runtime config as `config['constants']`.
 - Constants are config-scoped runtime data, not output columns; they only appear in output if a config explicitly derives a custom column from them.
@@ -91,7 +91,7 @@
 
 ## Preset Notes
 
-- `presets/marketing.yml` provides a marketing/campaign-timing preset.
+- `presets/events/marketing.yml` provides a marketing/campaign-timing preset.
 - It combines:
   - hard vetoes for compact time-window flags (`timeF`),
   - weighted YAML base scoring for houses, tithi, nakshatra, dasha phases, and quality signals,
@@ -99,13 +99,14 @@
   - a simple additive Gowri adjustment derived from `gowriScore`,
   - a simple additive special-planet Shadbala adjustment derived from the average of Mercury, Venus, Moon, Jupiter, and Sun strengths,
   - reduced-column TSV export support via stacked override configs.
-- `presets/launch.yml` provides a separate launch/go-live preset for product launch, company start, offer go-live, and similar commencement-oriented use cases.
-- The launch preset intentionally emphasizes commencement/transactability houses more than the marketing preset, but now uses the same simple additive Gowri/Shadbala adjustment pattern on top of its own base score.
-- `presets/staffOnboarding.yml` provides a separate staff-joining/onboarding preset for formal entry into an organization.
+- `presets/events/launch.yml` provides a separate launch/go-live preset for product launch, company start, offer go-live, and similar commencement-oriented use cases.
+- The launch preset intentionally emphasizes commencement/transactability houses more than the marketing preset, but uses the same simple additive Gowri/Shadbala adjustment pattern on top of its own base score.
+- `presets/events/staffOnboarding.yml` provides a separate staff-joining/onboarding preset for formal entry into an organization.
 - It emphasizes 10th/11th/1st house fit, practical 2nd/6th support, and bounded dasha/strength support from Mercury, Sun, Jupiter, Moon, and Saturn.
-- `presets/studentOnboarding.yml` provides a separate student/course-entry preset for commencing study or onboarding into a course.
+- `presets/events/studentOnboarding.yml` provides a separate student/course-entry preset for commencing study or onboarding into a course.
 - It emphasizes 4th/5th/9th learning support, education-specific weekday/nakshatra preferences, and bounded dasha/strength support from Jupiter, Mercury, Moon, Venus, and Sun.
-- All four richer presets now avoid impossible or always-on quality branches for fixed-nature planets; fixed benefic/malefic tendencies are captured through the broader rubric rather than through constant `qualityScore` terms.
+- The four event presets share `presets/muhurta-base.yml` via the `imports:` directive: the base owns the shared `sources`, the shared score-chain structure (coefficient-driven via `constants.event*`), and the shared `report` keyed on `eventScore`; each event file supplies only its coefficients and its `eventHouseScore` / `baseEventScore` / `eventScore` formulas. See `docs/presets-cheatsheet.md` -> *Imports*.
+- All four event presets avoid impossible or always-on quality branches for fixed-nature planets; fixed benefic/malefic tendencies are captured through the broader rubric rather than through constant `qualityScore` terms.
 - Current preset scope intentionally excludes owner/business-chart-specific natal alignment logic and deeper chart-shape rules not yet exposed on the current preset surface.
 
 ## Presets Cheatsheet
