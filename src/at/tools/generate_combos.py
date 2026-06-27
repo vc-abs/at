@@ -571,6 +571,7 @@ def sort_data(df, order):
 	return df.sort_values(
 		by=keys,
 		ascending=orders,
+		kind='mergesort',
 		inplace=True,
 	)
 
@@ -651,7 +652,6 @@ def generate_combos(config):
 	add_custom_columns(
 		df, get_computation_fields(config), config
 	)
-	sort_data(df, report['order'])
 	split_timestamp(df)
 	adjust_columns(df)
 	filtered_df = df.query(
@@ -660,6 +660,7 @@ def generate_combos(config):
 		),
 		local_dict=get_expression_locals(config),
 	)
+	sort_data(filtered_df, report['order'])
 	return add_columns(
 		filtered_df, report.get('fieldSets', select_all_field_sets)
 	)

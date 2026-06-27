@@ -377,7 +377,7 @@ This is the main pattern used by the richer presets like:
 
 ## 9) Sort results with `order`
 
-Use `order` to sort the final DataFrame before filtering/output.
+Use `order` to sort the filtered DataFrame before output. `report.selection` is applied first, then `order` sorts the surviving rows; the sort is stable, so tied rows keep their original relative order.
 
 ```yml
 order:

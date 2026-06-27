@@ -536,6 +536,26 @@ def test_sort_data_and_split_timestamp_mutate_dataframe():
 
 
 
+def test_sort_data_is_stable_for_tied_scores():
+	# A stable sort keeps tied rows in their original relative order.
+	# Use enough rows that quicksort would otherwise reshuffle the tie block.
+	labels = [chr(65 + i) for i in range(17)]
+	df = pd.DataFrame(
+		{
+			'label': labels,
+			'score': [2] * 8 + [1] * 9,
+		}
+	)
+
+	sort_data(df, {'score': 'descending'})
+
+	# High-score tie block (8 rows) must retain input order A..H.
+	assert list(df['label'])[:8] == labels[:8]
+	# Low-score tie block (9 rows) must retain input order I..Q.
+	assert list(df['label'])[8:] == labels[8:]
+
+
+
 def test_get_panchang_formats_time_strings():
 	result = get_panchang(_panchang_chart())
 	assert result['sunrise'] == '06:00:00'
