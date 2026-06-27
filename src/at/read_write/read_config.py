@@ -144,16 +144,73 @@ merger = Merger(
 )
 
 
-def merge_files(file_paths):
-	data = [yaml.safe_load(open(file, 'r')) for file in file_paths]
+def _normalize_imports(imports_value):
+	if not imports_value:
+		return []
+	if isinstance(imports_value, str):
+		return [imports_value]
+	return list(imports_value)
+
+
+def _format_import_cycle(import_stack, repeated_path):
+	cycle_start = import_stack.index(repeated_path)
+	cycle = import_stack[cycle_start:] + [repeated_path]
+	return ' → '.join(cycle)
+
+
+def _resolve_import_path(import_path, importing_file):
+	return path.realpath(
+		path.join(path.dirname(importing_file), import_path)
+	)
+
+
+def _load_file(file_path, import_stack):
+	resolved_file_path = path.realpath(file_path)
+	if resolved_file_path in import_stack:
+		raise ValueError(
+			'Config import cycle detected: '
+			f'{_format_import_cycle(import_stack, resolved_file_path)}'
+		)
+
+	with open(resolved_file_path, 'r') as file:
+		data = yaml.safe_load(file) or {}
+
+	imports = _normalize_imports(data.pop('imports', []))
+	if imports:
+		data = merger.merge(
+			_merge_files(
+				[
+					_resolve_import_path(import_path, resolved_file_path)
+					for import_path in imports
+				],
+				import_stack + [resolved_file_path],
+			),
+			data,
+		)
+
+	return data
+
+
+def _merge_files(file_paths, import_stack=None):
+	import_stack = import_stack or []
+	data = [
+		_load_file(file, import_stack)
+		for file in file_paths
+	]
+	if not data:
+		return {}
 	merged_data = data[0]
 	for d in data[1:]:
 		merged_data = merger.merge(merged_data, d)
 	return merged_data
 
 
+def merge_files(file_paths):
+	return _merge_files(file_paths)
+
+
 def read_config(file_paths):
-	config = merge_files([project_root + '/data/defaultConfig.yml'] + file_paths)
+	config = _merge_files([project_root + '/data/defaultConfig.yml'] + file_paths)
 	config = {**get_default_config(), **config}
 
 	if 'baseConfigurations' in config:

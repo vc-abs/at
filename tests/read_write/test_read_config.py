@@ -121,6 +121,180 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 	assert 'date' in result['scenarios']['default']
 
 
+
+def test_read_config_supports_single_import(tmp_path: Path):
+	base = tmp_path / 'base.yml'
+	child = tmp_path / 'child.yml'
+	base.write_text(
+		'interval: 1h\n'
+		'count: 1\n'
+		'report:\n'
+		'  order:\n'
+		'    score: ascending\n'
+	)
+	child.write_text(
+		'imports:\n'
+		'  - base.yml\n'
+		'report:\n'
+		'  order:\n'
+		'    score: descending\n'
+		'computations:\n'
+		'  score: h1 + h2\n'
+	)
+
+	assert merge_files([str(child)]) == merge_files([str(base), str(child)])
+
+
+
+def test_read_config_supports_chained_imports(tmp_path: Path):
+	a = tmp_path / 'a.yml'
+	b = tmp_path / 'b.yml'
+	c = tmp_path / 'c.yml'
+	a.write_text(
+		'interval: 1h\n'
+		'count: 1\n'
+		'nested:\n'
+		'  left: a\n'
+		'  shared: a\n'
+	)
+	b.write_text(
+		'imports:\n'
+		'  - a.yml\n'
+		'nested:\n'
+		'  shared: b\n'
+	)
+	c.write_text(
+		'imports:\n'
+		'  - b.yml\n'
+		'nested:\n'
+		'  right: c\n'
+	)
+
+	result = read_config([str(c)])
+	assert result['nested'] == {'left': 'a', 'shared': 'b', 'right': 'c'}
+
+
+
+def test_read_config_supports_multi_import_merge_order(tmp_path: Path):
+	a = tmp_path / 'a.yml'
+	b = tmp_path / 'b.yml'
+	c = tmp_path / 'c.yml'
+	a.write_text(
+		'interval: 1h\n'
+		'count: 1\n'
+		'flag: a\n'
+	)
+	b.write_text(
+		'flag: b\n'
+		'obj:\n'
+		'  left: 1\n'
+	)
+	c.write_text(
+		'imports:\n'
+		'  - a.yml\n'
+		'  - b.yml\n'
+		'flag: c\n'
+		'obj:\n'
+		'  right: 2\n'
+	)
+
+	result = read_config([str(c)])
+	assert result['flag'] == 'c'
+	assert result['obj'] == {'left': 1, 'right': 2}
+
+
+
+def test_read_config_resolves_imports_relative_to_file(tmp_path: Path):
+	nested = tmp_path / 'nested'
+	sibling = tmp_path / 'sibling.yml'
+	child = nested / 'child.yml'
+	nested.mkdir()
+	sibling.write_text(
+		'interval: 1h\n'
+		'count: 1\n'
+		'flag: sibling\n'
+	)
+	child.write_text(
+		'imports:\n'
+		'  - ../sibling.yml\n'
+		'flag: child\n'
+	)
+
+	result = read_config([str(child)])
+	assert result['flag'] == 'child'
+
+
+
+def test_read_config_rejects_import_cycles(tmp_path: Path):
+	a = tmp_path / 'a.yml'
+	b = tmp_path / 'b.yml'
+	a.write_text(
+		'interval: 1h\n'
+		'count: 1\n'
+		'imports:\n'
+		'  - b.yml\n'
+	)
+	b.write_text(
+		'imports:\n'
+		'  - a.yml\n'
+	)
+
+	with pytest.raises(ValueError, match='Config import cycle detected: .*a.yml.*b.yml.*a.yml'):
+		read_config([str(a)])
+
+
+
+def test_read_config_strips_imports_key(tmp_path: Path):
+	base = tmp_path / 'base.yml'
+	child = tmp_path / 'child.yml'
+	base.write_text(
+		'interval: 1h\n'
+		'count: 1\n'
+		'imports:\n'
+		'  - child.yml\n'
+	)
+	child.write_text(
+		'flag: child\n'
+	)
+
+	result = read_config([str(child)])
+	assert 'imports' not in result
+
+
+
+def test_read_config_loads_default_and_user_files_against_imports_once(tmp_path: Path):
+	base = tmp_path / 'base.yml'
+	child = tmp_path / 'child.yml'
+	base.write_text(
+		'interval: 1h\n'
+		'count: 1\n'
+	)
+	child.write_text(
+		'imports:\n'
+		'  - base.yml\n'
+	)
+
+	result = read_config([str(child)])
+	assert result['utcHour'] == 5
+	assert result['utcMinute'] == 30
+	assert result['sources'] == [
+		'muhurtaYogaEffects',
+		'objectHouses',
+		'planetaryDegrees',
+		'ashtakavarga',
+		'mahaDasha',
+		'antarDashas',
+		'planetFlags',
+		'planetQualities',
+		'timeFlags',
+		'gowriFlags',
+		'shadBalaStrength',
+		'karakas',
+		'scenario',
+		'panchang',
+	]
+
+
 def test_dms_compact_parses_to_decimal(repo_root):
 	cfg = read_config([str(repo_root / 'tests/fixtures/coord_sampling_base.yml')])
 	assert cfg['latitude'] == pytest.approx(70 + 15 / 60)
