@@ -7,6 +7,7 @@ from at.read_write.read_config import (
 	build_scenarios,
 	get_scenario_time,
 	merge_files,
+	merge_scenario_config,
 	read_config,
 )
 
@@ -59,6 +60,54 @@ def test_build_scenarios_merges_defaults_and_scenario_specific():
 	assert scenarios['custom']['name'] == 'c1'
 	assert 'date' in scenarios['custom']
 	assert scenarios['custom']['count'] == 2
+	# deep-merge: a scenario overriding one nested constant merges with the
+	# global block instead of replacing it, and the override does not leak
+	# into sibling scenarios or the global config.
+	config = {
+		'latitude': 1.0,
+		'longitude': 2.0,
+		'year': 2025,
+		'month': 1,
+		'day': 2,
+		'hour': 3,
+		'minute': 4,
+		'second': 5,
+		'utcHour': 0,
+		'utcMinute': 0,
+		'interval': '1h',
+		'count': 2,
+		'constants': {'houseWeight': 1.0, 'minScore': 0},
+		'scenarios': {
+			'balanced': {},
+			'houseHeavy': {'constants': {'houseWeight': 2.5}},
+		},
+	}
+	scenarios = build_scenarios(config)
+	balanced = scenarios['balanced']
+	house_heavy = scenarios['houseHeavy']
+	# legacy top-level constants are folded into computations.constants.
+	assert balanced['computations']['constants'] == {
+		'houseWeight': 1.0,
+		'minScore': 0,
+	}
+	# the scenario overrides one constant and inherits the rest via deep-merge.
+	assert house_heavy['computations']['constants'] == {
+		'houseWeight': 2.5,
+		'minScore': 0,
+	}
+	# overrides do not leak across scenarios.
+	assert balanced['computations']['constants']['houseWeight'] == 1.0
+
+
+def test_merge_scenario_config_does_not_mutate_global_config():
+	config = {
+		'computations': {'constants': {'w': 1.0}, 'fields': {}},
+		'scenarios': {'a': {}, 'b': {'computations': {'constants': {'w': 9.0}}}},
+	}
+	merged = merge_scenario_config(config, config['scenarios']['b'])
+	assert merged['computations']['constants']['w'] == 9.0
+	# the global config is untouched.
+	assert config['computations']['constants']['w'] == 1.0
 
 
 def test_merge_files_merges_dicts(tmp_path: Path):

@@ -2,11 +2,16 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
+from at.read_write.read_config import read_config
 from at.tools.generate_combos import (
 	add_columns,
 	add_custom_columns,
 	format_dasha_data,
+	generate_combos,
+	generate_scenario_combos,
 	get_column,
+	get_computation_constants,
+	get_computation_fields,
 	get_expression_locals,
 	get_gowri_flags,
 	get_panchang,
@@ -715,3 +720,134 @@ def test_add_columns_can_select_computations_explicitly():
 	)
 
 	assert list(selected.columns) == ['eventScore', 'weekdayScore', 'scenario', 'date', 'time']
+
+
+# --- per-scenario constants & computations ---
+
+
+def test_groupby_transform_string_produces_per_group_zscore():
+	df = pd.DataFrame([
+		{'scenario': 'a', 'eventScore': 1},
+		{'scenario': 'a', 'eventScore': 2},
+		{'scenario': 'a', 'eventScore': 3},
+		{'scenario': 'b', 'eventScore': 10},
+		{'scenario': 'b', 'eventScore': 20},
+		{'scenario': 'b', 'eventScore': 30},
+	])
+	add_custom_columns(df, {
+		'eventScoreDev': "(eventScore - eventScore.groupby(scenario).transform('mean'))"
+		                 " / eventScore.groupby(scenario).transform('std')",
+	}, {'computations': {'constants': {}, 'fields': {}}})
+	# per-group z-score, ddof=1
+	assert list(df['eventScoreDev']) == [-1.0, 0.0, 1.0, -1.0, 0.0, 1.0]
+
+
+def test_per_scenario_constants_flow_into_computations(repo_root):
+	cfg = read_config([
+		str(repo_root / 'tests/fixtures/per_scenario_constants.yml'),
+	])
+
+	# the global config keeps the base constant; scenarios override per-key.
+	assert get_computation_constants(cfg)['houseWeight'] == 1.0
+	assert get_computation_constants(cfg['scenarios']['balanced'])['houseWeight'] == 1.0
+	assert (
+		get_computation_constants(cfg['scenarios']['houseHeavy'])['houseWeight']
+		== 2.5
+	)
+	# minScore is inherited via deep-merge (not restated by the scenario).
+	assert (
+		get_computation_constants(cfg['scenarios']['houseHeavy'])['minScore']
+		== 0
+	)
+	# the shared computation fields stay global; a scenario overriding one
+	# constant does not have to restate them.
+	assert (
+		list(get_computation_fields(cfg['scenarios']['houseHeavy']).keys())
+		== ['eventScore', 'eventScoreDev']
+	)
+	# report stays global and is not routed through scenario configs.
+	assert cfg['report']['selection'] == (
+		'eventScoreDev >= 1.0 and eventScore >= constants.minScore'
+	)
+
+
+def _combined_per_scenario_df(cfg):
+	"""Reproduce the engine's per-scenario computation step without the
+	global report projection, so computed columns can be inspected."""
+	df = pd.DataFrame()
+	for scenario_name in cfg['scenarios'].keys():
+		scenario_df, scenario_config = generate_scenario_combos(
+			scenario_name, cfg
+		)
+		add_custom_columns(
+			scenario_df,
+			get_computation_fields(scenario_config),
+			scenario_config,
+		)
+		df = pd.concat([df, scenario_df], ignore_index=True)
+	return df
+
+
+def test_computations_apply_per_scenario_with_scenario_constants(repo_root):
+	cfg = read_config([
+		str(repo_root / 'tests/fixtures/per_scenario_constants.yml'),
+	])
+	df = _combined_per_scenario_df(cfg)
+
+	# Pass 1: each scenario computes eventScore with its own houseWeight.
+	# eventScore = h1 * houseWeight + h5 + h9  =>  (eventScore - h5 - h9) / h1.
+	scenario_key = {'house-heavy': 'houseHeavy'}
+	for scenario_name, group in df.groupby('scenario'):
+		scenario_cfg = cfg['scenarios'][scenario_key.get(scenario_name, 'balanced')]
+		weight = get_computation_constants(scenario_cfg)['houseWeight']
+		ratio = (group['eventScore'] - group['h5'] - group['h9']) / group['h1']
+		assert set(ratio.round(6).unique()) == {round(weight, 6)}, scenario_name
+
+	# Pass 2: eventScoreDev is a per-scenario z-score (sample std, ddof=1).
+	for scenario_name, group in df.groupby('scenario'):
+		dev = group['eventScoreDev']
+		assert abs(dev.mean()) < 1e-9, scenario_name
+		# std of z-scores is 1 by construction (ddof=1).
+		assert abs(dev.std(ddof=1) - 1.0) < 1e-9, scenario_name
+		# the max row is the +1 sigma relative to its group mean/std.
+		expected = (group['eventScore'] - group['eventScore'].mean()) / (
+			group['eventScore'].std(ddof=1)
+		)
+		pd.testing.assert_series_equal(
+			dev.reset_index(drop=True),
+			expected.reset_index(drop=True),
+			check_names=False,
+		)
+
+
+def test_generate_combos_keeps_report_global(repo_root):
+	cfg = read_config([
+		str(repo_root / 'tests/fixtures/per_scenario_constants.yml'),
+	])
+	out = generate_combos(cfg)
+
+	# Pass 3: report.selection is applied once globally across the combined
+	# DataFrame: every surviving row satisfies the selection predicate.
+	pre = _combined_per_scenario_df(cfg)
+	pre['minScore'] = 0
+	survivors = pre.query(
+		rewrite_constants_expression(
+			'eventScoreDev >= 1.0 and eventScore >= constants.minScore'
+		),
+		local_dict=get_expression_locals(cfg),
+	)
+	assert set(out['scenario']) == set(survivors['scenario'])
+	assert len(out) == len(survivors)
+
+	# report.order is global: rows are sorted by eventScoreDev desc, then
+	# eventScore desc across scenarios (not grouped by scenario first).
+	devs = list(out['eventScoreDev'])
+	assert devs == sorted(devs, reverse=True)
+
+	# report.fieldSets is global: only the configured columns are emitted.
+	# computations field-set surfaces eventScore / eventScoreDev explicitly.
+	assert 'eventScore' in out.columns
+	assert 'eventScoreDev' in out.columns
+	assert 'h1' in out.columns  # ashtakavarga: all
+	assert 'tithi' in out.columns  # panchang: all
+	assert 'suD' not in out.columns  # planetaryDegrees not selected

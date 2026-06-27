@@ -6,6 +6,7 @@ from at.read_write.get_default_config import (
 	select_all_field_sets,
 	select_all_query,
 )
+from at.read_write.read_config import merge_scenario_config
 from at.core.constants import (
 	planets,
 	nodes,
@@ -375,10 +376,7 @@ def generate_scenario_combos(
 	scenario_name, config
 ):
 	scenario_config = config['scenarios'][scenario_name]
-	config = {
-		**config,
-		**scenario_config,
-	}
+	config = merge_scenario_config(config, scenario_config)
 	time_series = (
 		pd.date_range(
 			start=config['date'],
@@ -389,7 +387,7 @@ def generate_scenario_combos(
 		.tolist()
 	)
 
-	return pd.DataFrame(
+	df = pd.DataFrame(
 		list(
 			map(
 				lambda dt: get_time_combos(
@@ -399,6 +397,7 @@ def generate_scenario_combos(
 			)
 		),
 	)
+	return df, config
 
 
 class ConstantNamespace(Mapping):
@@ -640,18 +639,25 @@ def generate_combos(config):
 	report = config['report']
 
 	for scenario_name in config['scenarios'].keys():
+		scenario_df, scenario_config = generate_scenario_combos(
+			scenario_name, config
+		)
+		# Apply computations per scenario using that scenario's merged config,
+		# so per-scenario constant/computation overrides take effect. The
+		# ``report`` (selection / order / fieldSets) stays global and is
+		# applied once to the combined DataFrame below.
+		add_custom_columns(
+			scenario_df,
+			get_computation_fields(scenario_config),
+			scenario_config,
+		)
 		df = pd.concat(
 			[
 				df,
-				generate_scenario_combos(
-					scenario_name, config
-				),
+				scenario_df,
 			],
 		)
 
-	add_custom_columns(
-		df, get_computation_fields(config), config
-	)
 	split_timestamp(df)
 	adjust_columns(df)
 	filtered_df = df.query(

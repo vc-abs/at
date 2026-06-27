@@ -225,6 +225,19 @@ Imports also compose with `scenarios`: an imported file may define `scenarios`,
 and the importer can override individual scenarios via deep-merge, because both
 use the same merge policy.
 
+#### Primary score column: `eventScore`
+
+The canonical primary muhurta-score column name is **`eventScore`**. Event-type
+presets compute `eventScore` instead of per-event names
+(`marketingScore`, `launchScore`, …). The `scenario` column already
+disambiguates *which* event a row belongs to, so a shared column name loses
+no information — and it lets a shared base preset define one `report.selection`
+/ `report.order` keyed on `eventScore`, and lets multiple output files be
+concatenated and compared across event types. Optional breakdown columns keep
+descriptive names (`eventHouseScore`, `weekdayScore`, `tithiScore`,
+`qualityScore`, `dashaScore`, `gowriEventAdj`, `eventShadbalaAdj`) — these are
+components, not the headline.
+
 ---
 
 ## 5) Choose output columns with `fieldSets`
@@ -506,6 +519,121 @@ scenarios:
 ```
 
 Scenario values inherit the top-level defaults unless overridden.
+
+### Merge policy (scenarios stack like files)
+
+A scenario is **deep-merged** onto a fresh copy of the global config, using
+the same policy as stacked config files (see §4):
+
+- **dicts merge** (`computations`, `computations.constants`,
+  `computations.fields`, nested `constants`);
+- **lists and scalars override** (restate the whole list/value).
+
+So a scenario can override a single constant without restating the rest of
+the block, and the override stays scoped to that scenario — it does not leak
+into sibling scenarios or the global view.
+
+### Per-scenario `constants` and `computations`
+
+A scenario may override `constants` (or `computations.constants` /
+`computations.fields`) to express a **parameter sweep** over one contract:
+the same field names and the same `report`, but different constant weights.
+Computations are evaluated **per scenario** using that scenario's merged
+config, so a scenario's constant override actually changes computed values.
+
+```yml
+interval: 1d
+count: 5
+latitude: 23.101
+longitude: 77.461
+constants:
+  houseWeight: 1.0
+  minScore: 0
+computations:
+  fields:
+    eventScore: "h1 * constants.houseWeight + h5 + h9"
+    eventScoreDev: >-
+      (eventScore - eventScore.groupby(scenario).transform('mean'))
+      / eventScore.groupby(scenario).transform('std')
+report:
+  selection: "eventScoreDev >= 1.0 and eventScore >= constants.minScore"
+  order:
+    eventScoreDev: descending
+    eventScore: descending
+  fieldSets:
+    scenario: all
+    panchang: all
+    ashtakavarga: all
+scenarios:
+  balanced: {}
+  houseHeavy:
+    name: house-heavy
+    constants:
+      houseWeight: 2.5
+```
+
+`balanced` rows compute `eventScore` with `houseWeight == 1.0`; `houseHeavy`
+rows with `houseWeight == 2.5` — without restating `minScore`, the `fields`,
+or the `report`.
+
+### `eventScoreDev` — within-scenario z-score
+
+`eventScoreDev` is a within-scenario z-score written as a plain eval string
+using `Series.groupby(scenario).transform(...)`:
+
+```yml
+computations:
+  fields:
+    eventScoreDev: >-
+      (eventScore - eventScore.groupby(scenario).transform('mean'))
+      / eventScore.groupby(scenario).transform('std')
+```
+
+Notes:
+
+- `transform('std')` uses **sample std (`ddof=1`)**. Population std
+  (`ddof=0`) is not expressible via the eval-string form.
+- A constant `eventScore` within a scenario → `std` is 0 → `eventScoreDev`
+  is NaN → those rows silently fail `eventScoreDev >= 1.0`. Expected.
+- The deviation is computed in `add_custom_columns`, which runs **before**
+  `report.selection`, so the mean/std are taken over the full scan window,
+  not the filtered survivors.
+- `scenario` is already a real column on every row, so the groupby needs no
+  plumbing.
+
+`eventScoreDev` is most useful paired with per-scenario constants (weight
+rescaling makes absolute `minEventScore`-style thresholds break), but it
+works on the combined DataFrame regardless of how scores were computed.
+
+### `report` stays global
+
+`report` (selection / order / fieldSets) is **global** and applied once to
+the combined DataFrame across all scenarios. It is not per-scenario. The
+moment a scenario needs its own `report`, it is no longer a parameter sweep
+over one contract — split it into a separate config (see §4 *Imports*).
+
+### Edge case: scenarios with different computed field names
+
+If scenarios define *different* computed field names, `pd.concat` produces
+NaN for scenarios lacking a column, and a global `report.selection` /
+`report.fieldSets` referencing a scenario-only column will silently drop or
+blank those rows. The engine does not guard against this. Recommended
+author pattern: keep computation field names consistent across scenarios.
+
+### Footgun: per-scenario `sources` without per-scenario `computations`
+
+`sources` is already read from the merged per-scenario config inside
+`generate_scenario_combos`, so a scenario *can* prune `sources`. But everything
+downstream of it (`computations`, `report.selection`, `report.order`,
+`report.fieldSets`) assumes a uniform schema. Pruning a source that a global
+computation/selection/fieldSet references causes either silent NaN drops (if
+some scenarios keep it) or a hard `KeyError` / `UndefinedVariableError` (if all
+scenarios prune it).
+
+Per-scenario `computations` (above) widens the safe window: a scenario that
+prunes `sources` can also override `computations` to only reference the columns
+it still produces. Safe per-scenario `sources` therefore composes with, and
+benefits from, per-scenario computations.
 
 ---
 

@@ -1,3 +1,4 @@
+import copy
 import re
 from os import path
 from datetime import (
@@ -129,10 +130,54 @@ def _standardize_config(config):
 	return config
 
 
+def _normalize_computations(config):
+	"""Fold legacy top-level ``constants`` into ``computations.constants``.
+
+	Supports both the legacy flat form (``constants:`` plus a ``computations:``
+	block of bare fields) and the structured form
+	(``computations: {constants: ..., fields: ...}``). Idempotent: re-applying
+	to an already-normalized config leaves it unchanged.
+	"""
+	legacy_constants = config.pop('constants', {}) or {}
+	computations = config.get('computations', {}) or {}
+	if not isinstance(computations, dict):
+		computations = {}
+	if 'fields' in computations or 'constants' in computations:
+		fields = computations.get('fields', {}) or {}
+		constants = computations.get('constants', {}) or {}
+	else:
+		fields = {
+			k: v
+			for k, v in computations.items()
+			if k not in ('constants', 'fields')
+		}
+		constants = {}
+	config['computations'] = {
+		'constants': {**legacy_constants, **constants},
+		'fields': fields,
+	}
+	return config
+
+
+def merge_scenario_config(config, scenario):
+	"""Deep-merge a scenario onto a fresh copy of the global config.
+
+	Reuses the file-stack ``merger`` so scenarios get the same merge semantics
+	as stacked config files: dicts merge, lists/scalars override. Merging onto
+	``copy.deepcopy(config)`` prevents a scenario's overrides from leaking into
+	the next iteration or the global view.
+	"""
+	return merger.merge(copy.deepcopy(config), scenario)
+
+
 def build_scenarios(config):
 	scenarios = config.get('scenarios', default_scenarios)
 	return {
-		k: _standardize_config({**config, **scenario})
+		k: _standardize_config(
+			_normalize_computations(
+				merge_scenario_config(config, scenario)
+			)
+		)
 		for k, scenario in scenarios.items()
 	}
 
@@ -205,28 +250,14 @@ def read_config(file_paths):
 		base_config = config.pop('baseConfigurations') or {}
 		config = {**base_config, **config}
 
-	legacy_constants = config.pop('constants', {}) or {}
-	computations = config.get('computations', {}) or {}
-	if not isinstance(computations, dict):
-		computations = {}
-	if 'fields' in computations or 'constants' in computations:
-		fields = computations.get('fields', {}) or {}
-		constants = computations.get('constants', {}) or {}
-	else:
-		fields = {
-			k: v
-			for k, v in computations.items()
-			if k not in ('constants', 'fields')
-		}
-		constants = {}
-	config['computations'] = {
-		'constants': {**legacy_constants, **constants},
-		'fields': fields,
-	}
-
 	config.setdefault('report', {})
 	config.setdefault('sources', [])
 
-	config = _standardize_config(config)
+	# Build scenarios from the pre-normalization config so a scenario's
+	# top-level ``constants`` deep-merge with the global ``constants`` before
+	# being folded into ``computations.constants`` per scenario.
+	scenarios = build_scenarios(config)
 
-	return {**config, 'scenarios': build_scenarios(config)}
+	config = _standardize_config(_normalize_computations(config))
+
+	return {**config, 'scenarios': scenarios}
