@@ -35,10 +35,12 @@ computations:
     eventMercuryNeutralBonus: 10
     eventMoonBeneficBonus: 20
     eventGowriMultiplier: 16.5
-    # Saturn replaces Venus for institutional-structure strength signaling.
-    eventStrengthCols: [meS, suS, juS, moS, saS]
-    eventShadbalaCenter: 1.22
-    eventShadbalaMultiplier: 110
+    # Special-planet Shadbala uses Mercury, Venus, Moon, Jupiter, Sun (the
+    # same five-planet set as marketing/launch); Saturn features in the dasha
+    # core-planet list above, not in the strength average.
+    eventStrengthCols: [meS, veS, moS, juS, suS]
+    eventShadbalaCenter: 1.27
+    eventShadbalaMultiplier: 120
     eventMinThreshold: 22
     eventScoreThreshold: 275
   fields:

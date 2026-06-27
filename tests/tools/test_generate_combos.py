@@ -505,9 +505,10 @@ def test_staff_onboarding_preset_imports_base_and_supplies_constants(repo_root):
 	assert 'eventHouseScore:' in text
 	assert 'baseEventScore:' in text
 	assert 'eventScore:' in text
-	# staff swaps Saturn in for Venus in the strength column set.
-	assert 'saS' in text
-	assert 'veS' not in text
+	# staff's strength average uses Venus (meS/veS/moS/juS/suS), like
+	# marketing/launch; Saturn appears in the dasha core-planet list, not here.
+	assert 'veS' in text
+	assert 'saS' not in text
 
 
 
