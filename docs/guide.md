@@ -64,11 +64,11 @@
 - In expression strings such as `report.selection` and string-valued `computations`, use author-facing `constants.foo` syntax.
 - `sources` is the source-group pruning list: keep it broad in defaults, narrow it in presets when you want to avoid computing unused groups.
 - Example patterns:
-  - allow/filter lists: `nakshatra.isin(constants.launchNakshatras)`
-  - mapping/weight dictionaries: `vaara.map(constants.marketingWeekdayWeights).fillna(0)`
+  - allow/filter lists: `nakshatra.isin(constants.eventNakshatras)`
+  - mapping/weight dictionaries: `vaara.map(constants.eventWeekdayWeights).fillna(0)`
   - numeric lookups: `h2 * constants.houseWeights.h2 + h3 * constants.houseWeights.h3`
 - In summary/list-style custom columns, constant-backed lists can also be referenced directly:
-  - `min: constants.marketingMinHouses`
+  - `min: constants.eventMinHouses`
 - A useful pattern is to centralize weekday preferences as a weight map and then query on the derived score, for example `weekdayScore > 0`, instead of duplicating both a weekday allow-list and a separate weekday score formula.
 - Constants stay available on merged runtime config as `config['constants']`.
 - Constants are config-scoped runtime data, not output columns; they only appear in output if a config explicitly derives a custom column from them.
