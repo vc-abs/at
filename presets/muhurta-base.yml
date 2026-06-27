@@ -33,6 +33,11 @@ sources:
 computations:
   constants:
     tabooTimeFlagsRegex: 'RK|YG|GK'
+    # Shared muhurta tithi lists — identical across every event preset.
+    preferredTithis: [2, 3, 5, 7, 10, 11, 13]
+    tithisToAvoid: [4, 8, 9]
+    waningRiktaTithis: [19, 24, 29]
+    waningPoornaTithis: [20, 25]
   fields:
     muhurtaYogaEffect: >-
       positive + negative
@@ -42,17 +47,18 @@ computations:
       vaara.map(constants.eventWeekdayWeights).fillna(0)
     nakshatraScore: >-
       nakshatra.isin(constants.eventNakshatras) * constants.eventNakshatraBonus
-    # Tithi policy is shared in shape; every coefficient is an event constant
-    # so an event can null out a term (e.g. set eventFullMoonBonus to 0).
+    # Tithi policy is shared in shape; only the coefficients (event constants)
+    # vary, so an event can null out a term (e.g. set eventFullMoonBonus to 0).
+    # The tithi lists themselves are shared muhurta constants defined above.
     tithiScore: >-
-      tithi.isin(constants.eventPreferredTithis) * constants.eventPreferredTithiBonus +
+      tithi.isin(constants.preferredTithis) * constants.eventPreferredTithiBonus +
       (tithi == 15) * constants.eventFullMoonBonus -
-      tithi.isin(constants.eventDiscouragedTithis) * constants.eventDiscouragedTithiPenalty -
+      tithi.isin(constants.tithisToAvoid) * constants.eventTithiAvoidPenalty -
       ((tithi >= 16) & (tithi <= 20)) * constants.eventWaningEarlyPenalty -
       ((tithi >= 21) & (tithi <= 25)) * constants.eventWaningMidPenalty -
       ((tithi >= 26) & (tithi <= 29)) * constants.eventWaningLatePenalty -
-      tithi.isin(constants.eventWaningRiktaTithis) * constants.eventWaningRiktaPenalty +
-      tithi.isin(constants.eventWaningPoornaTithis) * constants.eventWaningPoornaBonus
+      tithi.isin(constants.waningRiktaTithis) * constants.eventWaningRiktaPenalty +
+      tithi.isin(constants.waningPoornaTithis) * constants.eventWaningPoornaBonus
     qualityScore: >-
       (meQ == 'benefic') * constants.eventMercuryBeneficBonus +
       (meQ == 'neutral') * constants.eventMercuryNeutralBonus +

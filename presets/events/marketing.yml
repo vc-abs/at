@@ -21,16 +21,12 @@ computations:
       - shravana
       - dhanishta
       - revati
-    eventPreferredTithis: [2, 3, 5, 7, 10, 11, 13]
-    eventDiscouragedTithis: [4, 8, 9]
-    eventWaningRiktaTithis: [19, 24, 29]
-    eventWaningPoornaTithis: [20, 25]
     eventMinHouses: [h3, h5, h7, h10, h11]
     eventCorePlanets: [mercury, venus, jupiter, moon, sun]
     eventNakshatraBonus: 36
     eventPreferredTithiBonus: 28
     eventFullMoonBonus: 10
-    eventDiscouragedTithiPenalty: 18
+    eventTithiAvoidPenalty: 18
     eventWaningEarlyPenalty: 8
     eventWaningMidPenalty: 14
     eventWaningLatePenalty: 22
