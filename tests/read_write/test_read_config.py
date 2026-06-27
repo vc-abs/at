@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from at.read_write.read_config import (
+	_load_with_imports,
 	build_scenarios,
 	get_scenario_time,
 	merge_files,
@@ -207,5 +208,133 @@ def test_partial_end_date_time_raises(tmp_path):
 	)
 	with pytest.raises(ValueError):
 		read_config([str(f)])
+
+
+# --- imports: directive resolution ---
+
+
+def test_single_import_overlays_own_body(tmp_path):
+	base = tmp_path / 'base.yml'
+	this = tmp_path / 'this.yml'
+	base.write_text('a: 1\nshared: base\n')
+	this.write_text('imports: [base.yml]\nb: 2\nshared: this\n')
+
+	resolved = _load_with_imports(str(this))
+	expected = merge_files([str(base), str(this)])
+	expected.pop('imports', None)
+	assert resolved == expected
+	assert resolved == {'a': 1, 'b': 2, 'shared': 'this'}
+
+
+def test_chained_imports_resolve_depth_first(tmp_path):
+	a = tmp_path / 'a.yml'
+	b = tmp_path / 'b.yml'
+	c = tmp_path / 'c.yml'
+	a.write_text('val: a\nonlyA: 1\n')
+	b.write_text('imports: [a.yml]\nval: b\nonlyB: 2\n')
+	c.write_text('imports: [b.yml]\nval: c\nonlyC: 3\n')
+
+	resolved = _load_with_imports(str(c))
+	assert resolved['val'] == 'c'
+	assert resolved['onlyA'] == 1
+	assert resolved['onlyB'] == 2
+	assert resolved['onlyC'] == 3
+
+
+def test_multi_import_merge_order_rightmost_wins(tmp_path):
+	a = tmp_path / 'a.yml'
+	b = tmp_path / 'b.yml'
+	this = tmp_path / 'this.yml'
+	a.write_text('val: a\nkeepA: 1\n')
+	b.write_text('val: b\nkeepB: 2\n')
+	this.write_text('imports: [a.yml, b.yml]\nval: this\n')
+
+	resolved = _load_with_imports(str(this))
+	expected = merge_files([str(a), str(b), str(this)])
+	expected.pop('imports', None)
+	assert resolved == expected
+	assert resolved['val'] == 'this'
+	assert resolved['keepA'] == 1
+	assert resolved['keepB'] == 2
+
+
+def test_imports_resolve_relative_to_importing_file_dir(tmp_path):
+	sub = tmp_path / 'sub'
+	sub.mkdir()
+	sibling = tmp_path / 'sibling.yml'
+	this = sub / 'this.yml'
+	sibling.write_text('fromSibling: "yes"\n')
+	this.write_text('imports: [../sibling.yml]\nlocal: 1\n')
+
+	resolved = _load_with_imports(str(this))
+	assert resolved['fromSibling'] == 'yes'
+	assert resolved['local'] == 1
+
+
+def test_import_cycle_raises_naming_cycle(tmp_path):
+	a = tmp_path / 'a.yml'
+	b = tmp_path / 'b.yml'
+	a.write_text('imports: [b.yml]\n')
+	b.write_text('imports: [a.yml]\n')
+
+	with pytest.raises(ValueError) as exc:
+		_load_with_imports(str(a))
+	msg = str(exc.value)
+	assert 'cycle' in msg
+	assert 'a.yml' in msg
+	assert 'b.yml' in msg
+
+
+def test_imports_key_stripped_from_result(tmp_path):
+	base = tmp_path / 'base.yml'
+	this = tmp_path / 'this.yml'
+	base.write_text('x: 1\n')
+	this.write_text('imports: [base.yml]\ny: 2\n')
+
+	resolved = _load_with_imports(str(this))
+	assert 'imports' not in resolved
+
+
+def test_read_config_default_precedence_unchanged_with_imports(tmp_path):
+	base = tmp_path / 'base.yml'
+	this = tmp_path / 'this.yml'
+	base.write_text('interval: 2h\n')
+	this.write_text('imports: [base.yml]\nlatitude: 23.101\nlongitude: 77.461\ninterval: 1h\ncount: 2\n')
+
+	cfg = read_config([str(this)])
+	# defaultConfig provides interval: 1h; the import does not bypass it,
+	# and the importing file's own interval wins over both.
+	assert cfg['interval'] == '1h'
+	# defaults (ayanamsa, utcHour) are still present from defaultConfig.
+	assert cfg['utcHour'] == 5
+	assert cfg['utcMinute'] == 30
+	assert 'imports' not in cfg
+
+
+def test_read_config_imports_compose_with_scenarios(tmp_path):
+	base = tmp_path / 'base.yml'
+	this = tmp_path / 'this.yml'
+	base.write_text(
+		'latitude: 23.101\n'
+		'longitude: 77.461\n'
+		'interval: 1h\n'
+		'count: 2\n'
+		'scenarios:\n'
+		'  default: {}\n'
+		'  shared:\n'
+		'    hour: 6\n'
+		'    name: shared\n'
+	)
+	this.write_text(
+		'imports: [base.yml]\n'
+		'scenarios:\n'
+		'  shared:\n'
+		'    name: overridden\n'
+	)
+
+	cfg = read_config([str(this)])
+	assert 'shared' in cfg['scenarios']
+	assert cfg['scenarios']['shared']['hour'] == 6
+	assert cfg['scenarios']['shared']['name'] == 'overridden'
 
 
