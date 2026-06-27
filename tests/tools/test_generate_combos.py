@@ -744,7 +744,7 @@ def test_groupby_transform_string_produces_per_group_zscore():
 
 def test_per_scenario_constants_flow_into_computations(repo_root):
 	cfg = read_config([
-		str(repo_root / 'tests/fixtures/per_scenario_constants.yml'),
+		str(repo_root / 'presets/scenarioSweep.yml'),
 	])
 
 	# the global config keeps the base constant; scenarios override per-key.
@@ -790,7 +790,7 @@ def _combined_per_scenario_df(cfg):
 
 def test_computations_apply_per_scenario_with_scenario_constants(repo_root):
 	cfg = read_config([
-		str(repo_root / 'tests/fixtures/per_scenario_constants.yml'),
+		str(repo_root / 'presets/scenarioSweep.yml'),
 	])
 	df = _combined_per_scenario_df(cfg)
 
@@ -822,7 +822,7 @@ def test_computations_apply_per_scenario_with_scenario_constants(repo_root):
 
 def test_generate_combos_keeps_report_global(repo_root):
 	cfg = read_config([
-		str(repo_root / 'tests/fixtures/per_scenario_constants.yml'),
+		str(repo_root / 'presets/scenarioSweep.yml'),
 	])
 	out = generate_combos(cfg)
 

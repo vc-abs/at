@@ -1,6 +1,7 @@
-# Acceptance fixture for per-scenario constants & computations.
-# A parameter sweep over one contract: shared `eventScore` / `eventScoreDev`
-# formulas and a shared `report`, with `houseHeavy` overriding one constant.
+# Example: parameter sweep over one contract using per-scenario constants.
+# Shared `eventScore` / `eventScoreDev` formulas and a shared `report`, with
+# `houseHeavy` overriding a single constant (`houseWeight`) via deep-merge.
+# See docs/presets-cheatsheet.md §11.
 interval: 1d
 count: 5
 latitude: 23.101

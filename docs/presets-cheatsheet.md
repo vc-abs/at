@@ -541,6 +541,9 @@ the same field names and the same `report`, but different constant weights.
 Computations are evaluated **per scenario** using that scenario's merged
 config, so a scenario's constant override actually changes computed values.
 
+A complete runnable example lives at `presets/scenarioSweep.yml` (run it with
+`python3 main.py ./presets/scenarioSweep.yml`). The block below is that preset:
+
 ```yml
 interval: 1d
 count: 5
@@ -564,6 +567,9 @@ report:
     scenario: all
     panchang: all
     ashtakavarga: all
+    computations:
+      - eventScore
+      - eventScoreDev
 scenarios:
   balanced: {}
   houseHeavy:
