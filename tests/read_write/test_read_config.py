@@ -209,3 +209,147 @@ def test_partial_end_date_time_raises(tmp_path):
 		read_config([str(f)])
 
 
+def test_imports_single_import_overlays_importer_body(tmp_path: Path):
+	base = tmp_path / 'base.yml'
+	base.write_text('a: 1\nobj:\n  x: 1\n')
+
+	this = tmp_path / 'this.yml'
+	this.write_text(
+		'imports: [base.yml]\n'
+		'a: 2\n'
+		'obj:\n'
+		'  y: 2\n'
+	)
+
+	with_imports = merge_files([str(this)])
+	explicit_stack = merge_files([str(base), str(this)])
+
+	assert with_imports == explicit_stack
+
+
+def test_imports_chained_imports_resolve_depth_first(tmp_path: Path):
+	a = tmp_path / 'a.yml'
+	a.write_text('x: 1\n')
+
+	b = tmp_path / 'b.yml'
+	b.write_text('imports: [a.yml]\nx: 2\n')
+
+	c = tmp_path / 'c.yml'
+	c.write_text('imports: [b.yml]\nx: 3\n')
+
+	merged = merge_files([str(c)])
+	assert merged['x'] == 3
+
+
+def test_imports_multi_import_merge_order_is_left_to_right(tmp_path: Path):
+	a = tmp_path / 'a.yml'
+	a.write_text('x: 1\n')
+
+	b = tmp_path / 'b.yml'
+	b.write_text('x: 2\n')
+
+	this = tmp_path / 'this.yml'
+	this.write_text(
+		'imports: [a.yml, b.yml]\n'
+		'y: 3\n'
+	)
+
+	merged = merge_files([str(this)])
+	assert merged['x'] == 2
+	assert merged['y'] == 3
+
+
+def test_imports_relative_paths_resolve_relative_to_importer_file_dir(
+	tmp_path: Path,
+	monkeypatch: pytest.MonkeyPatch,
+):
+	subdir = tmp_path / 'subdir'
+	subdir.mkdir()
+
+	sibling = tmp_path / 'sibling.yml'
+	sibling.write_text('x: 1\n')
+
+	importer = subdir / 'importer.yml'
+	importer.write_text('imports: [../sibling.yml]\ny: 2\n')
+
+	# If imports were resolved from CWD instead of the importing file's
+	# directory, '../sibling.yml' would point somewhere else.
+	monkeypatch.chdir(tmp_path)
+
+	merged = merge_files([str(importer)])
+	assert merged['x'] == 1
+	assert merged['y'] == 2
+
+
+def test_imports_cycle_rejection_names_cycle(tmp_path: Path):
+	a = tmp_path / 'a.yml'
+	a.write_text('imports: [b.yml]\nx: 1\n')
+
+	b = tmp_path / 'b.yml'
+	b.write_text('imports: [a.yml]\ny: 2\n')
+
+	with pytest.raises(ValueError) as excinfo:
+		merge_files([str(a)])
+
+	msg = str(excinfo.value)
+	assert 'a.yml' in msg
+	assert 'b.yml' in msg
+
+
+def test_imports_key_is_stripped_from_merged_result(tmp_path: Path):
+	base = tmp_path / 'base.yml'
+	base.write_text('x: 1\n')
+
+	this = tmp_path / 'this.yml'
+	this.write_text('imports: [base.yml]\ny: 2\n')
+
+	merged = merge_files([str(this)])
+	assert 'imports' not in merged
+	assert merged['x'] == 1
+	assert merged['y'] == 2
+
+
+def test_imports_do_not_bypass_or_duplicate_defaultConfig(tmp_path: Path):
+	base = tmp_path / 'base.yml'
+	base.write_text(
+		'sources: [from-base]\n'
+		'utcHour: 6\n'
+	)
+
+	importer = tmp_path / 'importer.yml'
+	importer.write_text(
+		'imports: [base.yml]\n'
+		'sources: [from-importer]\n'
+		'utcHour: 7\n'
+	)
+
+	result = read_config([str(importer)])
+	assert result['utcHour'] == 7
+	assert result['sources'] == ['from-importer']
+	assert result['interval'] == '1h'
+
+
+def test_imports_deep_merge_scenarios(tmp_path: Path):
+	base = tmp_path / 'base.yml'
+	base.write_text(
+		'scenarios:\n'
+		'  default:\n'
+		'    hour: 5\n'
+		'    name: base\n'
+	)
+
+	importer = tmp_path / 'importer.yml'
+	importer.write_text(
+		'imports: [base.yml]\n'
+		'scenarios:\n'
+		'  default:\n'
+		'    minute: 30\n'
+	)
+
+	merged = merge_files([str(importer)])
+	assert merged['scenarios']['default'] == {
+		'hour': 5,
+		'name': 'base',
+		'minute': 30,
+	}
+

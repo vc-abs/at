@@ -144,10 +144,65 @@ merger = Merger(
 )
 
 
+def _format_import_cycle(cycle_paths):
+	return ' -> '.join(path.basename(p) for p in cycle_paths)
+
+
+def _resolve_imports_in_file(file_path, imports_stack):
+	abs_file_path = path.realpath(file_path)
+	if abs_file_path in imports_stack:
+		cycle_start_index = imports_stack.index(abs_file_path)
+		cycle_paths = imports_stack[cycle_start_index:] + [abs_file_path]
+		raise ValueError(
+			f'Import cycle detected: {_format_import_cycle(cycle_paths)}'
+		)
+
+	imports_stack.append(abs_file_path)
+
+	with open(abs_file_path, 'r') as f:
+		loaded = yaml.safe_load(f)
+
+	data = loaded or {}
+	if not isinstance(data, dict):
+		raise ValueError(
+			f'Config files must be YAML mappings; got {type(data).__name__}: {file_path}'
+		)
+
+	imports = data.pop('imports', None)
+	if imports is None:
+		imports_list = []
+	elif isinstance(imports, str):
+		imports_list = [imports]
+	elif isinstance(imports, list):
+		imports_list = imports
+	else:
+		raise ValueError(
+			f'imports must be a string or list of strings: {file_path}'
+		)
+
+	import_dir = path.dirname(abs_file_path)
+	merged = None
+	for import_path in imports_list:
+		import_abs_path = path.realpath(path.join(import_dir, str(import_path)))
+		import_merged = _resolve_imports_in_file(
+			import_abs_path, imports_stack,
+		)
+		merged = import_merged if merged is None else merger.merge(merged, import_merged)
+
+	merged = data if merged is None else merger.merge(merged, data)
+
+	imports_stack.pop()
+	return merged
+
+
 def merge_files(file_paths):
-	data = [yaml.safe_load(open(file, 'r')) for file in file_paths]
-	merged_data = data[0]
-	for d in data[1:]:
+	resolved_data = [
+		_resolve_imports_in_file(file_path, [])
+		for file_path in file_paths
+	]
+
+	merged_data = resolved_data[0]
+	for d in resolved_data[1:]:
 		merged_data = merger.merge(merged_data, d)
 	return merged_data
 
