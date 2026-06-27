@@ -13,7 +13,7 @@ python3 main.py ./presets/panchang.yml
 Or stack multiple files:
 
 ```bash
-python3 main.py ./presets/marketing.yml ./examples/presetExtensions.yml
+python3 main.py ./presets/events/marketing.yml ./examples/presetExtensions.yml
 ```
 
 Files are merged left to right.
@@ -129,7 +129,7 @@ A very common pattern is:
 Example:
 
 ```bash
-python3 main.py ./presets/launch.yml ./examples/presetExtensions.yml
+python3 main.py ./presets/events/launch.yml ./examples/presetExtensions.yml
 ```
 
 ### Merge rules
@@ -175,6 +175,26 @@ Lists do **not** merge item by item.
 If you override a list, restate the whole list you want.
 
 ---
+
+### Reuse preset pieces with `imports`
+Presets can build on other presets via an `imports:` key.
+
+- paths are resolved relative to the importing file's directory
+- imports are merged depth-first, left-to-right (earlier import = lower priority), then the importing file wins
+- import cycles are rejected with a clear `ValueError`
+- the final merged config has no `imports` key (it is stripped during load)
+
+Canonical muhurta example:
+
+```bash
+python3 main.py ./presets/events/marketing.yml
+```
+
+And inside the preset:
+
+```yml
+imports: [../muhurta-base.yml]
+```
 
 ## 5) Choose output columns with `fieldSets`
 
@@ -368,10 +388,10 @@ You can reference constants from:
 - summary/list-style custom columns such as `min: constants.minHouses`
 
 This is the main pattern used by the richer presets like:
-- `presets/marketing.yml`
-- `presets/launch.yml`
-- `presets/staffOnboarding.yml`
-- `presets/studentOnboarding.yml`
+- `presets/events/marketing.yml`
+- `presets/events/launch.yml`
+- `presets/events/staffOnboarding.yml`
+- `presets/events/studentOnboarding.yml`
 
 ---
 
@@ -381,8 +401,8 @@ Use `order` to sort the filtered DataFrame before output. `report.selection` is 
 
 ```yml
 order:
-  marketingScore: descending
-  baseMarketingScore: descending
+  eventScore: descending
+  baseEventScore: descending
   muhurtaYogaEffect: descending
 ```
 
@@ -669,7 +689,7 @@ fieldSets:
     - tithi
     - nakshatra
     - vaara
-    - launchScore
+    - eventScore
   muhurtaYogaEffects:
     - positive
     - negative
@@ -680,7 +700,7 @@ fieldSets:
 Run it:
 
 ```bash
-python3 main.py ./presets/launch.yml ./temp/launch-export.yml
+python3 main.py ./presets/events/launch.yml ./temp/launch-export.yml
 ```
 
 This is often the cleanest workflow:
@@ -695,10 +715,10 @@ If you want real repo examples, start here:
 
 - `presets/panchang.yml` — minimal reporting preset
 - `presets/biz.yml` — simple score + filter pattern
-- `presets/marketing.yml` — richer constants-driven scoring
-- `presets/launch.yml` — launch-oriented scoring
-- `presets/staffOnboarding.yml` — institutional joining preset
-- `presets/studentOnboarding.yml` — education/course-entry preset
+- `presets/events/marketing.yml` — richer constants-driven scoring
+- `presets/events/launch.yml` — launch-oriented scoring
+- `presets/events/staffOnboarding.yml` — institutional joining preset
+- `presets/events/studentOnboarding.yml` — education/course-entry preset
 - `presets/allFieldSets.yml` — useful for seeing every output group
 
 ---

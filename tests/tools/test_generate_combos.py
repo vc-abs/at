@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
+from at.read_write.read_config import read_config
 from at.tools.generate_combos import (
 	add_columns,
 	add_custom_columns,
@@ -461,41 +462,97 @@ def test_add_custom_columns_supports_mapping_constants_with_series_map():
 
 
 def test_launch_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/launch.yml', 'r') as f:
-		text = f.read()
+	cfg = read_config([
+		str(repo_root / 'presets/events/launch.yml'),
+	])
+	constants = cfg['computations']['constants']
+	fields = cfg['computations']['fields']
+	report = cfg['report']
 
-	assert 'constants:' in text
-	assert 'launchWeekdayWeights:' in text
-	assert 'launchCorePlanets:' in text
-	assert 'vaara.map(constants.launchWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.launchCorePlanets)' in text
-	assert 'min: constants.launchMinHouses' in text
+	assert 'eventWeekdayWeights' in constants
+	assert 'eventCorePlanets' in constants
+	assert fields['eventMin'] == {'min': 'constants.eventMinHouses'}
+	assert 'constants.eventWeekdayWeights' in fields['weekdayScore']
+	assert 'mdLord.isin(constants.eventCorePlanets)' in fields['mdPhaseScore']
+	assert 'eventScore' in fields
+	assert isinstance(fields['eventHouseScore'], str)
+	assert report['order'] == {
+		'eventScore': 'descending',
+		'baseEventScore': 'descending',
+		'muhurtaYogaEffect': 'descending',
+	}
+	assert 'eventMin >= constants.eventMinThreshold' in report['selection']
+	assert 'eventScore >= constants.eventScoreThreshold' in report['selection']
+	assert report['fieldSets']['panchang'] == ['tithi', 'nakshatra', 'vaara', 'eventScore']
+	assert cfg['report']['fieldSets']['planetQualities'] == ['meQ', 'moQ']
 
 
 
 def test_staff_onboarding_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/staffOnboarding.yml', 'r') as f:
-		text = f.read()
+	cfg = read_config([
+		str(repo_root / 'presets/events/staffOnboarding.yml'),
+	])
+	constants = cfg['computations']['constants']
+	fields = cfg['computations']['fields']
+	report = cfg['report']
 
-	assert 'constants:' in text
-	assert 'staffOnboardingWeekdayWeights:' in text
-	assert 'staffOnboardingCorePlanets:' in text
-	assert 'vaara.map(constants.staffOnboardingWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.staffOnboardingCorePlanets)' in text
-	assert 'min: constants.staffOnboardingMinHouses' in text
+	assert 'eventWeekdayWeights' in constants
+	assert 'eventCorePlanets' in constants
+	assert fields['eventMin'] == {'min': 'constants.eventMinHouses'}
+	assert 'constants.eventWeekdayWeights' in fields['weekdayScore']
+	assert 'mdLord.isin(constants.eventCorePlanets)' in fields['mdPhaseScore']
+	assert 'eventScore' in fields
+	assert isinstance(fields['eventHouseScore'], str)
+	assert report['order'] == {
+		'eventScore': 'descending',
+		'baseEventScore': 'descending',
+		'muhurtaYogaEffect': 'descending',
+	}
+	assert 'eventMin >= constants.eventMinThreshold' in report['selection']
+	assert 'eventScore >= constants.eventScoreThreshold' in report['selection']
+	assert report['fieldSets']['panchang'] == ['tithi', 'nakshatra', 'vaara', 'eventScore']
+	assert cfg['report']['fieldSets']['planetQualities'] == ['meQ', 'moQ']
 
 
 
 def test_student_onboarding_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/studentOnboarding.yml', 'r') as f:
-		text = f.read()
+	cfg = read_config([
+		str(repo_root / 'presets/events/studentOnboarding.yml'),
+	])
+	constants = cfg['computations']['constants']
+	fields = cfg['computations']['fields']
+	report = cfg['report']
 
-	assert 'constants:' in text
-	assert 'studentOnboardingWeekdayWeights:' in text
-	assert 'studentOnboardingCorePlanets:' in text
-	assert 'vaara.map(constants.studentOnboardingWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.studentOnboardingCorePlanets)' in text
-	assert 'min: constants.studentOnboardingMinHouses' in text
+	assert 'eventWeekdayWeights' in constants
+	assert 'eventCorePlanets' in constants
+	assert fields['eventMin'] == {'min': 'constants.eventMinHouses'}
+	assert 'constants.eventWeekdayWeights' in fields['weekdayScore']
+	assert 'mdLord.isin(constants.eventCorePlanets)' in fields['mdPhaseScore']
+	assert 'eventScore' in fields
+	assert isinstance(fields['eventHouseScore'], str)
+	assert report['order'] == {
+		'eventScore': 'descending',
+		'baseEventScore': 'descending',
+		'muhurtaYogaEffect': 'descending',
+	}
+	assert 'eventMin >= constants.eventMinThreshold' in report['selection']
+	assert 'eventScore >= constants.eventScoreThreshold' in report['selection']
+	assert report['fieldSets']['panchang'] == ['tithi', 'nakshatra', 'vaara', 'eventScore']
+	assert cfg['report']['fieldSets']['planetQualities'] == ['meQ', 'moQ']
+
+
+def test_marketing_event_file_omits_moQ_from_output(repo_root):
+	cfg = read_config([
+		str(repo_root / 'presets/events/marketing.yml'),
+	])
+	report = cfg['report']
+	assert report['order'] == {
+		'eventScore': 'descending',
+		'baseEventScore': 'descending',
+		'muhurtaYogaEffect': 'descending',
+	}
+	assert 'eventScore >= constants.eventScoreThreshold' in report['selection']
+	assert cfg['report']['fieldSets']['planetQualities'] == ['meQ']
 
 
 
