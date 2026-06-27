@@ -1,0 +1,57 @@
+imports: [../muhurta-base.yml]
+# Student / course-entry preset. Imports the shared muhurta base and supplies
+# only its coefficients and the event-specific score formulas.
+computations:
+  constants:
+    eventWeekdayWeights:
+      thursday: 30
+      wednesday: 28
+      monday: 22
+      friday: 18
+    eventNakshatras:
+      - asvini
+      - punarvasu
+      - ardra
+      - hasta
+      - chitra
+      - svati
+      - shravana
+      - revati
+    eventPreferredTithis: [2, 3, 5, 7, 10, 11, 13]
+    eventDiscouragedTithis: [4, 8, 9]
+    eventWaningRiktaTithis: [19, 24, 29]
+    eventWaningPoornaTithis: [20, 25]
+    eventMinHouses: [h2, h4, h5, h9]
+    eventCorePlanets: [jupiter, mercury, moon, venus, sun]
+    eventNakshatraBonus: 36
+    eventPreferredTithiBonus: 26
+    # No full-moon bonus for learning starts; the waning-half penalties carry
+    # the bright-half lean instead.
+    eventFullMoonBonus: 0
+    eventDiscouragedTithiPenalty: 16
+    eventWaningEarlyPenalty: 10
+    eventWaningMidPenalty: 16
+    eventWaningLatePenalty: 24
+    eventWaningRiktaPenalty: 5
+    eventWaningPoornaBonus: 2
+    eventMercuryBeneficBonus: 22
+    eventMercuryNeutralBonus: 10
+    eventMoonBeneficBonus: 20
+    eventGowriMultiplier: 16.5
+    eventStrengthCols: [juS, meS, moS, veS, suS]
+    eventShadbalaCenter: 1.27
+    eventShadbalaMultiplier: 120
+    eventMinThreshold: 22
+    eventScoreThreshold: 285
+  fields:
+    # House policy: prioritize foundational learning, grasping power, and
+    # teacher support — 4th and 5th anchor, 9th adds guidance and grace, and
+    # 2nd/11th/3rd/1st support resources, completion, effort, and adaptation.
+    eventHouseScore: >-
+      (h4 * 1.6 + h5 * 1.6 + h9 * 1.4 + h2 * 1.0 + h11 * 0.9 +
+      h3 * 0.7 + h1 * 0.8) * 0.40
+    baseEventScore: >-
+      eventHouseScore + muhurtaYogaEffect * 12 + weekdayScore +
+      nakshatraScore + tithiScore + qualityScore + dashaScore
+    eventScore: >-
+      baseEventScore + gowriEventAdj + eventShadbalaAdj

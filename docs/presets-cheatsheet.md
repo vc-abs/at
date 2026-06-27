@@ -13,7 +13,7 @@ python3 main.py ./presets/panchang.yml
 Or stack multiple files:
 
 ```bash
-python3 main.py ./presets/marketing.yml ./examples/presetExtensions.yml
+python3 main.py ./presets/events/marketing.yml ./examples/presetExtensions.yml
 ```
 
 Files are merged left to right.
@@ -129,7 +129,7 @@ A very common pattern is:
 Example:
 
 ```bash
-python3 main.py ./presets/launch.yml ./examples/presetExtensions.yml
+python3 main.py ./presets/events/launch.yml ./examples/presetExtensions.yml
 ```
 
 ### Merge rules
@@ -173,6 +173,57 @@ Merged effect:
 
 Lists do **not** merge item by item.
 If you override a list, restate the whole list you want.
+
+### Imports: self-documenting stacking
+
+Instead of stacking files on the command line, a preset can declare what it
+builds on with an `imports:` directive. This makes the stack
+self-documenting and self-contained — a colleague can run a single file
+without knowing the base stack.
+
+```yml
+# ./presets/events/launch.yml
+imports: [../muhurta-base.yml]
+computations:
+  constants:
+    eventWeekdayWeights: { wednesday: 28, friday: 24, thursday: 22, sunday: 20 }
+    # ...event-specific coefficients and lists...
+  fields:
+    eventHouseScore: >-
+      (h1 * 1.2 + h2 * 1.4 + h7 * 1.4 + h10 * 1.5 + h11 * 1.6) * 0.38
+    baseEventScore: >-
+      eventHouseScore + muhurtaYogaEffect * 12 + weekdayScore + dashaScore
+    eventScore: >-
+      baseEventScore + gowriEventAdj + eventShadbalaAdj
+```
+
+Resolution rules:
+
+- `imports:` paths resolve **relative to the importing file's directory**, not
+  CWD, so the preset is portable.
+- Imports are resolved depth-first, then merged left-to-right (earlier import =
+  lower priority), then the importing file's own body is merged on top (highest
+  priority). The result equals what
+  `main.py <imports in order> <this file>` would produce.
+- The same merge rules apply: dicts deep-merge, lists and scalars override.
+- The `imports:` key is stripped from the merged result; downstream code never
+  sees it.
+- Import cycles raise a `ValueError` naming the cycle.
+- `data/defaultConfig.yml` is still prepended once at the very bottom of the
+  stack; imports do not bypass or duplicate the defaults.
+
+The canonical example is `presets/muhurta-base.yml`, an abstract base that owns
+the shared `sources`, the shared score-chain structure (coefficient-driven via
+`constants.event*`), and the shared `report` keyed on `eventScore`. It is **not
+standalone-runnable** — its `report.selection` and score chain reference
+`eventHouseScore` / `baseEventScore` / `eventScore`, which an importing event
+preset must supply. The four event presets
+(`presets/events/{marketing,launch,staffOnboarding,studentOnboarding}.yml`)
+import it and each declare only their coefficients plus those three formulas.
+
+Imports also compose with `scenarios`: an imported file may define `scenarios`,
+and the importer can override individual scenarios via deep-merge, because both
+use the same merge policy.
 
 ---
 
@@ -367,11 +418,13 @@ You can reference constants from:
 - string-valued `customColumns`
 - summary/list-style custom columns such as `min: constants.minHouses`
 
-This is the main pattern used by the richer presets like:
-- `presets/marketing.yml`
-- `presets/launch.yml`
-- `presets/staffOnboarding.yml`
-- `presets/studentOnboarding.yml`
+This is the main pattern used by the richer event presets like:
+- `presets/events/marketing.yml`
+- `presets/events/launch.yml`
+- `presets/events/staffOnboarding.yml`
+- `presets/events/studentOnboarding.yml`
+
+These four share `presets/muhurta-base.yml` via `imports:` (see *Imports* below).
 
 ---
 
@@ -381,8 +434,8 @@ Use `order` to sort the filtered DataFrame before output. `report.selection` is 
 
 ```yml
 order:
-  marketingScore: descending
-  baseMarketingScore: descending
+  eventScore: descending
+  baseEventScore: descending
   muhurtaYogaEffect: descending
 ```
 
@@ -669,7 +722,7 @@ fieldSets:
     - tithi
     - nakshatra
     - vaara
-    - launchScore
+    - eventScore
   muhurtaYogaEffects:
     - positive
     - negative
@@ -680,7 +733,7 @@ fieldSets:
 Run it:
 
 ```bash
-python3 main.py ./presets/launch.yml ./temp/launch-export.yml
+python3 main.py ./presets/events/launch.yml ./temp/launch-export.yml
 ```
 
 This is often the cleanest workflow:
@@ -695,10 +748,11 @@ If you want real repo examples, start here:
 
 - `presets/panchang.yml` — minimal reporting preset
 - `presets/biz.yml` — simple score + filter pattern
-- `presets/marketing.yml` — richer constants-driven scoring
-- `presets/launch.yml` — launch-oriented scoring
-- `presets/staffOnboarding.yml` — institutional joining preset
-- `presets/studentOnboarding.yml` — education/course-entry preset
+- `presets/muhurta-base.yml` — abstract shared muhurta base (imports target; not standalone-runnable)
+- `presets/events/marketing.yml` — marketing/campaign scoring (imports the base)
+- `presets/events/launch.yml` — launch/go-live scoring (imports the base)
+- `presets/events/staffOnboarding.yml` — institutional joining scoring (imports the base)
+- `presets/events/studentOnboarding.yml` — education/course-entry scoring (imports the base)
 - `presets/allFieldSets.yml` — useful for seeing every output group
 
 ---

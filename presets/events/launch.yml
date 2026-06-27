@@ -1,0 +1,58 @@
+imports: [../muhurta-base.yml]
+# Launch / go-live preset. Imports the shared muhurta base and supplies only
+# its coefficients and the event-specific score formulas.
+computations:
+  constants:
+    eventWeekdayWeights:
+      wednesday: 28
+      friday: 24
+      thursday: 22
+      sunday: 20
+    eventNakshatras:
+      - asvini
+      - rohini
+      - mrigashira
+      - punarvasu
+      - pushya
+      - hasta
+      - svati
+      - anuradha
+      - shravana
+      - dhanishta
+      - revati
+    eventPreferredTithis: [2, 3, 5, 7, 10, 11, 13]
+    eventDiscouragedTithis: [4, 8, 9]
+    eventWaningRiktaTithis: [19, 24, 29]
+    eventWaningPoornaTithis: [20, 25]
+    eventMinHouses: [h1, h2, h7, h10, h11]
+    eventCorePlanets: [mercury, venus, jupiter, moon, sun]
+    eventNakshatraBonus: 34
+    eventPreferredTithiBonus: 26
+    eventFullMoonBonus: 8
+    eventDiscouragedTithiPenalty: 18
+    eventWaningEarlyPenalty: 6
+    eventWaningMidPenalty: 12
+    eventWaningLatePenalty: 20
+    eventWaningRiktaPenalty: 4
+    eventWaningPoornaBonus: 4
+    eventMercuryBeneficBonus: 20
+    eventMercuryNeutralBonus: 10
+    eventMoonBeneficBonus: 18
+    eventGowriMultiplier: 18.5
+    eventStrengthCols: [meS, veS, moS, juS, suS]
+    eventShadbalaCenter: 1.27
+    eventShadbalaMultiplier: 120
+    eventMinThreshold: 23
+    eventScoreThreshold: 285
+  fields:
+    # House policy: prioritize commencement and transactability houses (1st,
+    # 2nd, 7th, 10th, 11th) over campaign houses; retain 3rd/5th/9th as
+    # supporting houses for initiative, presentation, and grace.
+    eventHouseScore: >-
+      (h1 * 1.2 + h2 * 1.4 + h7 * 1.4 + h10 * 1.5 + h11 * 1.6 +
+      h3 * 0.8 + h5 * 0.7 + h9 * 1.0) * 0.38
+    baseEventScore: >-
+      eventHouseScore + muhurtaYogaEffect * 12 + weekdayScore +
+      nakshatraScore + tithiScore + qualityScore + dashaScore
+    eventScore: >-
+      baseEventScore + gowriEventAdj + eventShadbalaAdj

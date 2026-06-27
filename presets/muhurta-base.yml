@@ -1,0 +1,118 @@
+# Abstract muhurta base preset.
+#
+# Not standalone-runnable: `report.selection` and the final score chain
+# reference `eventHouseScore`, `baseEventScore`, and `eventScore`, which an
+# importing event preset must supply via `computations.fields`. The event
+# preset also supplies every `event*` constant; this base only owns the shared
+# `sources`, the shared score-chain structure (coefficient-driven via
+# `constants.event*`), and the shared `report` keyed on `eventScore`.
+#
+# An event preset imports this file and declares its own `computations.constants`
+# plus `eventHouseScore` / `baseEventScore` / `eventScore`:
+#
+#   imports: [../muhurta-base.yml]
+#
+# Imports resolve relative to the importing file's directory and merge
+# left-to-right; the importing file's body wins. See
+# `docs/presets-cheatsheet.md` → *Imports*.
+sources:
+  - muhurtaYogaEffects
+  - objectHouses
+  - planetaryDegrees
+  - ashtakavarga
+  - mahaDasha
+  - antarDashas
+  - planetFlags
+  - planetQualities
+  - timeFlags
+  - gowriFlags
+  - shadBalaStrength
+  - karakas
+  - scenario
+  - panchang
+computations:
+  constants:
+    tabooTimeFlagsRegex: 'RK|YG|GK'
+  fields:
+    muhurtaYogaEffect: >-
+      positive + negative
+    eventMin:
+      min: constants.eventMinHouses
+    weekdayScore: >-
+      vaara.map(constants.eventWeekdayWeights).fillna(0)
+    nakshatraScore: >-
+      nakshatra.isin(constants.eventNakshatras) * constants.eventNakshatraBonus
+    # Tithi policy is shared in shape; every coefficient is an event constant
+    # so an event can null out a term (e.g. set eventFullMoonBonus to 0).
+    tithiScore: >-
+      tithi.isin(constants.eventPreferredTithis) * constants.eventPreferredTithiBonus +
+      (tithi == 15) * constants.eventFullMoonBonus -
+      tithi.isin(constants.eventDiscouragedTithis) * constants.eventDiscouragedTithiPenalty -
+      ((tithi >= 16) & (tithi <= 20)) * constants.eventWaningEarlyPenalty -
+      ((tithi >= 21) & (tithi <= 25)) * constants.eventWaningMidPenalty -
+      ((tithi >= 26) & (tithi <= 29)) * constants.eventWaningLatePenalty -
+      tithi.isin(constants.eventWaningRiktaTithis) * constants.eventWaningRiktaPenalty +
+      tithi.isin(constants.eventWaningPoornaTithis) * constants.eventWaningPoornaBonus
+    qualityScore: >-
+      (meQ == 'benefic') * constants.eventMercuryBeneficBonus +
+      (meQ == 'neutral') * constants.eventMercuryNeutralBonus +
+      (moQ == 'benefic') * constants.eventMoonBeneficBonus
+    mdPhaseScore: >-
+      mdLord.isin(constants.eventCorePlanets) *
+      (6 + mdlStrength * 4 + mdRemainder * 6)
+    adPhaseScore: >-
+      adLord.isin(constants.eventCorePlanets) *
+      (5 + adlStrength * 3 + adRemainder * 4)
+    padPhaseScore: >-
+      padLord.isin(constants.eventCorePlanets) *
+      (3 + padlStrength * 2 + padRemainder * 3)
+    dashaScore: >-
+      mdPhaseScore + adPhaseScore + padPhaseScore
+    gowriEventAdj: >-
+      gowriScore * constants.eventGowriMultiplier
+    # Mean of the event's five strength columns = sum / 5. The planet set is
+    # event-specific, so the column list lives in `constants.eventStrengthCols`.
+    eventSpecialStrength:
+      mean: constants.eventStrengthCols
+    eventShadbalaAdj: >-
+      (eventSpecialStrength - constants.eventShadbalaCenter) * constants.eventShadbalaMultiplier
+report:
+  selection: >-
+    timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
+    tithi != 0 and
+    tithi != 14 and
+    meQ != 'malefic' and
+    muhurtaYogaEffect >= 0 and
+    eventMin >= constants.eventMinThreshold and
+    weekdayScore > 0 and
+    eventScore >= constants.eventScoreThreshold
+  order:
+    eventScore: descending
+    baseEventScore: descending
+    muhurtaYogaEffect: descending
+  fieldSets:
+    scenario:
+      - date
+      - time
+    panchang:
+      - tithi
+      - nakshatra
+      - vaara
+      - eventScore
+    planetQualities:
+      - meQ
+      - moQ
+    timeFlags:
+      - timeF
+    muhurtaYogaEffects:
+      - positive
+      - negative
+      - yogas
+    mahaDasha:
+      - mdLord
+    antarDashas:
+      - adLord
+      - padLord
+    shadBalaStrength: none
+    objectHouses: all
+    ashtakavarga: all
