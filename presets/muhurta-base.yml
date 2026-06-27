@@ -1,0 +1,118 @@
+sources:
+  - muhurtaYogaEffects
+  - objectHouses
+  - planetaryDegrees
+  - ashtakavarga
+  - mahaDasha
+  - antarDashas
+  - planetFlags
+  - planetQualities
+  - timeFlags
+  - gowriFlags
+  - shadBalaStrength
+  - karakas
+  - scenario
+  - panchang
+computations:
+  constants:
+    tabooTimeFlagsRegex: 'RK|YG|GK'
+    preferredTithis:
+      - 2
+      - 3
+      - 5
+      - 7
+      - 10
+      - 11
+      - 13
+    discouragedTithis:
+      - 4
+      - 8
+      - 9
+    waningRiktaTithis:
+      - 19
+      - 24
+      - 29
+    waningPoornaTithis:
+      - 20
+      - 25
+    neutralQualityWeight: 10
+  fields:
+    muhurtaYogaEffect: >-
+      positive + negative
+    eventMin:
+      min: constants.minHouses
+    weekdayScore: >-
+      vaara.map(constants.weekdayWeights).fillna(0)
+    nakshatraScore: >-
+      nakshatra.isin(constants.nakshatras) * constants.nakshatraWeight
+    tithiScore: >-
+      tithi.isin(constants.preferredTithis) * constants.preferredTithiWeight +
+      (tithi == 15) * constants.fullTithiBonus -
+      tithi.isin(constants.discouragedTithis) * constants.discouragedTithiPenalty -
+      ((tithi >= 16) & (tithi <= 20)) * constants.waning1620Penalty -
+      ((tithi >= 21) & (tithi <= 25)) * constants.waning2125Penalty -
+      ((tithi >= 26) & (tithi <= 29)) * constants.waning2629Penalty -
+      tithi.isin(constants.waningRiktaTithis) * constants.waningRiktaPenalty +
+      tithi.isin(constants.waningPoornaTithis) * constants.waningPoornaBonus
+    qualityScore: >-
+      (meQ == 'benefic') * constants.beneficQualityWeight +
+      (meQ == 'neutral') * constants.neutralQualityWeight +
+      (moQ == 'benefic') * constants.moonQualityWeight
+    mdPhaseScore: >-
+      mdLord.isin(constants.corePlanets) *
+      (6 + mdlStrength * 4 + mdRemainder * 6)
+    adPhaseScore: >-
+      adLord.isin(constants.corePlanets) *
+      (5 + adlStrength * 3 + adRemainder * 4)
+    padPhaseScore: >-
+      padLord.isin(constants.corePlanets) *
+      (3 + padlStrength * 2 + padRemainder * 3)
+    dashaScore: >-
+      mdPhaseScore + adPhaseScore + padPhaseScore
+    gowriEventAdj: >-
+      gowriScore * constants.gowriMultiplier
+    eventSpecialStrength:
+      sum: constants.specialStrengthColumns
+    eventShadbalaAdj: >-
+      (eventSpecialStrength / 5 - constants.shadbalaCenter) *
+      constants.shadbalaMultiplier
+report:
+  selection: >-
+    timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
+    tithi != 0 and
+    tithi != 14 and
+    meQ != 'malefic' and
+    muhurtaYogaEffect >= 0 and
+    eventMin >= constants.minHouseScore and
+    weekdayScore > 0 and
+    eventScore >= constants.scoreThreshold
+  order:
+    eventScore: descending
+    baseEventScore: descending
+    muhurtaYogaEffect: descending
+  fieldSets:
+    scenario:
+      - date
+      - time
+    panchang:
+      - tithi
+      - nakshatra
+      - vaara
+      - eventScore
+    planetQualities:
+      - meQ
+      - moQ
+    timeFlags:
+      - timeF
+    muhurtaYogaEffects:
+      - positive
+      - negative
+      - yogas
+    mahaDasha:
+      - mdLord
+    antarDashas:
+      - adLord
+      - padLord
+    shadBalaStrength: none
+    objectHouses: all
+    ashtakavarga: all

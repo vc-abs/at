@@ -1,0 +1,34 @@
+imports:
+  - ../muhurta-base.yml
+computations:
+  constants:
+    weekdayWeights: {wednesday: 30, thursday: 26, sunday: 18, monday: 14, saturday: 10, friday: 8}
+    nakshatras: [asvini, rohini, punarvasu, pushya, hasta, anuradha, shravana, dhanishta, revati]
+    minHouses: [h1, h2, h6, h10, h11]
+    minHouseScore: 22
+    scoreThreshold: 275
+    corePlanets: [mercury, sun, jupiter, moon, saturn]
+    specialStrengthColumns: [meS, suS, juS, moS, saS]
+    shadbalaCenter: 1.22
+    shadbalaMultiplier: 110
+    gowriMultiplier: 16.5
+    nakshatraWeight: 32
+    preferredTithiWeight: 24
+    fullTithiBonus: 6
+    discouragedTithiPenalty: 16
+    waning1620Penalty: 6
+    waning2125Penalty: 12
+    waning2629Penalty: 18
+    waningRiktaPenalty: 5
+    waningPoornaBonus: 3
+    beneficQualityWeight: 22
+    moonQualityWeight: 16
+  fields:
+    eventHouseScore: >-
+      (h10 * 1.6 + h11 * 1.6 + h1 * 1.3 + h2 * 1.1 + h6 * 1.0 +
+      h7 * 0.8 + h9 * 0.9) * 0.38
+    baseEventScore: >-
+      eventHouseScore + muhurtaYogaEffect * 12 + weekdayScore +
+      nakshatraScore + tithiScore + qualityScore + dashaScore
+    eventScore: >-
+      baseEventScore + gowriEventAdj + eventShadbalaAdj

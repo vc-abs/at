@@ -368,10 +368,32 @@ You can reference constants from:
 - summary/list-style custom columns such as `min: constants.minHouses`
 
 This is the main pattern used by the richer presets like:
-- `presets/marketing.yml`
-- `presets/launch.yml`
-- `presets/staffOnboarding.yml`
-- `presets/studentOnboarding.yml`
+- `presets/muhurta-base.yml` (shared import base)
+- `presets/events/marketing.yml`
+- `presets/events/launch.yml`
+- `presets/events/staffOnboarding.yml`
+- `presets/events/studentOnboarding.yml`
+
+### Config imports
+
+A preset can stack files internally with an `imports:` key. The paths are
+resolved relative to the importing file, imports are expanded depth-first, and
+the importer’s own body is applied last.
+
+Example:
+
+```yml
+imports:
+  - base.yml
+  - tweaks.yml
+```
+
+This is equivalent to stacking `base.yml`, then `tweaks.yml`, then the current
+file on the command line.
+
+Imports are stripped from the merged config, so downstream code never sees the
+key. Cycles are rejected with a clear error.
+
 
 ---
 
@@ -381,8 +403,8 @@ Use `order` to sort the filtered DataFrame before output. `report.selection` is 
 
 ```yml
 order:
-  marketingScore: descending
-  baseMarketingScore: descending
+  eventScore: descending
+  baseEventScore: descending
   muhurtaYogaEffect: descending
 ```
 
@@ -669,7 +691,7 @@ fieldSets:
     - tithi
     - nakshatra
     - vaara
-    - launchScore
+    - eventScore
   muhurtaYogaEffects:
     - positive
     - negative
@@ -683,6 +705,8 @@ Run it:
 python3 main.py ./presets/launch.yml ./temp/launch-export.yml
 ```
 
+The legacy root preset paths (`./presets/marketing.yml`, etc.) remain as thin shims that import the matching file under `presets/events/`.
+
 This is often the cleanest workflow:
 - keep the scoring logic in a reusable preset
 - keep the run-specific output/export choices in a small override file
@@ -695,10 +719,11 @@ If you want real repo examples, start here:
 
 - `presets/panchang.yml` — minimal reporting preset
 - `presets/biz.yml` — simple score + filter pattern
-- `presets/marketing.yml` — richer constants-driven scoring
-- `presets/launch.yml` — launch-oriented scoring
-- `presets/staffOnboarding.yml` — institutional joining preset
-- `presets/studentOnboarding.yml` — education/course-entry preset
+- `presets/muhurta-base.yml` — shared import base for the event presets
+- `presets/events/marketing.yml` — marketing/campaign-timing preset
+- `presets/events/launch.yml` — launch-oriented scoring
+- `presets/events/staffOnboarding.yml` — institutional joining preset
+- `presets/events/studentOnboarding.yml` — education/course-entry preset
 - `presets/allFieldSets.yml` — useful for seeing every output group
 
 ---

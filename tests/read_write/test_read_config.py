@@ -121,6 +121,24 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 	assert 'date' in result['scenarios']['default']
 
 
+@pytest.mark.parametrize(
+	'preset_path',
+	[
+		'presets/events/marketing.yml',
+		'presets/events/launch.yml',
+		'presets/events/staffOnboarding.yml',
+		'presets/events/studentOnboarding.yml',
+	],
+)
+def test_event_presets_load_via_read_config(repo_root, preset_path):
+	cfg = read_config([str(repo_root / preset_path)])
+	assert cfg['report']['selection'].startswith('timeF.str.contains')
+	assert cfg['report']['order']['eventScore'] == 'descending'
+	assert cfg['report']['order']['baseEventScore'] == 'descending'
+	assert cfg['report']['fieldSets']['panchang'] == ['tithi', 'nakshatra', 'vaara', 'eventScore']
+	assert cfg['computations']['fields']['eventScore'].startswith('baseEventScore + gowriEventAdj')
+
+
 
 def test_read_config_supports_single_import(tmp_path: Path):
 	base = tmp_path / 'base.yml'

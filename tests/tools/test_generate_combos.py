@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 import pandas as pd
+import pytest
 
 from at.tools.generate_combos import (
 	add_columns,
@@ -460,42 +461,37 @@ def test_add_custom_columns_supports_mapping_constants_with_series_map():
 
 
 
-def test_launch_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/launch.yml', 'r') as f:
+def test_event_preset_shims_import_their_event_files(repo_root):
+	for preset_name in (
+		'marketing',
+		'launch',
+		'staffOnboarding',
+		'studentOnboarding',
+	):
+		with open(repo_root / f'presets/{preset_name}.yml', 'r') as f:
+			text = f.read()
+
+		assert text.strip() == f'imports:\n  - events/{preset_name}.yml'
+
+
+@pytest.mark.parametrize(
+	'preset_path',
+	[
+		'presets/events/marketing.yml',
+		'presets/events/launch.yml',
+		'presets/events/staffOnboarding.yml',
+		'presets/events/studentOnboarding.yml',
+	],
+)
+def test_event_preset_structure_uses_event_score(repo_root, preset_path):
+	with open(repo_root / preset_path, 'r') as f:
 		text = f.read()
 
-	assert 'constants:' in text
-	assert 'launchWeekdayWeights:' in text
-	assert 'launchCorePlanets:' in text
-	assert 'vaara.map(constants.launchWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.launchCorePlanets)' in text
-	assert 'min: constants.launchMinHouses' in text
-
-
-
-def test_staff_onboarding_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/staffOnboarding.yml', 'r') as f:
-		text = f.read()
-
-	assert 'constants:' in text
-	assert 'staffOnboardingWeekdayWeights:' in text
-	assert 'staffOnboardingCorePlanets:' in text
-	assert 'vaara.map(constants.staffOnboardingWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.staffOnboardingCorePlanets)' in text
-	assert 'min: constants.staffOnboardingMinHouses' in text
-
-
-
-def test_student_onboarding_preset_uses_constants_pattern_consistently(repo_root):
-	with open(repo_root / 'presets/studentOnboarding.yml', 'r') as f:
-		text = f.read()
-
-	assert 'constants:' in text
-	assert 'studentOnboardingWeekdayWeights:' in text
-	assert 'studentOnboardingCorePlanets:' in text
-	assert 'vaara.map(constants.studentOnboardingWeekdayWeights).fillna(0)' in text
-	assert 'mdLord.isin(constants.studentOnboardingCorePlanets)' in text
-	assert 'min: constants.studentOnboardingMinHouses' in text
+	assert 'imports:' in text
+	assert 'muhurta-base.yml' in text
+	assert 'eventHouseScore:' in text
+	assert 'baseEventScore:' in text
+	assert 'eventScore:' in text
 
 
 
@@ -671,8 +667,8 @@ def test_add_columns_can_select_computations_explicitly():
 				'date': '2025-01-01',
 				'time': '00:00:00',
 				'weekdayScore': 30.0,
-				'launchScore': 317.0,
-				'launchHouseScore': 91.0,
+				'eventScore': 317.0,
+				'baseEventScore': 91.0,
 			}
 		]
 	)
@@ -680,9 +676,9 @@ def test_add_columns_can_select_computations_explicitly():
 	selected = add_columns(
 		df,
 		{
-			'computations': ['launchScore', 'weekdayScore'],
+			'computations': ['eventScore', 'weekdayScore'],
 			'scenario': 'all',
 		},
 	)
 
-	assert list(selected.columns) == ['launchScore', 'weekdayScore', 'scenario', 'date', 'time']
+	assert list(selected.columns) == ['eventScore', 'weekdayScore', 'scenario', 'date', 'time']
