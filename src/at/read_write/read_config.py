@@ -144,16 +144,61 @@ merger = Merger(
 )
 
 
+def _merge_dicts(dicts):
+	merged = dicts[0]
+	for d in dicts[1:]:
+		merged = merger.merge(merged, d)
+	return merged
+
+
 def merge_files(file_paths):
-	data = [yaml.safe_load(open(file, 'r')) for file in file_paths]
-	merged_data = data[0]
-	for d in data[1:]:
-		merged_data = merger.merge(merged_data, d)
-	return merged_data
+	return _merge_dicts(
+		[yaml.safe_load(open(file, 'r')) for file in file_paths]
+	)
+
+
+def _load_with_imports(file_path, chain=None):
+	"""Load a YAML file, resolving any `imports:` directive first.
+
+	Imports resolve relative to the importing file's directory. They are
+	merged depth-first, left-to-right (earlier import = lower priority),
+	and the importing file's own body is merged on top. The `imports:` key
+	is stripped from the result. Cycles raise ``ValueError``.
+	"""
+	abs_path = path.realpath(file_path)
+	if chain is None:
+		chain = []
+	if abs_path in chain:
+		cycle = chain[chain.index(abs_path):] + [abs_path]
+		raise ValueError(
+			'Import cycle detected: ' + ' -> '.join(cycle)
+		)
+	chain = chain + [abs_path]
+
+	body = yaml.safe_load(open(file_path, 'r'))
+	if not isinstance(body, dict):
+		return body
+
+	imports = body.pop('imports', None)
+	if imports is None:
+		return body
+	if isinstance(imports, str):
+		imports = [imports]
+
+	base_dir = path.dirname(abs_path)
+	merged_imports = _merge_dicts([
+		_load_with_imports(path.join(base_dir, imp), chain)
+		for imp in imports
+	])
+	return merger.merge(merged_imports, body)
 
 
 def read_config(file_paths):
-	config = merge_files([project_root + '/data/defaultConfig.yml'] + file_paths)
+	default_path = project_root + '/data/defaultConfig.yml'
+	resolved = [_load_with_imports(fp) for fp in file_paths]
+	config = _merge_dicts(
+		[yaml.safe_load(open(default_path, 'r'))] + resolved
+	)
 	config = {**get_default_config(), **config}
 
 	if 'baseConfigurations' in config:
