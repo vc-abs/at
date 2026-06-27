@@ -28,8 +28,8 @@
 
 - Prefer deterministic calculations and explicit units/types.
 - Keep domain constants and rules traceable and documented.
-- Prefer YAML/config-first solutions over runtime/code expansion when the requested behavior can be expressed clearly and maintainably in the existing preset/query/custom-column surface.
-- When YAML expressions become long or compound, prefer multi-line YAML string forms for readability where supported, including escaped continuation where needed to preserve query semantics.
+- Prefer YAML/config-first solutions over runtime/code expansion when the requested behavior can be expressed clearly and maintainably in the existing preset/selection/computation surface.
+- When YAML expressions become long or compound, prefer multi-line YAML string forms for readability where supported, including escaped continuation where needed to preserve selection semantics.
 - Prefer dictionary/data-driven dispatch over long `if`/`elif` chains or switch-style branching when selecting behavior by key/category, unless branching is genuinely clearer for a small bounded case.
 - The system generally operates on point-in-time records; prefer computing the value for the current point in time directly and deriving a full schedule/range view only when a caller actually needs it.
 - Prefer compact algorithmic weekday-cycle rules over persisted runtime tables when the domain pattern is stable and clearly expressible in code.

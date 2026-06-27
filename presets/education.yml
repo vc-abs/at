@@ -1,7 +1,17 @@
-query: "edu > 30 and muhurtaYogaEffect > 0"
-customColumns:
-  edu: "h4 + h5"
-  muhurtaYogaEffect: "positive + negative"
-order:
-  edu: descending
-  muhurtaYogaEffect: descending
+sources:
+  - muhurtaYogaEffects
+  - objectHouses
+  - ashtakavarga
+computations:
+  fields:
+    edu: "h4 + h5"
+    muhurtaYogaEffect: "positive + negative"
+report:
+  selection: "edu > 30 and muhurtaYogaEffect > 0"
+  order:
+    edu: descending
+    muhurtaYogaEffect: descending
+  fieldSets:
+    muhurtaYogaEffects: all
+    objectHouses: all
+    ashtakavarga: all

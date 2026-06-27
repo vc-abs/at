@@ -1,7 +1,17 @@
-query: "biz > 150 and muhurtaYogaEffect > 0"
-customColumns:
-  biz: "h2 + h6 + h9 + h10 + h11"
-  muhurtaYogaEffect: "positive + negative"
-order:
-  biz: descending
-  muhurtaYogaEffect: descending
+sources:
+  - muhurtaYogaEffects
+  - objectHouses
+  - ashtakavarga
+computations:
+  fields:
+    biz: "h2 + h6 + h9 + h10 + h11"
+    muhurtaYogaEffect: "positive + negative"
+report:
+  selection: "biz > 150 and muhurtaYogaEffect > 0"
+  order:
+    biz: descending
+    muhurtaYogaEffect: descending
+  fieldSets:
+    muhurtaYogaEffects: all
+    objectHouses: all
+    ashtakavarga: all

@@ -1,6 +1,12 @@
 # Amatyakaraka and Antardasha Lord
 interval: 15min
 count: 35040
+sources:
+  - antarDashas
+  - shadBalaStrength
+  - karakas
+  - panchang
+  - scenario
 fieldSets:
   scenario:
     - date

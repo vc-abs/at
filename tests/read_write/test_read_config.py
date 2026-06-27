@@ -115,7 +115,7 @@ def test_read_config_loads_default_and_user_files(tmp_path: Path):
 
 	result = read_config([str(cfg)])
 	assert result['utcHour'] == 5
-	assert result['constants'] == {}
+	assert result['computations'] == {'constants': {}, 'fields': {}}
 	assert 'scenarios' in result
 	assert 'default' in result['scenarios']
 	assert 'date' in result['scenarios']['default']
@@ -207,3 +207,5 @@ def test_partial_end_date_time_raises(tmp_path):
 	)
 	with pytest.raises(ValueError):
 		read_config([str(f)])
+
+

@@ -1,6 +1,12 @@
 # Amatyakaraka and Dasha Lord
 interval: 15min
 count: 35040
+sources:
+  - mahaDasha
+  - shadBalaStrength
+  - karakas
+  - panchang
+  - scenario
 fieldSets:
   scenario:
     - date
@@ -16,7 +22,7 @@ fieldSets:
     - mdLord
     - mdRemainder
     - mdlStrength
-    - mdlIshtaPhala
+    - mdIshtaPhala
   shadBalaStrength:
     - totalS
     - avgIP

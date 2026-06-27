@@ -241,26 +241,28 @@ Tip: start narrow. `all` on many field sets can make output very wide.
 
 ---
 
-## 6) Filter rows with `query`
+## 6) Filter rows with `report.selection`
 
-`query` is evaluated with `pandas.DataFrame.query(...)`.
+`report.selection` is evaluated with `pandas.DataFrame.query(...)`.
 
 Simple example:
 
 ```yml
-query: "positive + negative > 0"
-fieldSets:
-  scenario: all
-  panchang: all
-  muhurtaYogaEffects: all
+report:
+  selection: "positive + negative > 0"
+  fieldSets:
+    scenario: all
+    panchang: all
+    muhurtaYogaEffects: all
 ```
 
 String example:
 
 ```yml
-query: >-
-  nakshatra.str.contains('rohini', case=False, na=False) and
-  timeF.str.contains('RK', na=False) == False
+report:
+  selection: >-
+    nakshatra.str.contains('rohini', case=False, na=False) and
+    timeF.str.contains('RK', na=False) == False
 ```
 
 Useful patterns already used in the repo:
@@ -278,14 +280,14 @@ Useful patterns already used in the repo:
 
 ---
 
-## 7) Add computed columns with `customColumns`
+## 7) Add computed columns with `computations`
 
-Use `customColumns` to derive scores, summaries, booleans, and helper columns.
+Use `computations` to derive scores, summaries, booleans, and helper columns.
 
 ### Simple expression columns
 
 ```yml
-customColumns:
+computations:
   dharma: "h1 + h5 + h9"
   muhurtaYogaEffect: "positive + negative"
 ```
@@ -293,7 +295,7 @@ customColumns:
 ### Summary columns across multiple columns
 
 ```yml
-customColumns:
+computations:
   minH:
     min:
       - h2
@@ -306,17 +308,18 @@ customColumns:
 ### Filter using the computed columns
 
 ```yml
-query: "dharma > 75 and muhurtaYogaEffect > 0"
-order:
-  dharma: descending
-  muhurtaYogaEffect: descending
+report:
+  selection: "dharma > 75 and muhurtaYogaEffect > 0"
+  order:
+    dharma: descending
+    muhurtaYogaEffect: descending
 ```
 
 ### Evaluation notes
 
-- string-valued `customColumns` are evaluated with `df.eval(...)`
+- string-valued `computations` are evaluated with `df.eval(...)`
 - summary columns such as `min`, `max`, etc. operate across listed columns
-- custom columns are available to later steps like `query`, `order`, and output selection
+- computed columns are available to later steps like `report.selection`, `report.order`, and output selection
 
 ### Gotcha
 
@@ -344,12 +347,13 @@ constants:
     - h11
   minScore: 300
 
-query: >-
-  timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
-  weekdayScore > 0 and
-  score >= constants.minScore
+report:
+  selection: >-
+    timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
+    weekdayScore > 0 and
+    score >= constants.minScore
 
-customColumns:
+computations:
   weekdayScore: >-
     vaara.map(constants.goodWeekdayWeights).fillna(0)
   minH:
@@ -495,7 +499,7 @@ fieldSets:
 ### Step D: add helper columns
 
 ```yml
-customColumns:
+computations:
   muhurtaYogaEffect: "positive + negative"
   dharma: "h1 + h5 + h9"
 ```
@@ -503,24 +507,26 @@ customColumns:
 ### Step E: add filtering and sorting
 
 ```yml
-query: "dharma > 75 and muhurtaYogaEffect > 0"
-order:
-  dharma: descending
-  muhurtaYogaEffect: descending
+report:
+  selection: "dharma > 75 and muhurtaYogaEffect > 0"
+  order:
+    dharma: descending
+    muhurtaYogaEffect: descending
 ```
 
 ### Step F: extract only the columns you care about
 
 ```yml
-fieldSets:
-  scenario: all
-  panchang:
-    - tithi
-    - nakshatra
-    - vaara
-  muhurtaYogaEffects:
-    - positive
-    - negative
+report:
+  fieldSets:
+    scenario: all
+    panchang:
+      - tithi
+      - nakshatra
+      - vaara
+    muhurtaYogaEffects:
+      - positive
+      - negative
 ```
 
 ---
@@ -544,9 +550,10 @@ longitude: 77.461
 frequency: 1h
 periods: 72
 
-query: "dharma > 75 and muhurtaYogaEffect > 0"
+report:
+  selection: "dharma > 75 and muhurtaYogaEffect > 0"
 
-customColumns:
+computations:
   dharma: "h1 + h5 + h9"
   muhurtaYogaEffect: "positive + negative"
   maxOfDharma:
@@ -555,15 +562,15 @@ customColumns:
       - h5
       - h9
 
-order:
-  dharma: descending
-  muhurtaYogaEffect: descending
-
-fieldSets:
-  scenario: all
-  panchang: all
-  muhurtaYogaEffects: all
-  ashtakavarga: all
+report:
+  order:
+    dharma: descending
+    muhurtaYogaEffect: descending
+  fieldSets:
+    scenario: all
+    panchang: all
+    muhurtaYogaEffects: all
+    ashtakavarga: all
 ```
 
 Run it:
@@ -603,14 +610,15 @@ constants:
     - h11
   minScore: 140
 
-query: >-
-  timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
-  muhurtaYogaEffect >= 0 and
-  minFocusHouse >= 24 and
-  weekdayScore > 0 and
-  score >= constants.minScore
+report:
+  selection: >-
+    timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
+    muhurtaYogaEffect >= 0 and
+    minFocusHouse >= 24 and
+    weekdayScore > 0 and
+    score >= constants.minScore
 
-customColumns:
+computations:
   muhurtaYogaEffect: >-
     positive + negative
   weekdayScore: >-
@@ -621,22 +629,22 @@ customColumns:
     (h3 * 1.5 + h5 * 1.0 + h7 * 1.2 + h10 * 1.6 + h11 * 1.7) * 0.42 +
     muhurtaYogaEffect * 12 + weekdayScore
 
-order:
-  score: descending
-  muhurtaYogaEffect: descending
-
-fieldSets:
-  scenario: all
-  panchang:
-    - tithi
-    - nakshatra
-    - vaara
-    - gowri
-    - gowriScore
-  muhurtaYogaEffects:
-    - positive
-    - negative
-  timeFlags:
+report:
+  order:
+    score: descending
+    muhurtaYogaEffect: descending
+  fieldSets:
+    scenario: all
+    panchang:
+      - tithi
+      - nakshatra
+      - vaara
+      - gowri
+      - gowriScore
+    muhurtaYogaEffects:
+      - positive
+      - negative
+    timeFlags:
     - timeF
   ashtakavarga: all
 ```
@@ -709,22 +717,22 @@ python3 main.py base.yml override.yml
 
 If a later file sets a list, it replaces the earlier list.
 
-### `query` uses pandas query syntax
+### `report.selection` uses pandas query syntax
 
 That means:
 - string expressions need quotes
 - `.str.contains(...)` is supported
 - `na=False` is usually safer for string filters
 
-### `customColumns` expressions must reference available columns
+### `computations` expressions must reference available columns
 
 If you compute from `h1`, `h5`, `h9`, make sure the underlying data exists in the generated DataFrame.
 
-### `fieldSets` affect final output, not whether columns can be computed earlier
+### `report.fieldSets` affect final output, not whether columns can be computed earlier
 
 You can compute and filter on columns, then still choose a smaller final output.
 
-### Prefer `fieldSets` over `skipColumns`
+### Prefer `report.fieldSets` over `skipColumns`
 
-Some older examples mention `skipColumns`, but the current runtime path is driven by `fieldSets`.
-Prefer `fieldSets` for shaping output.
+Some older examples mention `skipColumns`, but the current runtime path is driven by `report.fieldSets`.
+Prefer `report.fieldSets` for shaping output.

@@ -1,64 +1,116 @@
-constants:
-  tabooTimeFlagsRegex: 'RK|YG|GK'
-  marketingWeekdayWeights:
-    wednesday: 30
-    friday: 24
-    thursday: 22
-    sunday: 18
-  marketingNakshatras:
-    - asvini
-    - rohini
-    - mrigashira
-    - punarvasu
-    - pushya
-    - hasta
-    - chitra
-    - svati
-    - anuradha
-    - shravana
-    - dhanishta
-    - revati
-  marketingPreferredTithis:
-    - 2
-    - 3
-    - 5
-    - 7
-    - 10
-    - 11
-    - 13
-  marketingDiscouragedTithis:
-    - 4
-    - 8
-    - 9
-  marketingWaningRiktaTithis:
-    - 19
-    - 24
-    - 29
-  marketingWaningPoornaTithis:
-    - 20
-    - 25
-  marketingMinHouses:
-    - h3
-    - h5
-    - h7
-    - h10
-    - h11
-  marketingCorePlanets:
-    - mercury
-    - venus
-    - jupiter
-    - moon
-    - sun
-query: >-
-  timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
-  tithi != 0 and
-  tithi != 14 and
-  meQ != 'malefic' and
-  muhurtaYogaEffect >= 0 and
-  marketingMin >= 24 and
-  weekdayScore > 0 and
-  marketingScore >= 300
-customColumns:
+sources:
+  - muhurtaYogaEffects
+  - objectHouses
+  - planetaryDegrees
+  - ashtakavarga
+  - mahaDasha
+  - antarDashas
+  - planetFlags
+  - planetQualities
+  - timeFlags
+  - gowriFlags
+  - shadBalaStrength
+  - karakas
+  - scenario
+  - panchang
+computations:
+  constants:
+    tabooTimeFlagsRegex: 'RK|YG|GK'
+    marketingWeekdayWeights:
+      wednesday: 30
+      friday: 24
+      thursday: 22
+      sunday: 18
+    marketingNakshatras:
+      - asvini
+      - rohini
+      - mrigashira
+      - punarvasu
+      - pushya
+      - hasta
+      - chitra
+      - svati
+      - anuradha
+      - shravana
+      - dhanishta
+      - revati
+    marketingPreferredTithis:
+      - 2
+      - 3
+      - 5
+      - 7
+      - 10
+      - 11
+      - 13
+    marketingDiscouragedTithis:
+      - 4
+      - 8
+      - 9
+    marketingWaningRiktaTithis:
+      - 19
+      - 24
+      - 29
+    marketingWaningPoornaTithis:
+      - 20
+      - 25
+    marketingMinHouses:
+      - h3
+      - h5
+      - h7
+      - h10
+      - h11
+    marketingCorePlanets:
+      - mercury
+      - venus
+      - jupiter
+      - moon
+      - sun
+  fields:
+    marketingHouseScore: >-
+      (h2 * 0.9 + h5 * 1.0 + h7 * 1.2 + h3 * 1.5 + h10 * 1.6 + h11 * 1.7) * 0.42
+    muhurtaYogaEffect: >-
+      positive + negative
+    marketingMin:
+      min: constants.marketingMinHouses
+    weekdayScore: >-
+      vaara.map(constants.marketingWeekdayWeights).fillna(0)
+    nakshatraScore: >-
+      nakshatra.isin(constants.marketingNakshatras) * 36
+    tithiScore: >-
+      tithi.isin(constants.marketingPreferredTithis) * 28 +
+      (tithi == 15) * 10 -
+      tithi.isin(constants.marketingDiscouragedTithis) * 18 -
+      ((tithi >= 16) & (tithi <= 20)) * 8 -
+      ((tithi >= 21) & (tithi <= 25)) * 14 -
+      ((tithi >= 26) & (tithi <= 29)) * 22 -
+      tithi.isin(constants.marketingWaningRiktaTithis) * 6 +
+      tithi.isin(constants.marketingWaningPoornaTithis) * 4
+    qualityScore: >-
+      (meQ == 'benefic') * 20 +
+      (meQ == 'neutral') * 10 +
+      (moQ == 'benefic') * 18
+    mdPhaseScore: >-
+      mdLord.isin(constants.marketingCorePlanets) *
+      (6 + mdlStrength * 4 + mdRemainder * 6)
+    adPhaseScore: >-
+      adLord.isin(constants.marketingCorePlanets) *
+      (5 + adlStrength * 3 + adRemainder * 4)
+    padPhaseScore: >-
+      padLord.isin(constants.marketingCorePlanets) *
+      (3 + padlStrength * 2 + padRemainder * 3)
+    dashaScore: >-
+      mdPhaseScore + adPhaseScore + padPhaseScore
+    baseMarketingScore: >-
+      marketingHouseScore + muhurtaYogaEffect * 12 + weekdayScore +
+      nakshatraScore + tithiScore + qualityScore + dashaScore
+    gowriMarketingAdj: >-
+      gowriScore * 18.5
+    marketingSpecialStrength: >-
+      (meS + veS + moS + juS + suS) / 5
+    marketingShadbalaAdj: >-
+      (marketingSpecialStrength - 1.27) * 120
+    marketingScore: >-
+      baseMarketingScore + gowriMarketingAdj + marketingShadbalaAdj
   # House policy:
   # - weight communication and public-impact houses more strongly for marketing
   # - prioritize 3rd (media/outreach), 10th (visibility), and 11th (gains/reach)
@@ -138,32 +190,42 @@ customColumns:
     (marketingSpecialStrength - 1.27) * 120
   marketingScore: >-
     baseMarketingScore + gowriMarketingAdj + marketingShadbalaAdj
-order:
-  marketingScore: descending
-  baseMarketingScore: descending
-  muhurtaYogaEffect: descending
-fieldSets:
-  scenario:
-    - date
-    - time
-  panchang:
-    - tithi
-    - nakshatra
-    - vaara
-    - marketingScore
-  planetQualities:
-    - meQ
-  timeFlags:
-    - timeF
-  muhurtaYogaEffects:
-    - positive
-    - negative
-    - yogas
-  mahaDasha:
-    - mdLord
-  antarDashas:
-    - adLord
-    - padLord
-  shadBalaStrength: none
-  objectHouses: all
-  ashtakavarga: all
+report:
+  selection: >-
+    timeF.str.contains(constants.tabooTimeFlagsRegex, na=False) == False and
+    tithi != 0 and
+    tithi != 14 and
+    meQ != 'malefic' and
+    muhurtaYogaEffect >= 0 and
+    marketingMin >= 24 and
+    weekdayScore > 0 and
+    marketingScore >= 300
+  order:
+    marketingScore: descending
+    baseMarketingScore: descending
+    muhurtaYogaEffect: descending
+  fieldSets:
+    scenario:
+      - date
+      - time
+    panchang:
+      - tithi
+      - nakshatra
+      - vaara
+      - marketingScore
+    planetQualities:
+      - meQ
+    timeFlags:
+      - timeF
+    muhurtaYogaEffects:
+      - positive
+      - negative
+      - yogas
+    mahaDasha:
+      - mdLord
+    antarDashas:
+      - adLord
+      - padLord
+    shadBalaStrength: none
+    objectHouses: all
+    ashtakavarga: all

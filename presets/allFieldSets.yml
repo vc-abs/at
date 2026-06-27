@@ -1,4 +1,18 @@
 # Field Sets
+sources:
+  - muhurtaYogaEffects
+  - objectHouses
+  - planetaryDegrees
+  - ashtakavarga
+  - mahaDasha
+  - antarDashas
+  - planetFlags
+  - planetQualities
+  - timeFlags
+  - gowriFlags
+  - shadBalaStrength
+  - karakas
+  - panchang
 fieldSets:
   panchang: all
   muhurtaYogaEffects: all

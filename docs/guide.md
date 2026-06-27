@@ -5,7 +5,7 @@
 - [What This Tool Does](#what-this-tool-does)
 - [Basic Usage](#basic-usage)
 - [Configuration Inputs](#configuration-inputs)
-- [Query Language Notes](#query-language-notes)
+- [Selection Language Notes](#selection-language-notes)
 - [Config Constants](#config-constants)
 - [Gowri Panchangam Notes](#gowri-panchangam-notes)
 - [Preset Notes](#preset-notes)
@@ -45,9 +45,9 @@
 - When `endDate` / `endTime` are present, the derived count overrides any explicit `count` (the window is authoritative).
 - Range boundary semantics are **both-inclusive**: both the start and end timestamps appear in the generated series.
 
-## Query Language Notes
+## Selection Language Notes
 
-- The YAML `query` value is evaluated using `pandas.DataFrame.query(...)`.
+- The YAML `report.selection` value is evaluated using `pandas.DataFrame.query(...)`.
 - String contains checks are supported through vectorized string accessors, e.g.:
   - `nakshatra.str.contains('Rohini', na=False)`
   - `nakshatra.str.contains('rohini', case=False, na=False)`
@@ -61,7 +61,8 @@
 ## Config Constants
 
 - Configs may define a root-level `constants` mapping for reusable preset/config values.
-- In expression strings such as `query` and string-valued `customColumns`, use author-facing `constants.foo` syntax.
+- In expression strings such as `report.selection` and string-valued `computations`, use author-facing `constants.foo` syntax.
+- `sources` is the source-group pruning list: keep it broad in defaults, narrow it in presets when you want to avoid computing unused groups.
 - Example patterns:
   - allow/filter lists: `nakshatra.isin(constants.launchNakshatras)`
   - mapping/weight dictionaries: `vaara.map(constants.marketingWeekdayWeights).fillna(0)`
@@ -74,7 +75,9 @@
 
 ## Gowri Panchangam Notes
 
-- The first pass exposes current Gowri fields through the `panchang` field set and a dedicated `gowriFlags` field set.
+- The first pass exposes the core panchang fields through the `panchang` field set and a dedicated `gowriFlags` field set.
+- `gowriFlags` gets a fuller explanation than other field sets because it is the dedicated compact Gowri bundle and is where `gowri`, `gowriScore`, `gowriM`, `gowriS`, `gowriT`, `gowriStart`, and `gowriEnd` live.
+- If a preset does not need `computations`, `sources`, or other optional keys, leave them out entirely rather than keeping empty sections.
 - Available current-segment fields include:
   - `gowri` — current Gowri segment name
   - `gowriScore` — numeric quality score for the current segment

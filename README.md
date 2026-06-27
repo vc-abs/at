@@ -33,9 +33,9 @@ $ python3 main.py ./presets/biz.yml ./examples/presetExtensions.yml
 $ # See docs/presets-cheatsheet.md for a progressive walkthrough of preset config.
 ```
 
-## Config Constants
+## Config Contract
 
-You can define reusable root-level config constants and reference them from `query` and string-valued `customColumns` expressions.
+You can define reusable root-level config constants and reference them from `computations` and `report.selection` expressions.
 
 ```yml
 constants:
@@ -51,15 +51,25 @@ constants:
     - h10
     - h11
 
-query: >-
-  weekdayScore > 0 and
-  marketingMin >= 24
+sources:
+  # Optional. Defaults come from the defaultConfig.yml source-group list.
+  # Narrow this to skip computing source groups you do not need.
 
-customColumns:
+computations:
   weekdayScore: >-
     vaara.map(constants.marketingWeekdayWeights).fillna(0)
   marketingMin:
     min: constants.marketingMinHouses
+
+report:
+  selection: >-
+    weekdayScore > 0 and
+    marketingMin >= 24
+  order:
+    marketingMin: descending
+  fieldSets:
+    scenario: all
+    panchang: all
 ```
 
 Notes:

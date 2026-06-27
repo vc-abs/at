@@ -25,11 +25,11 @@
 - Remaining ShadBala alignment gaps were deferred to backlog for a future refinement cycle rather than addressed through speculative rule changes.
 - Added first-pass Gowri Panchangam runtime support using sunrise/sunset-derived 8-part day/night segmentation, an algorithmic weekday-cycle model, and queryable combo-output fields.
 - Kept provenance/verification concerns out of runtime artefacts and deferred them to backlog follow-up.
-- Finalized the Gowri first-pass cycle with point-in-time-first lookup, numeric `gowriScore`, shared constants, and documented query/runtime conventions.
+- Finalized the Gowri first-pass cycle with point-in-time-first lookup, numeric `gowriScore`, shared constants, and documented selection/runtime conventions.
 - Refreshed the marketing preset to derive its final score from a base score plus simple additive Gowri and special-planet Shadbala adjustments calibrated from observed review ranges.
 - Updated the `launch` preset to use the same additive Gowri/Shadbala adjustment structure on top of its own base score, and added hourly review/verification TSV artefacts under `temp/`.
 - Finalized root-level config constants support for presets and config-driven expressions.
-- Added author-facing `constants.foo` access for `query` and string-valued `customColumns`, with evaluation-boundary rewriting to pandas-native external-variable access.
+- Added author-facing `constants.foo` access for `report.selection` and string-valued `computations`, with evaluation-boundary rewriting to pandas-native external-variable access.
 - Added constant-backed summary/list reference support for custom columns such as `min: constants.marketingMinHouses`.
 - Refactored `presets/marketing.yml` to centralize repeated lists/filters under a root `constants` section.
 - Further refined the preset pattern so weekday preferences can be expressed as reusable weight maps (for example `marketingWeekdayWeights`) and consumed through `vaara.map(constants.<weights>).fillna(0)`.

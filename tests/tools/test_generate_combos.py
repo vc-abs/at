@@ -10,6 +10,7 @@ from at.tools.generate_combos import (
 	get_expression_locals,
 	get_gowri_flags,
 	get_panchang,
+	get_fields,
 	get_planetary_degrees,
 	get_planet_flags_by_planet,
 	get_planet_qualities,
@@ -540,9 +541,18 @@ def test_get_panchang_formats_time_strings():
 	assert result['sunrise'] == '06:00:00'
 	assert result['sunset'] == '18:00:00'
 	assert result['tithi'] == 1
-	assert result['gowri'] == 'laabam'
-	assert result['gowriStart'] == '06:00:00'
-	assert result['gowriScore'] == 1
+	assert result['nakshatra'] == 'asvini'
+	assert result['vaara'] == 'sunday'
+
+
+
+def test_get_fields_honors_sources_filter():
+	chart = _panchang_chart()
+	fields = get_fields(chart, ['panchang'])
+
+	assert 'tithi' in fields
+	assert 'suF' not in fields
+	assert 'asD' not in fields
 
 
 
@@ -630,3 +640,29 @@ def test_add_columns_keeps_fieldset_order():
 	)
 
 	assert list(selected.columns) == ['suF', 'moF', 'asD', 'suD']
+
+
+
+def test_add_columns_can_select_computations_explicitly():
+	df = pd.DataFrame(
+		[
+			{
+				'scenario': 'e',
+				'date': '2025-01-01',
+				'time': '00:00:00',
+				'weekdayScore': 30.0,
+				'launchScore': 317.0,
+				'launchHouseScore': 91.0,
+			}
+		]
+	)
+
+	selected = add_columns(
+		df,
+		{
+			'computations': ['launchScore', 'weekdayScore'],
+			'scenario': 'all',
+		},
+	)
+
+	assert list(selected.columns) == ['launchScore', 'weekdayScore', 'scenario', 'date', 'time']

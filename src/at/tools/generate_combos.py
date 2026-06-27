@@ -2,6 +2,10 @@ from collections.abc import Mapping
 from functools import reduce
 import pandas as pd
 from at.chart import Chart
+from at.read_write.get_default_config import (
+	select_all_field_sets,
+	select_all_query,
+)
 from at.core.constants import (
 	planets,
 	nodes,
@@ -256,21 +260,12 @@ def get_panchang(chart):
 	sunrise = rise_and_set['sunrise'].strftime("%H:%M:%S")
 	sunset = rise_and_set['sunset'].strftime("%H:%M:%S")
 
-	gowri = chart.panchang.gowri
-
 	return {
 		'tithi': chart.panchang.tithi,
 		'nakshatra': chart.panchang.nakshatra,
 		'vaara': chart.panchang.vaara,
 		'sunrise': sunrise,
 		'sunset': sunset,
-		'gowri': gowri['gowri'],
-		'gowriScore': gowri['gowriScore'],
-		'gowriM': gowri['gowriM'],
-		'gowriS': gowri['gowriS'],
-		'gowriT': gowri['gowriT'],
-		'gowriStart': gowri['gowriStart'].strftime("%H:%M:%S"),
-		'gowriEnd': gowri['gowriEnd'].strftime("%H:%M:%S"),
   }
 
 field_sets = {
@@ -328,19 +323,19 @@ field_sets = {
 	},
 	'panchang': {
 		'fn': get_panchang,
-		'columns': ['tithi', 'nakshatra', 'vaara', 'sunrise', 'sunset', 'gowri', 'gowriScore', 'gowriM', 'gowriS', 'gowriT', 'gowriStart', 'gowriEnd']
+		'columns': ['tithi', 'nakshatra', 'vaara', 'sunrise', 'sunset']
 	}
 }
 
-def get_fields(config, chart):
+def get_fields(chart, sources=None):
+	allowed_sources = set(sources) if sources is not None else None
 	return reduce(
-		lambda acc, field_set: (
-			{
-				**acc,
-				**field_sets[field_set[0]]['fn'](chart),
-			}
-		),
-		config['fieldSets'].items(), {}
+		lambda acc, field_set: {
+			**acc,
+			**field_sets[field_set[0]]['fn'](chart),
+		} if allowed_sources is None or field_set[0] in allowed_sources else acc,
+		field_sets.items(),
+		{},
 	)
 
 
@@ -367,7 +362,7 @@ def get_time_combos(
 		}
 	)
 
-	fields = get_fields(config, chart)
+	fields = get_fields(chart, config.get('sources'))
 
 	return {
 		'timestamp': dt,
@@ -446,8 +441,22 @@ def wrap_constants(value):
 	return value
 
 
+def get_computation_constants(config):
+	computations = config.get('computations', {})
+	if isinstance(computations, Mapping) and 'constants' in computations:
+		return computations.get('constants', {})
+	return config.get('constants', {})
+
+
+def get_computation_fields(config):
+	computations = config.get('computations', {})
+	if isinstance(computations, Mapping) and 'fields' in computations:
+		return computations.get('fields', {})
+	return computations
+
+
 def get_constant_namespace(config):
-	return wrap_constants(config.get('constants', {}))
+	return wrap_constants(get_computation_constants(config))
 
 
 def rewrite_constants_expression(expression):
@@ -504,7 +513,7 @@ def resolve_constant_reference(value, config):
 	):
 		return value
 
-	resolved = config.get('constants', {})
+	resolved = get_computation_constants(config)
 	for key in value.split('.')[1:]:
 		resolved = resolved[key]
 	return resolved
@@ -596,25 +605,40 @@ def adjust_columns(df):
 	df.insert(0, 'scenario', scenario_column)
 
 selection_types = {
-	'all': lambda key, columns : field_sets[key]['columns'],
-	'none': lambda key, columns : [],
-	'some': lambda key, columns : columns
+	'all': lambda key, columns: field_sets[key]['columns'],
+	'none': lambda key, columns: [],
+	'some': lambda key, columns: columns,
 }
+
+
+_emitted_field_sets = {
+	'computations': ['scenario', 'date', 'time'],
+}
+
+
+def _field_set_columns(field_set_name, selector):
+	if selector == 'all':
+		return field_sets[field_set_name]['columns']
+	if selector == 'none':
+		return []
+	return selector
+
 
 def add_columns(df, config_field_sets):
 	columns_to_include = []
-	for field_set in config_field_sets.items():
-		key, value = field_set
-		selector_type = value if type(value).__name__ == 'str' else 'some'
-		columns_to_include = columns_to_include + selection_types[selector_type](key, value)
+	for field_set_name, selector in config_field_sets.items():
+		if field_set_name in _emitted_field_sets and selector == 'all':
+			columns_to_include = columns_to_include + _emitted_field_sets[field_set_name]
+			continue
+		columns_to_include = columns_to_include + _field_set_columns(field_set_name, selector)
 	return df[columns_to_include]
+
 
 def generate_combos(config):
 	df = pd.DataFrame()
+	report = config['report']
 
-	for scenario_name in config[
-		'scenarios'
-	].keys():
+	for scenario_name in config['scenarios'].keys():
 		df = pd.concat(
 			[
 				df,
@@ -625,19 +649,17 @@ def generate_combos(config):
 		)
 
 	add_custom_columns(
-		df, config['customColumns'], config
+		df, get_computation_fields(config), config
 	)
-	sort_data(df, config['order'])
+	sort_data(df, report['order'])
 	split_timestamp(df)
 	adjust_columns(df)
 	filtered_df = df.query(
 		rewrite_constants_expression(
-			config['query']
+			report.get('selection', select_all_query)
 		),
 		local_dict=get_expression_locals(config),
 	)
-	modified_df = add_columns(
-		filtered_df, config['fieldSets']
+	return add_columns(
+		filtered_df, report.get('fieldSets', select_all_field_sets)
 	)
-
-	return modified_df

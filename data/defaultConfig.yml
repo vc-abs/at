@@ -1,14 +1,37 @@
-ayanamsa: raman
-# India specific defaults.
-utcHour: 5
-utcMinute: 30
-# Approximate Location of Mahakaal Jyotirlinga, Ujjain (to align with the many jyotish traditions across India).
-latitude: 23.101
-longitude: 77.461
-# Records
-interval: 1h
-count: 168 # one week, when the interval is 1h.
-# Export config.
-exportSeparator: "\t"
-fieldSets:
-  scenario: all
+baseConfigurations:
+  ayanamsa: raman
+  # India specific defaults.
+  utcHour: 5
+  utcMinute: 30
+  # Approximate Location of Mahakaal Jyotirlinga, Ujjain (to align with the many jyotish traditions across India).
+  latitude: 23.101
+  longitude: 77.461
+  # Records
+  interval: 1h
+  count: 168 # one week, when the interval is 1h.
+  # Export config.
+  exportSeparator: "\t"
+scenarios:
+  default: {}
+sources:
+  - muhurtaYogaEffects
+  - objectHouses
+  - planetaryDegrees
+  - ashtakavarga
+  - mahaDasha
+  - antarDashas
+  - planetFlags
+  - planetQualities
+  - timeFlags
+  - gowriFlags
+  - shadBalaStrength
+  - karakas
+  - scenario
+  - panchang
+report:
+  selection: ilevel_0 in ilevel_0
+  order: {}
+  fieldSets:
+    scenario: all
+    panchang: all
+skipColumns: []

@@ -1,31 +1,37 @@
-customColumns:
-  max:
+sources:
+  - ashtakavarga
+computations:
+  fields:
     max:
-      - h1
-      - h2
-      - h3
-      - h4
-      - h5
-      - h6
-      - h7
-      - h8
-      - h9
-      - h10
-      - h11
-      - h12
-  stdDev:
-    std:
-      - h1
-      - h2
-      - h3
-      - h4
-      - h5
-      - h6
-      - h7
-      - h8
-      - h9
-      - h10
-      - h11
-      - h12
-order:
-  stdDev: descending
+      max:
+        - h1
+        - h2
+        - h3
+        - h4
+        - h5
+        - h6
+        - h7
+        - h8
+        - h9
+        - h10
+        - h11
+        - h12
+    stdDev:
+      std:
+        - h1
+        - h2
+        - h3
+        - h4
+        - h5
+        - h6
+        - h7
+        - h8
+        - h9
+        - h10
+        - h11
+        - h12
+report:
+  order:
+    stdDev: descending
+  fieldSets:
+    ashtakavarga: all

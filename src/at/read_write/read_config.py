@@ -153,8 +153,34 @@ def merge_files(file_paths):
 
 
 def read_config(file_paths):
-	yaml_files = [project_root + '/data/defaultConfig.yml'] + file_paths
-	config = {**get_default_config(), **merge_files(yaml_files)}
+	config = merge_files([project_root + '/data/defaultConfig.yml'] + file_paths)
+	config = {**get_default_config(), **config}
+
+	if 'baseConfigurations' in config:
+		base_config = config.pop('baseConfigurations') or {}
+		config = {**base_config, **config}
+
+	legacy_constants = config.pop('constants', {}) or {}
+	computations = config.get('computations', {}) or {}
+	if not isinstance(computations, dict):
+		computations = {}
+	if 'fields' in computations or 'constants' in computations:
+		fields = computations.get('fields', {}) or {}
+		constants = computations.get('constants', {}) or {}
+	else:
+		fields = {
+			k: v
+			for k, v in computations.items()
+			if k not in ('constants', 'fields')
+		}
+		constants = {}
+	config['computations'] = {
+		'constants': {**legacy_constants, **constants},
+		'fields': fields,
+	}
+
+	config.setdefault('report', {})
+	config.setdefault('sources', [])
 
 	config = _standardize_config(config)
 

@@ -50,7 +50,7 @@
 - Test suite present under `tests/` with multiple domain-focused modules.
 - `tests/core/test_planet_quality.py` now covers BPHS aspect metadata, Mercury influence evaluation paths, and Moon tithi-based quality behavior.
 - `tests/panchang/test_gowri.py` covers first-pass Gowri schedule lookup and day/night segment selection behavior.
-- `tests/tools/test_generate_combos.py` now covers compact time-flag output, planet-quality output, Gowri output fields, field-set selection behavior, and constant-backed query/custom-column behavior for combo generation, including preset-structure checks for `launch`, `staffOnboarding`, and `studentOnboarding`.
+- `tests/tools/test_generate_combos.py` now covers compact time-flag output, planet-quality output, Gowri output fields, field-set selection behavior, source-group pruning, and constant-backed selection/computation behavior for combo generation, including preset-structure checks for `launch`, `staffOnboarding`, and `studentOnboarding`.
 - `tests/shad_bala/test_shadbala.py` now covers Dig Bala reference-longitude and linear falloff behavior.
 - `tests/shad_bala/test_shadbala_integration.py` loads the `referenceEvent` scenario from `tests/fixtures/shadbala_scenario.yml` (stacked with `presets/debug.yml` and `presets/allFieldSets.yml`) so validation runs against a committed, version-controlled fixture.
 - `tests/read_write/test_read_config.py` covers scenario merging, file merge behavior, default-config loading, DMS compact/decimal coordinate parsing, `startDate`/`startTime` alias equivalence, `endDate`/`endTime` count derivation (both-inclusive), legacy `frequency`/`periods` normalization, fixed-duration `interval` validation, and partial-end-pair fail-fast behavior.

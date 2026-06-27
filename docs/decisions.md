@@ -66,7 +66,7 @@
 
 - **Decision**: Add a root-level `constants` mapping to merged config and expose it to config-authored expressions through author-facing `constants.foo` syntax, with rewriting to pandas-native external-variable access only at evaluation boundaries.
 - **Rationale**: Presets need reusable shared lists, thresholds, and maps to stay readable, but those values are config-scoped runtime data rather than row-scoped DataFrame columns. Author-facing `constants.foo` keeps YAML readable while avoiding fragile string interpolation or hidden temporary columns.
-- **Consequences**: `config['constants']` is now always available, `query` and string-valued `customColumns` can reference constants through `constants.foo`, summary/list-style custom columns can resolve references such as `constants.marketingMinHouses`, and presets can centralize repeated values without exporting those constants as output columns.
+- **Consequences**: `config['constants']` is now always available, `report.selection` and string-valued `computations` can reference constants through `constants.foo`, summary/list-style computed columns can resolve references such as `constants.marketingMinHouses`, and presets can centralize repeated values without exporting those constants as output columns.
 
 ## 2026-06-22: Keep preset `qualityScore` limited to dynamically varying planet qualities
 

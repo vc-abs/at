@@ -4,6 +4,12 @@ from datetime import (
 
 select_all_query = 'ilevel_0 in ilevel_0'
 
+select_all_selection = select_all_query
+select_all_field_sets = {
+	'scenario': 'all',
+	'panchang': 'all',
+}
+
 
 def get_default_config():
 	now = datetime.now()
@@ -15,10 +21,5 @@ def get_default_config():
 		'hour': now.hour,
 		'minute': now.minute,
 		'second': now.second,
-		'query': select_all_query,
-		'constants': {},
-		'fieldSets': {},
-		'customColumns': {},
-		'skipColumns': [],
-		'order': {},
+		'baseConfigurations': {},
 	}
