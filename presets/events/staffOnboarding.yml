@@ -39,12 +39,12 @@ computations:
     eventDiscouragedTithiPenalty: 16
     eventWaningHalf16to20Penalty: 6
     eventWaningHalf21to25Penalty: 12
-    eventWaningHalf26to29Penalty: 20
-    eventWaningRiktaPenalty: 4
-    eventWaningPoornaBonus: 3
+    eventWaningHalf26to29Penalty: 18
+    eventWaningRiktaPenalty: 5
+    eventWaningPoornaBonus: 2
 
     eventMeBeneficScore: 22
-    eventMoBeneficScore: 16
+    eventMoBeneficScore: 20
 
     eventMinThreshold: 22
     eventScoreThreshold: 275
@@ -52,13 +52,13 @@ computations:
     eventGowriMultiplier: 16.5
     eventSpecialStrengthWeights:
       meS: 1
-      veS: 0
+      veS: 1
       moS: 1
       juS: 1
       suS: 1
-      saS: 1
-    eventShadbalaCenter: 1.22
-    eventShadbalaMultiplier: 110
+      saS: 0
+    eventShadbalaCenter: 1.27
+    eventShadbalaMultiplier: 120
 
   fields:
     eventHouseScore: >-

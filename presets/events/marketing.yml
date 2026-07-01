@@ -30,6 +30,8 @@ computations:
       - h3
       - h5
       - h7
+      - h10
+      - h11
     eventCorePlanets: [mercury, venus, jupiter, moon, sun]
 
     eventNakshatraScoreMultiplier: 36
