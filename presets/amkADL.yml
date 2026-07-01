@@ -7,24 +7,28 @@ sources:
   - karakas
   - panchang
   - scenario
-fieldSets:
-  scenario:
-    - date
-    - time
-  panchang:
-    - tithi
-    - vaara
-    - nakshatra
-  muhurtaYogaEffects: all
-  objectHouses: all
-  ashtakavarga: all
-  antarDashas:
-    - adLord
-    - adRemainder
-    - adlStrength
-    - adlIshtaPhala
-  shadBalaStrength:
-    - totalS
-    - avgIP
-  karakas:
-    - amk
+  - muhurtaYogaEffects
+  - objectHouses
+  - ashtakavarga
+report:
+  fieldSets:
+    scenario:
+      - date
+      - time
+    panchang:
+      - tithi
+      - vaara
+      - nakshatra
+    muhurtaYogaEffects: all
+    objectHouses: all
+    ashtakavarga: all
+    antarDashas:
+      - adLord
+      - adRemainder
+      - adlStrength
+      - adlIshtaPhala
+    shadBalaStrength:
+      - totalS
+      - avgIP
+    karakas:
+      - amk

@@ -13,16 +13,18 @@ sources:
   - shadBalaStrength
   - karakas
   - panchang
-fieldSets:
-  panchang: all
-  muhurtaYogaEffects: all
-  objectHouses: all
-  planetaryDegrees: all
-  ashtakavarga: all
-  karakas: all
-  mahaDasha: all
-  antarDashas: all
-  planetFlags: all
-  planetQualities: all
-  timeFlags: all
-  shadBalaStrength: all
+report:
+  fieldSets:
+    scenario: all
+    panchang: all
+    muhurtaYogaEffects: all
+    objectHouses: all
+    planetaryDegrees: all
+    ashtakavarga: all
+    karakas: all
+    mahaDasha: all
+    antarDashas: all
+    planetFlags: all
+    planetQualities: all
+    timeFlags: all
+    shadBalaStrength: all

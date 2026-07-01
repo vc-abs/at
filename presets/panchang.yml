@@ -7,9 +7,6 @@ count: 365
 sources:
   - panchang
   - scenario
-fieldSets:
-  scenario: all
-  panchang: all
 scenarios:
   panchang:
     name: "panchang"

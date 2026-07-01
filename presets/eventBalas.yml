@@ -1,3 +1,4 @@
 count: 1
-fieldSets:
-  shadBalaStrength: all
+report:
+  fieldSets:
+    shadBalaStrength: all
